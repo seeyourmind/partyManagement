@@ -49,7 +49,7 @@
             <button type="button" class="btn btn-default btn-sm" onclick="refreshUserList()"><i class="fa fa-refresh"></i></button>
             <div class="float-right">
               <div class="btn-group">
-                <button type="button" class="btn btn-primary btn-sm">批量添加</button>
+                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addMoreModal">批量添加</button>
                 <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addOneModal">单个添加</button>
               </div>
             </div>
@@ -140,130 +140,140 @@
   </div>
   <!-- /.row -->
 </section>
-<!-- 添加用户弹窗 -->
-<div class="modal fade" id="addOneModal" tabindex="-1" role="dialog" aria-labelledby="addOneModalLabel" aria-hidden="true">
+<!-- 添加单个用户弹窗 -->
+<div class="modal fade" id="addOneModal" tabindex="-1" role="dialog" aria-labelledby="addOneModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
-      <div class="card card-primary modal-content">
-        <div class="card-header modal-header">
-          <h3 class="card-title">添加用户信息</h3>
-        </div>
-        <form id="addoneform" role="form" style="background-color: #FFFFFF">
-          <div class="card-body modal-body">
-            <div class="form-group mb-3">
-              <label for="id">账号</label>
-              <input type="text" class="form-control" id="id" name="id" placeholder="请填写账号[学号|工号]">
-            </div>
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="form-group mb-3">
-                  <label for="name">姓名</label>
-                  <input type="text" class="form-control" id="name" name="name" placeholder="请填写姓名">
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="form-group mb-3">
-                  <label for="birthday">生日</label>
-                  <input type="date" class="form-control" id="birthday" name="birthday" placeholder="请选择生日，格式YYYY-MM-DD">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="form-group mb-3">
-                  <label for="nation">民族</label>
-                  <input type="text" class="form-control" id="nation" name="nation" placeholder="请填写民族">
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="form-group mb-3">
-                  <label for="sex">性别</label>
-                  <select class="form-control" id="sex" name="sex">
-                    <option>保密</option>
-                    <option>男</option>
-                    <option>女</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-            <hr>
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="form-group mb-3">
-                  <label for="leaguetime">入团时间</label>
-                  <input type="date" class="form-control" id="leaguetime" name="league_time" placeholder="请选择日期">
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="form-group mb-3">
-                  <label for="appletime">申请入党时间</label>
-                  <input type="date" class="form-control" id="appletime" name="party_apply_time" placeholder="请选择日期">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="form-group mb-3">
-                  <label for="stage">所在阶段</label>
-                  <select class="form-control" id="stage" name="stage">
-                    <option>群众</option>
-                    <option>共青团员</option>
-                    <option>入党积极分子</option>
-                    <option>预备党员</option>
-                    <option>发展对象</option>
-                    <option>党员</option>
-                  </select>
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="form-group mb-3">
-                  <label for="stagetime">阶段开始时间</label>
-                  <input type="date" class="form-control" id="stagetime" name="stage_time" placeholder="请选择生日">
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col-lg-6">
-                <div class="form-group mb-3">
-                  <label for="generalbranch">总支部</label>
-                  <input type="email" class="form-control" id="generalbranch" name="general_branch" placeholder="请填写总支部">
-                </div>
-              </div>
-              <div class="col-lg-6">
-                <div class="form-group mb-3">
-                  <label for="branch">支部</label>
-                  <input type="email" class="form-control" id="branch" name="branch" placeholder="请填写支部">
-                </div>
-              </div>
-            </div>
-            <hr>
-            <div class="form-group mb-3">
-              <label>个人荣誉</label>
-              <textarea class="form-control" rows="3" id="honor" name="honor" placeholder="请填写个人荣誉 ..."></textarea>
-            </div>
-            <!--
-            <div class="form-group mb-3">
-              <label for="exampleInputFile">File input</label>
-              <div class="input-group">
-                <div class="custom-file">
-                  <input type="file" class="custom-file-input" id="exampleInputFile" name="file">
-                  <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-                </div>
-                <div class="input-group-append">
-                  <span class="input-group-text" id="">Upload</span>
-                </div>
-              </div>
-            </div>
-            -->
-          </div>
-        </form>
-        <!-- /.card-body -->
-          <div class="card-footer modal-footer">
-            <button name="submit" class="btn btn-info" onclick="addOneData()">添加</button>
-            <button name="cancel" class="btn btn-default float-right" data-dismiss="modal">取消</button>
-          </div>
+    <div class="card card-primary modal-content">
+      <div class="card-header modal-header">
+        <h3 class="card-title">添加用户信息</h3>
       </div>
+      <form id="addoneform" role="form" style="background-color: #FFFFFF">
+        <div class="card-body modal-body">
+          <div class="form-group mb-3">
+            <label for="id">账号</label>
+            <input type="text" class="form-control" id="id" name="id" placeholder="请填写账号[学号|工号]">
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="name">姓名</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="请填写姓名">
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="birthday">生日</label>
+                <input type="date" class="form-control" id="birthday" name="birthday" placeholder="请选择生日，格式YYYY-MM-DD">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="nation">民族</label>
+                <input type="text" class="form-control" id="nation" name="nation" placeholder="请填写民族">
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="sex">性别</label>
+                <select class="form-control" id="sex" name="sex">
+                  <option>保密</option>
+                  <option>男</option>
+                  <option>女</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="leaguetime">入团时间</label>
+                <input type="date" class="form-control" id="leaguetime" name="league_time" placeholder="请选择日期">
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="appletime">申请入党时间</label>
+                <input type="date" class="form-control" id="appletime" name="party_apply_time" placeholder="请选择日期">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="stage">所在阶段</label>
+                <select class="form-control" id="stage" name="stage">
+                  <option>群众</option>
+                  <option>共青团员</option>
+                  <option>入党积极分子</option>
+                  <option>预备党员</option>
+                  <option>发展对象</option>
+                  <option>党员</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="stagetime">阶段开始时间</label>
+                <input type="date" class="form-control" id="stagetime" name="stage_time" placeholder="请选择生日">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="generalbranch">总支部</label>
+                <input type="email" class="form-control" id="generalbranch" name="general_branch" placeholder="请填写总支部">
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="branch">支部</label>
+                <input type="email" class="form-control" id="branch" name="branch" placeholder="请填写支部">
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="form-group mb-3">
+            <label>个人荣誉</label>
+            <textarea class="form-control" rows="3" id="honor" name="honor" placeholder="请填写个人荣誉 ..."></textarea>
+          </div>
+        </div>
+      </form>
+      <!-- /.card-body -->
+      <div class="card-footer modal-footer">
+        <button name="submit" class="btn btn-info" onclick="addOneData()">添加</button>
+        <button name="cancel" class="btn btn-default float-right" data-dismiss="modal">取消</button>
+      </div>
+    </div>
   </div>
-
+</div>
+<!-- 添加多个用户弹窗 -->
+<div class="modal fade" id="addMoreModal" tabindex="-1" role="dialog" aria-labelledby="addMoreModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <div class="card card-primary modal-content">
+      <div class="card-header modal-header">
+        <h3 class="card-title">添加用户信息</h3>
+      </div>
+      <div class="form-group mb-3 modal-body">
+        <form id="addmoreform" role="form" style="background-color: #FFFFFF" enctype="multipart/form-data" method="post">
+        <label for="userDataFile">File input</label>
+        <div class="input-group">
+          <div class="custom-file">
+            <input type="file" class="custom-file-input" multiple="multiple" id="userDataFile" name="file">
+            <label class="custom-file-label" for="userDataFile" id="userDataFileLabel">请选择需要上传的用户数据文件</label>
+          </div>
+        </div>
+        </form>
+      </div>
+      <div class="input-group-append modal-footer">
+        <button name="submit" class="btn btn-info" onclick="addMoreData()">添加</button>
+        <button name="cancel" class="btn btn-default float-right" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
 </div>
 </div>
 {/block}
@@ -354,6 +364,17 @@
                 }
             })
         })
+
+        // 获取文件路径
+        $('#userDataFile[type="file"]').change(function () {
+            var userFiles = $('#userDataFile[type="file"]').get(0).files;
+            var filesName = '';
+            for(var i=0; i<userFiles.length; i++){
+                filesName += userFiles[i].name+';';
+            }
+            $('#userDataFileLabel').html(filesName);
+            console.log(userFiles);
+        });
     })
     // 搜索用户信息
     function searchForUser() {
@@ -382,40 +403,47 @@
         window.location.href="/admin/user_management";
     }
     // 添加新用户
-  function addOneData() {
-      var d = {};
-      var t = $('form').serializeArray();
-      if (t[0].value.length < 1 || t[1].value.length < 1){
-          alert('用户账号和姓名不能为空，请检查所填数据是否有误');
-      } else {
-          $.each(t, function() {
-              if (this.value.length >= 1){
-                  d[this.name] = this.value;
-              }
-          });
-          $.ajax({
-              type: 'post',
-              url: '/insertUserinfo',
-              data: {'data':d},
-              dataType: 'json',
-              success: function (data) {
-                  if(data['data']){
-                      alert(data['msg']);
-                      $('#addOneModal').modal('hide');
-                  } else {
-                      alert(data['msg']);
-                  }
+    function addOneData() {
+        var d = {};
+        var t = $('#addoneform').serializeArray();
+        if (t[0].value.length < 1 || t[1].value.length < 1){
+            alert('用户账号和姓名不能为空，请检查所填数据是否有误');
+        } else {
+            $.each(t, function() {
+                if (this.value.length >= 1){
+                    d[this.name] = this.value;
+                }
+            });
+            $.ajax({
+                type: 'post',
+                url: '/insertUserinfo',
+                data: {'data':d},
+                dataType: 'json',
+                success: function (data) {
+                    if(data['data']){
+                        alert(data['msg']);
+                        $('#addOneModal').modal('hide');
+                    } else {
+                        alert(data['msg']);
+                    }
 
-              },
-              error: function (err, tt, kk) {
-                  alert('出现错误:'+JSON.stringify(err)+' 状态:'+tt+' 原因:'+kk);
-              }
-          });
-      }
-      console.log(JSON.stringify(d));
-  }
-  function addOneDataHide () {
-      $('#addOneModal').modal('hide');
-  }
+                },
+                error: function (err, tt, kk) {
+                    alert('出现错误:'+JSON.stringify(err)+' 状态:'+tt+' 原因:'+kk);
+                }
+            });
+        }
+        console.log(JSON.stringify(d));
+    }
+    // 获取文件路径
+    function getDataFilePath() {
+
+    }
+    // 添加多个新用户
+    function addMoreData () {
+        var d = {};
+        var t = $('#addmoreform').serializeArray();
+        console.log(t);
+    }
 </script>
 {/block}

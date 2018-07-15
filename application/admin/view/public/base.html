@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<!-- 头部meta标签 -->
+{include file="public/header" /}
+<body class="hold-transition sidebar-mini">
+<div class="wrapper">
+    <!-- 顶部导航栏 -->
+    {include file="public/navigate" /}
+    <div class="tlinks">Collect from <a href="http://www.cssmoban.com/" >手机网站模板</a></div>
+    <!-- 左边菜单栏 -->
+    {include file="public/asider" /}
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        {block name="content_header"}
+        页面主体内容导航栏显示块
+        {/block}
+        <!-- Main content -->
+        {block name="content_main"}
+        页面主体内容显示块
+        {/block}
+        <!-- /.content -->
+    </div>
+    <!-- 底部信息 -->
+    {include file="public/footer" /}
+</div>
+<!-- 公共js文件引入 -->
+{include file="public/com_js" /}
+<!-- 自定义JS函数块 -->
+{block name="user_js"}
+用户自定义脚本
+{/block}
+</body>
+</html>
+

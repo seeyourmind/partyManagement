@@ -55,7 +55,7 @@ class Userinfo extends Model
      * @throws \think\exception\DbException
      */
     public function getUserinfo(){
-        $res = Userinfo::paginate(12);
+        $res = Userinfo::order('id desc')->paginate(12);
 
         return $res;
     }

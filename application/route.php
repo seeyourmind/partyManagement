@@ -17,7 +17,7 @@ return [
         ':id'   => ['index/hello', ['method' => 'get'], ['id' => '\d+']],
         ':name' => ['index/hello', ['method' => 'post']],
     ],
-    'insertUserinfo' => 'api/api/insertUserinfo',
+    'insertUserinfo' => 'api/api/insertOneUserinfo',
     'deleteUserWithID' => 'api/api/deleteUserWithID',
     'updateUserInfo' => 'api/api/updateUserInfo',
     'getAllUser' => 'api/api/getAllUser',

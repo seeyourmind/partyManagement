@@ -21,30 +21,55 @@ class Api extends Controller
      * @return string|\think\response\Json
      * @throws \Exception
      */
-    public function insertUserinfo(Request $request){
+    public function insertOneUserinfo(Request $request){
         is_null($request) && $request;
         if ($request->isPost()){
             $datas = $request->post();
             $data = $datas['data'];
-            $user = new Userinfo();
-            try{
-                $result = $user->insertUser($data);
-            }catch (Exception $e){
-                return json([
-                    'flag'=>'F',
-                    'code' => $e->getCode(),
-                    'msg'  => $e->getMessage(),
-                    'file'    => $e->getFile(),
-                    'line'   => $e->getLine()
-                ]);
+            $msg = '填写数据格式正确';
+            $result = false;
+
+            if (strlen($data['id'])<=1){
+                $msg = $data['id'].'=>'.'账号不能为空';
+            } elseif (strlen($data['name'])<=1){
+                $msg = $data['name'].'=>'.'姓名不能为空';
+            } else {
+                $msg = $data;
+                $user = new Userinfo();
+                try{
+                    $result = $user->insertUser(array($data));
+                }catch (Exception $e){
+                    return json([
+                        'way' => 'post',
+                        'flag'=>'F',
+                        'code' => $e->getCode(),
+                        'msg'  => $e->getMessage(),
+                        'file'    => $e->getFile(),
+                        'line'   => $e->getLine()
+                    ]);
+                }
+            }
+
+            if ($result){
+                $msg = '数据添加成功';
+            } else {
+                $msg = '数据添加失败'.$result;
             }
 
             return json([
+                'way' => 'post',
                 'flag'=>'S',
-                'data'=>$result
+                'data'=>$result,
+                'msg' => $msg
             ]);
-        } else {
-            return 'please use post';
+        }
+
+        if($request->isAjax()){
+            $data = $request->param();
+            return json([
+                'way' => 'Ajax',
+                'get_data' => $data
+            ]);
         }
     }
 

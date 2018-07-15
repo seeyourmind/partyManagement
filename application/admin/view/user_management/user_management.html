@@ -141,121 +141,129 @@
   <!-- /.row -->
 </section>
 <!-- 添加用户弹窗 -->
-<div class="modal fade" id="addOneModal" tabindex="-1" role="dialog" aria-labelledby="addOneModalLabel" aria-hidden="true"
-  style="z-index: 9999;margin: auto;width: 50%;height: max-content">
-  <div class="card card-primary">
-    <div class="card-header">
-      <h3 class="card-title">添加用户信息</h3>
-    </div>
-    <form id="addoneform" role="form" style="background-color: #FFFFFF">
-      <div class="card-body">
-        <div class="row">
-          <div class="col-lg-6">
-            <div class="form-group mb-3">
-              <label for="name">姓名</label>
-              <input type="text" class="form-control" id="name" name="name" placeholder="请填写姓名">
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="form-group mb-3">
-              <label for="birthday">生日</label>
-              <input type="date" class="form-control" id="birthday" name="birthday" placeholder="请选择生日，格式YYYY-MM-DD">
-            </div>
-          </div>
+<div class="modal fade" id="addOneModal" tabindex="-1" role="dialog" aria-labelledby="addOneModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+      <div class="card card-primary modal-content">
+        <div class="card-header modal-header">
+          <h3 class="card-title">添加用户信息</h3>
         </div>
-        <div class="row">
-          <div class="col-lg-6">
+        <form id="addoneform" role="form" style="background-color: #FFFFFF">
+          <div class="card-body modal-body">
             <div class="form-group mb-3">
-              <label for="nation">民族</label>
-              <input type="text" class="form-control" id="nation" name="nation" placeholder="请填写民族">
+              <label for="id">账号</label>
+              <input type="text" class="form-control" id="id" name="id" placeholder="请填写账号[学号|工号]">
             </div>
-          </div>
-          <div class="col-lg-6">
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group mb-3">
+                  <label for="name">姓名</label>
+                  <input type="text" class="form-control" id="name" name="name" placeholder="请填写姓名">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group mb-3">
+                  <label for="birthday">生日</label>
+                  <input type="date" class="form-control" id="birthday" name="birthday" placeholder="请选择生日，格式YYYY-MM-DD">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group mb-3">
+                  <label for="nation">民族</label>
+                  <input type="text" class="form-control" id="nation" name="nation" placeholder="请填写民族">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group mb-3">
+                  <label for="sex">性别</label>
+                  <select class="form-control" id="sex" name="sex">
+                    <option>保密</option>
+                    <option>男</option>
+                    <option>女</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group mb-3">
+                  <label for="leaguetime">入团时间</label>
+                  <input type="date" class="form-control" id="leaguetime" name="league_time" placeholder="请选择日期">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group mb-3">
+                  <label for="appletime">申请入党时间</label>
+                  <input type="date" class="form-control" id="appletime" name="party_apply_time" placeholder="请选择日期">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group mb-3">
+                  <label for="stage">所在阶段</label>
+                  <select class="form-control" id="stage" name="stage">
+                    <option>群众</option>
+                    <option>共青团员</option>
+                    <option>入党积极分子</option>
+                    <option>预备党员</option>
+                    <option>发展对象</option>
+                    <option>党员</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group mb-3">
+                  <label for="stagetime">阶段开始时间</label>
+                  <input type="date" class="form-control" id="stagetime" name="stage_time" placeholder="请选择生日">
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-lg-6">
+                <div class="form-group mb-3">
+                  <label for="generalbranch">总支部</label>
+                  <input type="email" class="form-control" id="generalbranch" name="general_branch" placeholder="请填写总支部">
+                </div>
+              </div>
+              <div class="col-lg-6">
+                <div class="form-group mb-3">
+                  <label for="branch">支部</label>
+                  <input type="email" class="form-control" id="branch" name="branch" placeholder="请填写支部">
+                </div>
+              </div>
+            </div>
+            <hr>
             <div class="form-group mb-3">
-              <label for="sex">性别</label>
-              <select class="form-control" id="sex" name="sex">
-                <option>保密</option>
-                <option>男</option>
-                <option>女</option>
-              </select>
+              <label>个人荣誉</label>
+              <textarea class="form-control" rows="3" id="honor" name="honor" placeholder="请填写个人荣誉 ..."></textarea>
             </div>
-          </div>
-        </div>
-        <hr>
-        <div class="row">
-          <div class="col-lg-6">
+            <!--
             <div class="form-group mb-3">
-              <label for="leaguetime">入团时间</label>
-              <input type="date" class="form-control" id="leaguetime" name="leaguetime" placeholder="请选择日期">
+              <label for="exampleInputFile">File input</label>
+              <div class="input-group">
+                <div class="custom-file">
+                  <input type="file" class="custom-file-input" id="exampleInputFile" name="file">
+                  <label class="custom-file-label" for="exampleInputFile">Choose file</label>
+                </div>
+                <div class="input-group-append">
+                  <span class="input-group-text" id="">Upload</span>
+                </div>
+              </div>
             </div>
+            -->
           </div>
-          <div class="col-lg-6">
-            <div class="form-group mb-3">
-              <label for="appletime">申请入党时间</label>
-              <input type="date" class="form-control" id="appletime" name="appletime" placeholder="请选择日期">
-            </div>
+        </form>
+        <!-- /.card-body -->
+          <div class="card-footer modal-footer">
+            <button name="submit" class="btn btn-info" onclick="addOneData()">添加</button>
+            <button name="cancel" class="btn btn-default float-right" data-dismiss="modal">取消</button>
           </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-6">
-            <div class="form-group mb-3">
-              <label for="stage">所在阶段</label>
-              <select class="form-control" id="stage" name="stage">
-                <option>群众</option>
-                <option>共青团员</option>
-                <option>入党积极分子</option>
-                <option>预备党员</option>
-                <option>发展对象</option>
-                <option>党员</option>
-              </select>
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="form-group mb-3">
-              <label for="stagetime">阶段开始时间</label>
-              <input type="date" class="form-control" id="stagetime" name="stagetime" placeholder="请选择生日">
-            </div>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-lg-6">
-            <div class="form-group mb-3">
-              <label for="generalbranch">总支部</label>
-              <input type="email" class="form-control" id="generalbranch" name="generalbranch" placeholder="请填写总支部">
-            </div>
-          </div>
-          <div class="col-lg-6">
-            <div class="form-group mb-3">
-              <label for="branch">支部</label>
-              <input type="email" class="form-control" id="branch" name="branch" placeholder="请填写支部">
-            </div>
-          </div>
-        </div>
-        <hr>
-        <div class="form-group mb-3">
-          <label>个人荣誉</label>
-          <textarea class="form-control" rows="3" id="honor" name="honor" placeholder="请填写个人荣誉 ..."></textarea>
-        </div>
-        <div class="form-group mb-3">
-          <label for="exampleInputFile">File input</label>
-          <div class="input-group">
-            <div class="custom-file">
-              <input type="file" class="custom-file-input" id="exampleInputFile" name="file">
-              <label class="custom-file-label" for="exampleInputFile">Choose file</label>
-            </div>
-            <div class="input-group-append">
-              <span class="input-group-text" id="">Upload</span>
-            </div>
-          </div>
-        </div>
       </div>
-      <!-- /.card-body -->
-      <div class="card-footer">
-        <button name="submit" type="submit" class="btn btn-info" onclick="addOneData()">添加</button>
-        <button name="cancel" type="submit" class="btn btn-default float-right">取消</button>
-      </div>
-    </form>
   </div>
+
 </div>
 </div>
 {/block}
@@ -315,19 +323,20 @@
                 data: {'id':user_id},
                 dataType: 'json',
                 success: function (data) {
+                    console.log(data['data']['data']);
                     var user = data['data']['data'][0];
-                    var username = (user.name).length>=1?user.name:'暂无';
-                    var userbirthday = (user.birthday).length>=1?user.birthday:'暂无';
-                    var userstage = (user.stage).length>=1?user.stage:'群众';
-                    var userstagetime = (user.stage_time).length>=1?'<'+user.stage_time+'>':'';
-                    var userid = (user.id).length>=1?user.id:'暂无';
-                    var usersex = (user.sex).length>=1?user.sex:'暂无';
-                    var usernation = (user.nation).length>=1?user.nation:'暂无';
-                    var userleaguetime = (user.league_time).length>=1?user.league_time:'暂无';
-                    var userpartyapplytime = (user.party_apply_time).length>=1?user.party_apply_time:'暂无';
-                    var usergeneralbranch = (user.general_branch).length>=1?user.general_branch:'';
-                    var userbranch = (user.branch).length>=1?'<br>'+user.branch:'';
-                    var userhonor = (user.honor).length>=1?user.honor:'暂无';
+                    var username = (user.name != null && (user.name).length>=1)?user.name:'暂无';
+                    var userbirthday = (user.birthday != null && (user.birthday).length>=1)?user.birthday:'暂无';
+                    var userstage = (user.stage != null && (user.stage).length>=1)?user.stage:'群众';
+                    var userstagetime = (user.stage_time != null && (user.stage_time).length>=1)?'<'+user.stage_time+'>':'';
+                    var userid = (user.id != null && (user.id).length>=1)?user.id:'暂无';
+                    var usersex = (user.sex != null && (user.sex).length>=1)?user.sex:'暂无';
+                    var usernation = (user.nation != null && (user.nation).length>=1)?user.nation:'暂无';
+                    var userleaguetime = (user.league_time != null && (user.league_time).length>=1)?user.league_time:'暂无';
+                    var userpartyapplytime = (user.party_apply_time != null && (user.party_apply_time).length>=1)?user.party_apply_time:'暂无';
+                    var usergeneralbranch = (user.general_branch != null && (user.general_branch).length>=1)?user.general_branch:'';
+                    var userbranch = (user.branch != null && (user.branch).length>=1)?'<br>'+user.branch:'';
+                    var userhonor = (user.honor != null && (user.honor).length>=1)?user.honor:'暂无';
 
                     $('#username').html(username);
                     $('#userstage').html(userstage+userstagetime);
@@ -376,11 +385,37 @@
   function addOneData() {
       var d = {};
       var t = $('form').serializeArray();
-      console.log(t)
-      $.each(t, function() {
-          d[this.name] = this.value;
-      });
-      alert(JSON.stringify(d));
+      if (t[0].value.length < 1 || t[1].value.length < 1){
+          alert('用户账号和姓名不能为空，请检查所填数据是否有误');
+      } else {
+          $.each(t, function() {
+              if (this.value.length >= 1){
+                  d[this.name] = this.value;
+              }
+          });
+          $.ajax({
+              type: 'post',
+              url: '/insertUserinfo',
+              data: {'data':d},
+              dataType: 'json',
+              success: function (data) {
+                  if(data['data']){
+                      alert(data['msg']);
+                      $('#addOneModal').modal('hide');
+                  } else {
+                      alert(data['msg']);
+                  }
+
+              },
+              error: function (err, tt, kk) {
+                  alert('出现错误:'+JSON.stringify(err)+' 状态:'+tt+' 原因:'+kk);
+              }
+          });
+      }
+      console.log(JSON.stringify(d));
+  }
+  function addOneDataHide () {
+      $('#addOneModal').modal('hide');
   }
 </script>
 {/block}

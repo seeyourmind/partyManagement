@@ -44,7 +44,7 @@
             <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
             </button>
             <!-- delete button -->
-            <button type="button" class="btn btn-default btn-sm"><i class="fa fa-trash-o"></i></button>
+            <button type="button" class="btn btn-default btn-sm" onclick="deleteUsers()"><i class="fa fa-trash-o"></i></button>
             <!-- refresh button -->
             <button type="button" class="btn btn-default btn-sm" onclick="refreshUserList()"><i class="fa fa-refresh"></i></button>
             <div class="float-right">
@@ -67,7 +67,7 @@
               </tr>
               {volist name='users' id='user'}
               <tr>
-                <td><input type="checkbox"></td>
+                <td><input type="checkbox" value="{$user.id}"></td>
                 <td class="mailbox-name"><a id="user_id" href="#">{$user.id}</a></td>
                 <td class="mailbox-subject"><b>{$user.name}</b></td>
                 <td class="mailbox-attachment">{$user.stage}</td>
@@ -258,15 +258,13 @@
         <h3 class="card-title">添加用户信息</h3>
       </div>
       <div class="form-group mb-3 modal-body">
-        <form id="addmoreform" role="form" style="background-color: #FFFFFF" enctype="multipart/form-data" method="post">
         <label for="userDataFile">File input</label>
         <div class="input-group">
           <div class="custom-file">
-            <input type="file" class="custom-file-input" multiple="multiple" id="userDataFile" name="file">
+            <input type="file" class="custom-file-input" id="userDataFile" name="file" accept=".xls,.xlsx">
             <label class="custom-file-label" for="userDataFile" id="userDataFileLabel">请选择需要上传的用户数据文件</label>
           </div>
         </div>
-        </form>
       </div>
       <div class="input-group-append modal-footer">
         <button name="submit" class="btn btn-info" onclick="addMoreData()">添加</button>
@@ -435,15 +433,67 @@
         }
         console.log(JSON.stringify(d));
     }
-    // 获取文件路径
-    function getDataFilePath() {
-
-    }
     // 添加多个新用户
     function addMoreData () {
-        var d = {};
-        var t = $('#addmoreform').serializeArray();
-        console.log(t);
+        var userFiles = $('#userDataFile[type="file"]').get(0).files;
+
+        if (typeof (userFiles) == "undefined" || userFiles.size <= 0) {
+            alert("请选择文件");
+            return;
+        }
+        var files = new FormData();
+        files.append('files', userFiles[0]);
+        $.ajax({
+            type: 'post',
+            url: '/uploadsFiles',
+            data: files,
+            dataType: "json",
+            cache: false,//上传文件无需缓存
+            processData: false,//用于对data参数进行序列化处理 这里必须false
+            contentType: false, //必须
+            success: function (data) {
+                console.log('走到了success')
+                if (data['flag'] === 'S'){
+                    alert(data['msg']);
+                    $('#addMoreModal').modal('hide');
+                } else {
+                    alert(data['msg'])
+                }
+            },
+            error: function (err, tt, kk) {
+                alert('出现错误:'+JSON.stringify(err)+' 状态:'+tt+' 原因:'+kk);
+            }
+        })
+    }
+    // 删除用户信息
+    function deleteUsers() {
+        var checkedUsers = $('input[type=checkbox]:checked');
+        var checkedID = new Array();
+        $.each(checkedUsers, function () {
+            checkedID.push($(this).val());
+        });
+        console.log(checkedID);
+        if (checkedID.length < 1){
+            alert('请选择要删除的用户');
+        } else {
+            $.ajax({
+                type: 'post',
+                url: '/deleteUserWithID',
+                data: {'id':checkedID},
+                dataType: 'json',
+                success: function (data) {
+                    if (data['flag'] === 'S'){
+                        alert(data['msg']);
+                        window.location.href = "/admin/user_management";
+                    } else {
+                        alert('用户数据删除失败');
+                    }
+                },
+                error: function (err, tt, kk) {
+                    alert('出现错误:'+JSON.stringify(err)+' 状态:'+tt+' 原因:'+kk);
+                }
+            })
+        }
     }
 </script>
 {/block}

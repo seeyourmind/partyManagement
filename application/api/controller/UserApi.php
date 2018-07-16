@@ -13,7 +13,7 @@ use think\Controller;
 use think\Exception;
 use think\Request;
 
-class Api extends Controller
+class UserApi extends Controller
 {
     /**
      * 添加新用户数据
@@ -101,6 +101,7 @@ class Api extends Controller
             }
             return json([
                 'flag'=>'S',
+                'msg'=>'用户删除成功',
                 'data'=>$delete_sum,
             ]);
         } else {
@@ -306,5 +307,93 @@ class Api extends Controller
                 'data'=>$result
             ]);
         }
+    }
+
+    /**
+     * 上传用户数据文件[单一文件处理]
+     * @return \think\response\Json
+     * @throws \Exception
+     * @throws \PHPExcel_Exception
+     * @throws \PHPExcel_Reader_Exception
+     */
+    public function uploadUserDataFiles(){
+        include_once EXTEND_PATH.'PHPExcel/PHPExcel.php';
+
+        $files = \request()->file('files');
+        if (empty($files)){
+            //$this->error('请选择上传文件');
+            return json([
+                'flag' => 'F',
+                'msg' => '请选择上传的文件'
+            ]);
+        }
+        $info = $files->move(ROOT_PATH.'public'.DS.'uploads');
+        if ($info){
+            //$this->success('文件上传成功');
+            //获取文件名
+            $exclePath = $info->getSaveName();
+            //上传文件的地址
+            $filename = ROOT_PATH . 'public' . DS . 'uploads' . DS . $exclePath;
+
+            //判断截取文件
+            $extension = strtolower( pathinfo($filename, PATHINFO_EXTENSION) );
+
+            //区分上传文件格式
+            if($extension == 'xlsx') {
+                $objReader =\PHPExcel_IOFactory::createReader('Excel2007');
+                $objPHPExcel = $objReader->load($filename, $encode = 'utf-8');
+            }else if($extension == 'xls'){
+                $objReader =\PHPExcel_IOFactory::createReader('Excel5');
+                $objPHPExcel = $objReader->load($filename, $encode = 'utf-8');
+            }
+
+            $excel_array = $objPHPExcel->getsheet(0)->toArray();   //转换为数组格式
+            array_shift($excel_array);  //删除第一个数组(标题);
+            $user = [];
+            foreach($excel_array as $k=>$v) {
+                $user[$k]['id'] = $v[0];
+                $user[$k]['name'] = $v[1];
+                $user[$k]['birthday'] = $v[2];
+                $user[$k]['nation'] = $v[3];
+                $user[$k]['sex'] = $v[4];
+                $user[$k]['league_time'] = $v[5];
+                $user[$k]['party_apply_time'] = $v[6];
+                $user[$k]['stage'] = $v[7];
+                $user[$k]['stage_time'] = $v[8];
+                $user[$k]['general_branch'] = $v[9];
+                $user[$k]['branch'] = $v[10];
+                $user[$k]['honor'] = $v[11];
+            }
+
+            $userinfo = new Userinfo();
+            $result = $userinfo->insertUser($user);
+            return json([
+                'flag' => 'S',
+                'msg' => '用户信息添加成功',
+                'result' => $result
+            ]);
+        } else {
+            //$this->error($files->getError());
+            return json([
+                'flag' => 'F',
+                'msg' => $files->getError()
+            ]);
+        }
+
+
+        /*
+        foreach($excel_array as $k=>$v) {
+            if(empty(Db::name('excel_shop')->where(['goods_id'=>$v[0]])->value('name'))){
+                $city[$k]['goods_id'] = $v[0];
+                //$city[$k]['xxx'] = $v[1];
+                //$city[$k]['xxx'] = $v[2];
+            }
+        }
+
+        Db::name('excel_shop')->insertAll($city); //批量插入数据
+        $output['status'] = true;
+        $output['info'] = '导入数据成功~';
+        $this->ajaxReturn($output);
+        */
     }
 }

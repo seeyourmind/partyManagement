@@ -1,6 +1,8 @@
 <?php
 namespace app\index\controller;
 
+//define('EXTEND_PATH','./extend/');
+
 class Index
 {
     public function index()

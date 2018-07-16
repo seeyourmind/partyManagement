@@ -304,7 +304,8 @@ class UserApi extends Controller
 
             return json([
                 'flag'=>'S',
-                'data'=>$result
+                'data'=>$result,
+                'msg'=>'更新数据操作成功'
             ]);
         }
     }

@@ -131,7 +131,7 @@
               获得五四表彰先进个人奖
             </p>
           </div>
-          <a href="#" class="btn btn-primary btn-block"><b>修改</b></a>
+          <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#updateModal"><b>修改</b></a>
         </div>
         <!-- /.card-body -->
       </div>
@@ -140,6 +140,116 @@
   </div>
   <!-- /.row -->
 </section>
+<!-- 修改用户信息弹窗 -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="addOneModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog">
+    <div class="card card-primary modal-content">
+      <div class="card-header modal-header">
+        <h3 class="card-title">添加用户信息</h3>
+      </div>
+      <form id="updateform" role="form" style="background-color: #FFFFFF">
+        <div class="card-body modal-body">
+          <div class="form-group mb-3">
+            <label for="id-update">账号</label>
+            <input type="text" class="form-control" id="id-update" name="id" placeholder="请填写账号[学号|工号]">
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="name-update">姓名</label>
+                <input type="text" class="form-control" id="name-update" name="name" placeholder="请填写姓名">
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="birthday-update">生日</label>
+                <input type="date" class="form-control" id="birthday-update" name="birthday" placeholder="请选择生日，格式YYYY-MM-DD">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="nation-update">民族</label>
+                <input type="text" class="form-control" id="nation-update" name="nation" placeholder="请填写民族">
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="sex-update">性别</label>
+                <select class="form-control" id="sex-update" name="sex">
+                  <option>保密</option>
+                  <option>男</option>
+                  <option>女</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="leaguetime-update">入团时间</label>
+                <input type="date" class="form-control" id="leaguetime-update" name="league_time" placeholder="请选择日期">
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="appletime-update">申请入党时间</label>
+                <input type="date" class="form-control" id="appletime-update" name="party_apply_time" placeholder="请选择日期">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="stage-update">所在阶段</label>
+                <select class="form-control" id="stage-update" name="stage">
+                  <option>群众</option>
+                  <option>共青团员</option>
+                  <option>入党积极分子</option>
+                  <option>预备党员</option>
+                  <option>发展对象</option>
+                  <option>党员</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="stagetime-update">阶段开始时间</label>
+                <input type="date" class="form-control" id="stagetime-update" name="stage_time" placeholder="请选择生日">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="generalbranch-update">总支部</label>
+                <input type="email" class="form-control" id="generalbranch-update" name="general_branch" placeholder="请填写总支部">
+              </div>
+            </div>
+            <div class="col-lg-6">
+              <div class="form-group mb-3">
+                <label for="branch-update">支部</label>
+                <input type="email" class="form-control" id="branch-update" name="branch" placeholder="请填写支部">
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="form-group mb-3">
+            <label>个人荣誉</label>
+            <textarea class="form-control" rows="3" id="honor-update" name="honor" placeholder="请填写个人荣誉 ..."></textarea>
+          </div>
+        </div>
+      </form>
+      <!-- /.card-body -->
+      <div class="card-footer modal-footer">
+        <button name="submit" class="btn btn-info" onclick="updateUsers()">修改</button>
+        <button name="cancel" class="btn btn-default float-right" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
 <!-- 添加单个用户弹窗 -->
 <div class="modal fade" id="addOneModal" tabindex="-1" role="dialog" aria-labelledby="addOneModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog">
@@ -277,6 +387,7 @@
 {/block}
 {block name="user_js"}
 <script>
+    var user_global = null;
     $(function () {
         //Enable iCheck plugin for checkboxes
         //iCheck for checkbox and radio inputs
@@ -331,8 +442,9 @@
                 data: {'id':user_id},
                 dataType: 'json',
                 success: function (data) {
-                    console.log(data['data']['data']);
+                    //console.log(data['data']['data']);
                     var user = data['data']['data'][0];
+                    user_global = user;
                     var username = (user.name != null && (user.name).length>=1)?user.name:'暂无';
                     var userbirthday = (user.birthday != null && (user.birthday).length>=1)?user.birthday:'暂无';
                     var userstage = (user.stage != null && (user.stage).length>=1)?user.stage:'群众';
@@ -373,6 +485,24 @@
             $('#userDataFileLabel').html(filesName);
             console.log(userFiles);
         });
+
+        // 向模态框传值
+        $('#updateModal').on('show.bs.modal', function (e) {
+            $('#user_right_card').hide();
+            var modal = $(this);
+            modal.find('#id-update').val(user_global['id']!=null?user_global['id']:null);
+            modal.find('#birthday-update').val(user_global['birthday']!=null?user_global['birthday']:null);
+            modal.find('#branch-update').val(user_global['branch']!=null?user_global['branch']:null);
+            modal.find('#generalbranch-update').val(user_global['general_branch']!=null?user_global['general_branch']:null);
+            modal.find('#honor-update').val(user_global['honor']!=null?user_global['honor']:null);
+            modal.find('#leaguetime-update').val(user_global['league_time']!=null?user_global['league_time']:null);
+            modal.find('#name-update').val(user_global['name']!=null?user_global['name']:null);
+            modal.find('#nation-update').val(user_global['nation']!=null?user_global['nation']:null);
+            modal.find('#applytime-update').val(user_global['part_apply_time']!=null?user_global['part_apply_time']:null);
+            modal.find('#sex-update').val(user_global['sex']!=null?user_global['sex']:null);
+            modal.find('#stage-update').val(user_global['stage']!=null?user_global['stage']:null);
+            modal.find('#stagetime-update').val(user_global['stage_time']!=null?user_global['stage_time']:null);
+        })
     })
     // 搜索用户信息
     function searchForUser() {
@@ -495,5 +625,42 @@
             })
         }
     }
+    // 修改用户信息
+  function updateUsers() {
+      var d = {};
+      var t = $('#updateform').serializeArray();
+      if (t[0].value.length < 1 || t[1].value.length < 1){
+          alert('用户账号和姓名不能为空，请检查所填数据是否有误');
+      } else {
+          $.each(t, function() {
+              if (this.value.length >= 1){
+                  d[this.name] = this.value;
+              }
+          });
+          
+          var update_array = new Array();
+          update_array.push(d);
+
+          $.ajax({
+              type: 'post',
+              url: '/updateUserInfo',
+              data: {'data':update_array},
+              dataType: 'json',
+              success: function (data) {
+                  if(data['flag']==='S'){
+                      alert(data['msg']);
+                      $('#updateModal').modal('hide');
+                  } else {
+                      alert(data['msg']);
+                  }
+
+              },
+              error: function (err, tt, kk) {
+                  alert('出现错误:'+JSON.stringify(err)+' 状态:'+tt+' 原因:'+kk);
+              }
+          });
+      }
+
+  }
 </script>
 {/block}

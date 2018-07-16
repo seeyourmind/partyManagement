@@ -20,6 +20,7 @@ class UserManagement extends Base
 
         $user = $userinfo->getUserinfo();
         $this->view->assign('users',$user);
+        $this->view->assign('content_header', '党员信息管理');
         return $this->view->fetch('user_management');
     }
 

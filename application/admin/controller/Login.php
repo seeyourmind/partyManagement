@@ -14,6 +14,7 @@ class Login extends Base
 {
     // 渲染登陆界面
     public function login(){
+        $this->assign('html_title', '党建管理平台|登录');
         return $this->view->fetch();
     }
     // 登陆验证

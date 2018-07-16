@@ -1,21 +1,4 @@
 {extend name="public/base" /}
-{block name="content_header"}
-<section class="content-header">
-  <div class="container-fluid">
-    <div class="row mb-2">
-      <div class="col-sm-6">
-        <h1>党员信息管理</h1>
-      </div>
-      <div class="col-sm-6">
-        <ol class="breadcrumb float-sm-right">
-          <li class="breadcrumb-item"><a href="#">首页</a></li>
-          <li class="breadcrumb-item active">党员信息管理</li>
-        </ol>
-      </div>
-    </div>
-  </div><!-- /.container-fluid -->
-</section>
-{/block}
 {block name="content_main"}
 <section class="content">
   <div class="row">
@@ -637,7 +620,7 @@
                   d[this.name] = this.value;
               }
           });
-          
+
           var update_array = new Array();
           update_array.push(d);
 

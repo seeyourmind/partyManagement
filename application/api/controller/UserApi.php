@@ -363,7 +363,9 @@ class UserApi extends Controller
                 $user[$k]['stage_time'] = $v[8];
                 $user[$k]['general_branch'] = $v[9];
                 $user[$k]['branch'] = $v[10];
-                $user[$k]['honor'] = $v[11];
+                $user[$k]['sponsor'] = $v[11];
+                $user[$k]['assessor'] = $v[12];
+                $user[$k]['honor'] = $v[13];
             }
 
             $userinfo = new Userinfo();

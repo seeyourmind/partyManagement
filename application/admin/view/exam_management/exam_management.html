@@ -1,0 +1,194 @@
+{extend name='public/base' /}
+{block name='content_main'}
+<section class="content">
+    <div class="row">
+        <!-- USER LIST -->
+        <div class="col-md-9">
+            <div class="card card-primary card-outline">
+                <!--  HEAD -->
+                <div class="card-header">
+                    <h3 class="card-title">Exam List</h3>
+                    <!-- SEARCH -->
+                    <div class="card-tools">
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="searchUser" class="form-control" placeholder="Search Keywords">
+                            <div class="input-group-append">
+                                <div class="btn btn-primary">
+                                    <span onclick="searchForUser()"><i class="fa fa-search"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- TOOL -->
+                <div class="card-body p-0">
+                    <div class="mailbox-controls">
+                        <!-- Check all button -->
+                        <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
+                        </button>
+                        <!-- delete button -->
+                        <button type="button" class="btn btn-default btn-sm" onclick="deleteUsers()"><i class="fa fa-trash-o"></i></button>
+                        <!-- refresh button -->
+                        <button type="button" class="btn btn-default btn-sm" onclick="refreshUserList()"><i class="fa fa-refresh"></i></button>
+                        <div class="float-right">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addMoreModal" disabled>批量添加</button>
+                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addOneModal">单个添加</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- LIST -->
+                    <div class="table-responsive mailbox-messages">
+                        <table class="table table-hover table-striped" style="table-layout: fixed">
+                            <tbody id="user_list_tb">
+                            <tr>
+                                <th class="mailbox-subject" width="10%">选择</th>
+                                <th class="mailbox-subject" width="8%">ID</a></th>
+                                <th class="mailbox-subject" width="10%">分类</th>
+                                <th class="mailbox-subject" width="20%">问题</th>
+                                <th class="mailbox-subject" width="13%">A</th>
+                                <th class="mailbox-subject" width="13%">B</th>
+                                <th class="mailbox-subject" width="13%">C</th>
+                                <th class="mailbox-subject" width="13%">D</th>
+                            </tr>
+                            {volist name='exams' id='exam'}
+                            <tr>
+                                <td><input type="checkbox" value="{$exam.id}"></td>
+                                <td class="mailbox-name"><p style="text-overflow:ellipsis;overflow:hidden;white-space: nowrap;"><a id="exam_id" href="#"><b>{$exam.id}</b></a></p></td>
+                                <td class="mailbox-subject"><p style="text-overflow:ellipsis;overflow:hidden;white-space: nowrap;">{$exam.category}</p></td>
+                                <td class="mailbox-subject"><p style="text-overflow:ellipsis;overflow:hidden;white-space: nowrap;">{$exam.question}</p></td>
+                                <td class="mailbox-subject"><p style="text-overflow:ellipsis;overflow:hidden;white-space: nowrap;">{$exam.item1}</p></td>
+                                <td class="mailbox-subject"><p style="text-overflow:ellipsis;overflow:hidden;white-space: nowrap;">{$exam.item2}</p></td>
+                                <td class="mailbox-subject"><p style="text-overflow:ellipsis;overflow:hidden;white-space: nowrap;">{$exam.item3}</p></td>
+                                <td class="mailbox-subject"><p style="text-overflow:ellipsis;overflow:hidden;white-space: nowrap;">{$exam.item4}</p></td>
+                            </tr>
+                            {/volist}
+                            </tbody>
+                        </table>
+                        <!-- /.table -->
+                    </div>
+                    <!-- /.mail-box-messages -->
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer p-0">
+                    <div class="mailbox-controls">
+                        <div class="float-right">
+                            {$exams->render()}
+                        </div>
+                        <!-- /.float-right -->
+                    </div>
+                </div>
+            </div>
+            <!-- /. box -->
+        </div>
+        <!-- /.col -->
+        <!-- 右边个人资料卡 -->
+        <div class="col-md-3">
+            <!-- Profile Image -->
+            <div id="exam_right_card" class="card card-primary card-outline" style="display: none">
+                <div class="card-body box-profile">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <b>编号：</b><span id="examid">XXXX</span>
+                        </div>
+                        <div class="col-lg-6">
+                            <b>分类：</b><span id="examcategory">XXXX</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <strong>Question:</strong><br>
+                    <p class="text-muted" id="examquestion">
+                        获得五四表彰先进个人奖
+                    </p>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <span id="exama">A. XXXX</span>
+                        </div>
+                        <div class="col-lg-6">
+                            <span id="examb">B. XXXX</span>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <span id="examc">C. XXXX</span>
+                        </div>
+                        <div class="col-lg-6">
+                            <span id="examd">D. XXXX</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <strong>Answer:</strong><br>
+                    <span id="examanswer">D. XXXX</span>
+                    <hr>
+                    <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#updateModal"><b>修改</b></a>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
+    <!-- /.row -->
+</section>
+{/block}
+{block name='user_js'}
+<script>
+    var exam_global = null;
+    // 列表内选择框
+    $('.mailbox-messages input[type="checkbox"]').iCheck({
+        checkboxClass: 'icheckbox_flat-blue',
+        radioClass   : 'iradio_flat-blue'
+    })
+    // 全选
+    $('.checkbox-toggle').click(function () {
+        var clicks = $(this).data('clicks')
+        if (clicks) {
+            //Uncheck all checkboxes
+            $('.mailbox-messages input[type=\'checkbox\']').iCheck('uncheck')
+            $('.fa', this).removeClass('fa-check-square-o').addClass('fa-square-o')
+        } else {
+            //Check all checkboxes
+            $('.mailbox-messages input[type=\'checkbox\']').iCheck('check')
+            $('.fa', this).removeClass('fa-square-o').addClass('fa-check-square-o')
+        }
+        $(this).data('clicks', !clicks)
+    })
+    // 显示试题详情
+    $('.mailbox-name').click(function (e) {
+        e.preventDefault();
+        $('#exam_right_card').show();
+        var exam_id = e.target.outerText;
+        console.log(exam_id);
+        $.ajax({
+            type: 'post',
+            url: '/getExamWithID',
+            data: {'id':exam_id},
+            dataType: 'json',
+            success: function (data) {
+                console.log(data['data']);
+                var exam = data['data'];
+                exam_global = exam;
+                var examid = (exam.id != null && (exam.id).length>=1)?exam.id:'暂无';
+                var examcategory = (exam.category != null && (exam.category).length>=1)?exam.category:'暂无';
+                var examquestion = (exam.question != null && (exam.question).length>=1)?exam.question:'暂无';
+                var exama = (exam.item1 != null && (exam.item1).length>=1)?'A. '+exam.item1:'A. ';
+                var examb = (exam.item2 != null && (exam.item2).length>=1)?'B. '+exam.item2:'B. ';
+                var examc = (exam.item3 != null && (exam.item3).length>=1)?'C. '+exam.item3:'C. ';
+                var examd = (exam.item4 != null && (exam.item4).length>=1)?'D. '+exam.item4:'D. ';
+                var examanswer = (exam.answer != null && (exam.answer).length>=1)?exam.answer:'无解';
+
+                $('#examid').html(examid);
+                $('#examcategory').html(examcategory);
+                $('#examquestion').html(examquestion);
+                $('#exama').html(exama);
+                $('#examb').html(examb);
+                $('#examc').html(examc);
+                $('#examd').html(examd);
+                $('#examanswer').html(examanswer);
+            },
+            error: function (err, tt, kk) {
+                alert('出现错误:'+JSON.stringify(err)+' 状态:'+tt+' 原因:'+kk);
+            }
+        })
+    })
+</script>
+{/block}

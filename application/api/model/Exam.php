@@ -13,15 +13,28 @@ use think\Model;
 class Exam extends Model
 {
     /**
-     * 获取某一类别的试卷
+     * 获取全部试卷题库
+     * @return \think\Paginator
+     * @throws \think\exception\DbException
+     */
+    public function getExam(){
+        $res = Exam::paginate(12);
+
+        return $res;
+    }
+    public function getExamWithID($id){
+        $res = Exam::where('id', '=', $id)->select();
+
+        return $res;
+    }
+    /**
+     * 获取某一类别的试卷题库
      * @param $category
      * @return false|\PDOStatement|string|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
     public function getExamWithCategoryID($category){
-        $res = Exam::where('category','=',$category)->select();
+        $res = Exam::where('category','=',$category)->paginate(12);
 
         return $res;
     }
@@ -30,12 +43,10 @@ class Exam extends Model
      * 依据试题关键词查找对应试题
      * @param $keyword
      * @return false|\PDOStatement|string|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
     public function getExamWithKeyword($keyword){
-        $res = Exam::where('question','like','%'.$keyword.'%')->select();
+        $res = Exam::where('question','like','%'.$keyword.'%')->paginate(12);
 
         return $res;
     }

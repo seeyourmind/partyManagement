@@ -20,7 +20,7 @@ class ExamCategory extends Model
      * @throws \think\exception\DbException
      */
     public function getExamCategory(){
-        $res = ExamCategory::select();
+        $res = ExamCategory::paginate(12);
 
         return $res;
     }
@@ -34,7 +34,7 @@ class ExamCategory extends Model
      * @throws \think\exception\DbException
      */
     public function getExamCategoryWithID($id){
-        $res = ExamCategory::where('id','=',$id)->select();
+        $res = ExamCategory::where('id','=',$id)->paginate(12);
 
         return $res;
     }

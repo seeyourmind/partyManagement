@@ -24,10 +24,12 @@ return [
     'getUserWithID' => 'api/UserApi/getUserWithID',
     'getUserWithName' => 'api/UserApi/getUserWithName',
     'uploadsFiles' => 'api/UserApi/uploadUserDataFiles',
+    'getAllExam' => 'api/ExamApi/getExamList',
+    'getExamWithID' => 'api/ExamApi/getExamWithID',
     'admin/login' => 'admin/login/login',
     'admin/login/check_in' => 'admin/login/check_in',
     'admin' => 'admin/index/index',
     'admin/user_management' => 'admin/userManagement/index',
-    'admin/user_management/searchUser' => 'admin/userManagement/searchUser'
-
+    'admin/user_management/searchUser' => 'admin/userManagement/searchUser',
+    'admin/exam_management' => 'admin/examManagement/index',
 ];

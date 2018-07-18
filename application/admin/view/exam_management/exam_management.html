@@ -155,7 +155,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label>问题描述</label>
-                        <textarea class="form-control" rows="3" id="question-update" name="question" placeholder="请填写个人荣誉 ..."></textarea>
+                        <textarea class="form-control" rows="3" id="question-update" name="question" placeholder="请填写问题描述 ..."></textarea>
                     </div>
                     <div class="row">
                         <div class="col-lg-6">
@@ -204,7 +204,7 @@
                     </div>
                     <div class="form-group mb-3">
                         <label>问题描述</label>
-                        <textarea class="form-control" rows="3" id="question-add" name="question" placeholder="请填写个人荣誉 ..."></textarea>
+                        <textarea class="form-control" rows="3" id="question-add" name="question" placeholder="请填写问题描述 ..."></textarea>
                     </div>
                     <div class="row">
                         <div class="col-lg-6">
@@ -224,7 +224,9 @@
                     </div>
                     <div class="form-group mb-3">
                         <label>答案</label>
-                        <select class="form-control" id="answer-add" name="answer"> </select>
+                        <select class="form-control" id="answer-add" name="answer">
+                            <option value="0">请选择</option>
+                        </select>
                     </div>
                 </div>
             </form>
@@ -242,6 +244,8 @@
 var exam_global = null;
 var exam_category = null;
 var exam_id = 0;
+    exam_category = JSON.parse('{$category}');
+    // console.log(exam_category)
     // 列表内选择框
     $('.mailbox-messages input[type="checkbox"]').iCheck({
         checkboxClass: 'icheckbox_flat-blue',
@@ -334,6 +338,17 @@ var exam_id = 0;
             $("#answer-update").append("<option value='"+(exam_global['item4'])+"'>"+(exam_global['item4'])+"</option>");
         }
         $("#answer-update option[value='"+(exam_global['answer']!=null?exam_global['answer']:null)+"']").attr("selected", "selected");
+    })
+    // 自动填充添加试题界面分类情况
+    $('#addModal').on('show.bs.modal', function () {
+        $(this).removeData('model')
+        var modal = $(this);
+        $('#category-add').empty();
+        $('#category-add').append("<option value='"+0+"'>请选择</option>");
+        // console.log(exam_category);
+        for (var category in exam_category){
+            $('#category-add').append("<option value='"+category+"'>"+exam_category[category]+"</option>");
+        }
     })
     // 动态刷新答案选择框内容
     $('.modal-content input[type="text"]').change(function (e) {
@@ -437,7 +452,44 @@ var exam_id = 0;
     }
     // 添加试题
     function addQuestion() {
+        var d = {};
+        var t = $('#addform').serializeArray();
+        $.each(t, function () {
+            if (this.value.length >= 1){
+                if (this.name === 'category') d[this.name] = parseInt(this.value);
+                else d[this.name] = this.value;
+            } else {
+                d[this.name] = null;
+            }
+        });
+        // console.log(d);
+        if (d['category'] === 0){
+            alert('请选择试题分类');
+        } else if(d['question'] === null){
+            alert('问题描述不能为空');
+        } else if (d['answer'] === "0"){
+            alert('答案不能为空')
+        } else {
+            var addArray = new Array();
+            addArray.push(d);
+            console.log(addArray)
+            $.ajax({
+                type: 'post',
+                url: '/insertQuestion',
+                data: {'data': addArray},
+                dataType: 'json',
+                success: function (data) {
+                    if (data['flag'] === 'S'){
+                        alert(data['msg']);
+                        $('#addModal').modal('hide');
+                    }
+                },
+                error: function (err, zt, yy) {
+                    alert('出现错误:'+JSON.stringify(err)+' 状态:'+zk+' 原因:'+yy);
+                }
 
+            })
+        }
     }
 </script>
 {/block}

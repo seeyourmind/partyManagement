@@ -129,6 +129,11 @@ class ExamApi extends Controller
         }
     }
 
+    /**
+     * 依据试题ID删除试题
+     * @param Request $request
+     * @return \think\response\Json
+     */
     public function deleteExamQuestionWithID(Request $request){
         is_null($request) && $request;
         if ($request->isPost()){
@@ -151,6 +156,31 @@ class ExamApi extends Controller
             return json([
                 'flag'=>'S',
                 'msg'=>'试题删除成功',
+                'data'=>$res,
+            ]);
+        }
+    }
+
+    public function insertExamQuestion(Request $request){
+        is_null($request) && $request;
+        if ($request->isPost()){
+            $params = $request->post();
+            $addData = $params['data'];
+            $exam = new Exam();
+            try{
+                $res = $exam->insertExam($addData);
+            } catch (Exception $e){
+                return json([
+                    'flag'=>'F',
+                    'code' => $e->getCode(),
+                    'msg'  => $e->getMessage(),
+                    'file'    => $e->getFile(),
+                    'line'   => $e->getLine()
+                ]);
+            }
+            return json([
+                'flag'=>'S',
+                'msg'=>'添加数据成功',
                 'data'=>$res,
             ]);
         }

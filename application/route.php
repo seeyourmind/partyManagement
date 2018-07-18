@@ -28,6 +28,7 @@ return [
     'getExamWithID' => 'api/ExamApi/getExamWithID',
     'updateExam' => 'api/ExamApi/updateExamQuestion',
     'deleteQuestion' => 'api/ExamApi/deleteExamQuestionWithID',
+    'insertQuestion' => 'api/ExamApi/insertExamQuestion',
     'admin/login' => 'admin/login/login',
     'admin/login/check_in' => 'admin/login/check_in',
     'admin' => 'admin/index/index',

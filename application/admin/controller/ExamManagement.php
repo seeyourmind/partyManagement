@@ -23,6 +23,7 @@ class ExamManagement extends Base
         }
         $exam_list = $exam->getExam();
         categoryID2NAME($category, $exam_list);
+        $this->view->assign('category', json_encode($category));
         $this->view->assign('exams', $exam_list);
         $this->view->assign('content_header', '试卷信息管理');
         $this->view->assign('menu_open2', 'menu-open');

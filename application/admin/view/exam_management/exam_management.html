@@ -32,8 +32,7 @@
                         <button type="button" class="btn btn-default btn-sm" onclick="refreshExamList()"><i class="fa fa-refresh"></i></button>
                         <div class="float-right">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addMoreModal" disabled>批量添加</button>
-                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addOneModal">添加试题</button>
+                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addModal">添加试题</button>
                             </div>
                         </div>
                     </div>
@@ -134,7 +133,7 @@
     <div class="modal-dialog">
         <div class="card card-primary modal-content">
             <div class="card-header modal-header">
-                <h3 class="card-title">修改试卷信息</h3>
+                <h3 class="card-title">修改试题</h3>
             </div>
             <form id="updateform" role="form">
                 <div class="card-body modal-body">
@@ -185,6 +184,53 @@
             <!-- /.card-body -->
             <div class="card-footer modal-footer">
                 <button name="submit" class="btn btn-info" onclick="updateExam()">修改</button>
+                <button name="cancel" class="btn btn-default float-right" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 添加试题模态框 -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="card card-primary modal-content">
+            <div class="card-header modal-header">
+                <h3 class="card-title">添加试题</h3>
+            </div>
+            <form id="addform" role="form">
+                <div class="card-body modal-body">
+                    <div class="form-group mb-3">
+                        <label>分类</label>
+                        <select class="form-control" id="category-add" name="category"></select>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>问题描述</label>
+                        <textarea class="form-control" rows="3" id="question-add" name="question" placeholder="请填写个人荣誉 ..."></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            A. <input type="text" class="form-control" id="item1-add" name="item1" placeholder="请填写选项1的内容">
+                        </div>
+                        <div class="col-lg-6">
+                            B. <input type="text" class="form-control" id="item2-add" name="item2" placeholder="请填写选项2的内容">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            C. <input type="text" class="form-control" id="item3-add" name="item3" placeholder="请填写选项3的内容">
+                        </div>
+                        <div class="col-lg-6">
+                            D. <input type="text" class="form-control" id="item4-add" name="item4" placeholder="请填写选项4的内容">
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>答案</label>
+                        <select class="form-control" id="answer-add" name="answer"> </select>
+                    </div>
+                </div>
+            </form>
+            <!-- /.card-body -->
+            <div class="card-footer modal-footer">
+                <button name="submit" class="btn btn-info" onclick="addQuestion()">添加</button>
                 <button name="cancel" class="btn btn-default float-right" data-dismiss="modal">取消</button>
             </div>
         </div>
@@ -289,6 +335,41 @@ var exam_id = 0;
         }
         $("#answer-update option[value='"+(exam_global['answer']!=null?exam_global['answer']:null)+"']").attr("selected", "selected");
     })
+    // 动态刷新答案选择框内容
+    $('.modal-content input[type="text"]').change(function (e) {
+        var thisID = $(this).attr('id');
+        var thisSelect = null;
+        var thisMsg = null;
+        if(thisID.indexOf("-update") >= 0){
+            thisSelect = $('#answer-update');
+            thisMsg = "-update";
+            console.log('updateModal');
+        } else if(thisID.indexOf("-add") >= 0) {
+            thisSelect = $('#answer-add');
+            thisMsg = "-add";
+            console.log('addModal');
+        }
+        if(thisSelect !== null){
+            thisSelect.empty();
+            thisSelect.append("<option value='"+0+"'>请选择</option>");
+            if ($('#item1'+thisMsg).val()!=null){
+                thisSelect.append("<option value='"+($('#item1'+thisMsg).val())+"'>"+($('#item1'+thisMsg).val())+"</option>");
+            }
+            if ($('#item2'+thisMsg).val()!=null){
+                thisSelect.append("<option value='"+($('#item2'+thisMsg).val())+"'>"+($('#item2'+thisMsg).val())+"</option>");
+            }
+            if ($('#item3'+thisMsg).val()!=null){
+                thisSelect.append("<option value='"+($('#item3'+thisMsg).val())+"'>"+($('#item3'+thisMsg).val())+"</option>");
+            }
+            if ($('#item4'+thisMsg).val()!=null){
+                thisSelect.append("<option value='"+($('#item4'+thisMsg).val())+"'>"+($('#item4'+thisMsg).val())+"</option>");
+            }
+            if(thisMsg === "-update"){
+                $("#answer-update option[value='"+(exam_global['answer']!=null?exam_global['answer']:null)+"']").attr("selected", "selected");
+            }
+        }
+
+    })
     // 修改试题详情
     function updateExam() {
         var d = {};
@@ -353,6 +434,10 @@ var exam_id = 0;
                 }
             })
         }
+    }
+    // 添加试题
+    function addQuestion() {
+
     }
 </script>
 {/block}

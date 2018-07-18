@@ -22,6 +22,15 @@ class Exam extends Model
 
         return $res;
     }
+
+    /**
+     * 依据试题ID获取试题详情
+     * @param $id
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function getExamWithID($id){
         $res = Exam::where('id', '=', $id)->select();
 
@@ -75,7 +84,7 @@ class Exam extends Model
         $exam = new Exam();
         $res = $exam
             ->where('id','=',$data['id'])
-            ->updata($data);
+            ->update($data);
 
         return sizeof($res);
     }

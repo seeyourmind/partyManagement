@@ -29,12 +29,22 @@ class ExamCategory extends Model
      * 获取某一类别的试卷分类信息
      * @param $id
      * @return false|\PDOStatement|string|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
     public function getExamCategoryWithID($id){
         $res = ExamCategory::where('id','=',$id)->paginate(12);
+
+        return $res;
+    }
+
+    /**
+     * 依据文字说明获取ID
+     * @param $explain
+     * @return \think\Paginator
+     * @throws \think\exception\DbException
+     */
+    public function getExamCategoryWithExplain($explain){
+        $res = ExamCategory::where('explain','=',$explain)->field('id')->paginate(12);
 
         return $res;
     }

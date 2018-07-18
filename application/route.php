@@ -26,6 +26,8 @@ return [
     'uploadsFiles' => 'api/UserApi/uploadUserDataFiles',
     'getAllExam' => 'api/ExamApi/getExamList',
     'getExamWithID' => 'api/ExamApi/getExamWithID',
+    'updateExam' => 'api/ExamApi/updateExamQuestion',
+    'deleteQuestion' => 'api/ExamApi/deleteExamQuestionWithID',
     'admin/login' => 'admin/login/login',
     'admin/login/check_in' => 'admin/login/check_in',
     'admin' => 'admin/index/index',

@@ -50,8 +50,6 @@ class Userinfo extends Model
     /**
      * 获取全部用户信息
      * @return false|\PDOStatement|string|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
     public function getUserinfo(){
@@ -64,8 +62,6 @@ class Userinfo extends Model
      * 获取某ID的用户信息
      * @param $userid
      * @return false|\PDOStatement|string|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
     public function getUserinfoWithID($userid){
@@ -77,8 +73,6 @@ class Userinfo extends Model
      * 获取某姓名的用户信息
      * @param $name
      * @return false|\PDOStatement|string|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
     public function getUserinfoWithName($name){

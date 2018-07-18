@@ -27,13 +27,13 @@
                         <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
                         </button>
                         <!-- delete button -->
-                        <button type="button" class="btn btn-default btn-sm" onclick="deleteUsers()"><i class="fa fa-trash-o"></i></button>
+                        <button type="button" class="btn btn-default btn-sm" onclick="deleteExam()"><i class="fa fa-trash-o"></i></button>
                         <!-- refresh button -->
-                        <button type="button" class="btn btn-default btn-sm" onclick="refreshUserList()"><i class="fa fa-refresh"></i></button>
+                        <button type="button" class="btn btn-default btn-sm" onclick="refreshExamList()"><i class="fa fa-refresh"></i></button>
                         <div class="float-right">
                             <div class="btn-group">
                                 <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addMoreModal" disabled>批量添加</button>
-                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addOneModal">单个添加</button>
+                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addOneModal">添加试题</button>
                             </div>
                         </div>
                     </div>
@@ -82,7 +82,7 @@
             <!-- /. box -->
         </div>
         <!-- /.col -->
-        <!-- 右边个人资料卡 -->
+        <!-- 右边试题详情卡 -->
         <div class="col-md-3">
             <!-- Profile Image -->
             <div id="exam_right_card" class="card card-primary card-outline" style="display: none">
@@ -129,10 +129,73 @@
     </div>
     <!-- /.row -->
 </section>
+<!-- 修改试题详情模态框 -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="card card-primary modal-content">
+            <div class="card-header modal-header">
+                <h3 class="card-title">修改试卷信息</h3>
+            </div>
+            <form id="updateform" role="form">
+                <div class="card-body modal-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="id-update">编号</label>
+                                <input type="text" class="form-control" id="id-update" name="id" disabled>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="category-update">分类</label>
+                                <select class="form-control" id="category-update" name="category">
+                                    <option>请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>问题描述</label>
+                        <textarea class="form-control" rows="3" id="question-update" name="question" placeholder="请填写个人荣誉 ..."></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            A. <input type="text" class="form-control" id="item1-update" name="item1" placeholder="请填写选项1的内容">
+                        </div>
+                        <div class="col-lg-6">
+                            B. <input type="text" class="form-control" id="item2-update" name="item2" placeholder="请填写选项2的内容">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            C. <input type="text" class="form-control" id="item3-update" name="item3" placeholder="请填写选项3的内容">
+                        </div>
+                        <div class="col-lg-6">
+                            D. <input type="text" class="form-control" id="item4-update" name="item4" placeholder="请填写选项4的内容">
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label>答案</label>
+                        <select class="form-control" id="answer-update" name="answer">
+                            <option>请选择</option>
+                        </select>
+                    </div>
+                </div>
+            </form>
+            <!-- /.card-body -->
+            <div class="card-footer modal-footer">
+                <button name="submit" class="btn btn-info" onclick="updateExam()">修改</button>
+                <button name="cancel" class="btn btn-default float-right" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
 {/block}
 {block name='user_js'}
 <script>
-    var exam_global = null;
+var exam_global = null;
+var exam_category = null;
+var exam_id = 0;
     // 列表内选择框
     $('.mailbox-messages input[type="checkbox"]').iCheck({
         checkboxClass: 'icheckbox_flat-blue',
@@ -157,23 +220,24 @@
         e.preventDefault();
         $('#exam_right_card').show();
         var exam_id = e.target.outerText;
-        console.log(exam_id);
+        // console.log(exam_id);
         $.ajax({
             type: 'post',
             url: '/getExamWithID',
             data: {'id':exam_id},
             dataType: 'json',
             success: function (data) {
-                console.log(data['data']);
+                // console.log(data['data']);
                 var exam = data['data'];
                 exam_global = exam;
-                var examid = (exam.id != null && (exam.id).length>=1)?exam.id:'暂无';
+                exam_category = data['category'];
+                var examid = (exam.id != null && exam.id>=1)?exam.id:'暂无';
                 var examcategory = (exam.category != null && (exam.category).length>=1)?exam.category:'暂无';
                 var examquestion = (exam.question != null && (exam.question).length>=1)?exam.question:'暂无';
-                var exama = (exam.item1 != null && (exam.item1).length>=1)?'A. '+exam.item1:'A. ';
-                var examb = (exam.item2 != null && (exam.item2).length>=1)?'B. '+exam.item2:'B. ';
-                var examc = (exam.item3 != null && (exam.item3).length>=1)?'C. '+exam.item3:'C. ';
-                var examd = (exam.item4 != null && (exam.item4).length>=1)?'D. '+exam.item4:'D. ';
+                var exama = (exam.item1 != null && (exam.item1).length>=1)?'<b>A.</b> '+exam.item1:'';
+                var examb = (exam.item2 != null && (exam.item2).length>=1)?'<b>B.</b> '+exam.item2:'';
+                var examc = (exam.item3 != null && (exam.item3).length>=1)?'<b>C.</b> '+exam.item3:'';
+                var examd = (exam.item4 != null && (exam.item4).length>=1)?'<b>D.</b> '+exam.item4:'';
                 var examanswer = (exam.answer != null && (exam.answer).length>=1)?exam.answer:'无解';
 
                 $('#examid').html(examid);
@@ -190,5 +254,105 @@
             }
         })
     })
+    // 自动填充待修改内容
+    $('#updateModal').on('show.bs.modal', function (e) {
+        $('#exam_right_card').hide();
+        $(this).removeData('model')
+        var modal = $(this);
+        exam_id = exam_global['id']!=null?exam_global['id']:null;
+        modal.find('#id-update').val(exam_id);
+        $('#category-update').empty();
+        $('#category-update').append("<option value='"+0+"'>请选择</option>");
+        // console.log(exam_category);
+        for (var category in exam_category){
+            $('#category-update').append("<option value='"+exam_category[category]+"'>"+exam_category[category]+"</option>");
+        }
+        $("#category-update option[value='"+(exam_global['category']!=null?exam_global['category']:null)+"']").attr("selected", "selected");
+        modal.find('#question-update').val(exam_global['question']!=null?exam_global['question']:null);
+        modal.find('#item1-update').val(exam_global['item1']!=null?exam_global['item1']:null);
+        modal.find('#item2-update').val(exam_global['item2']!=null?exam_global['item2']:null);
+        modal.find('#item3-update').val(exam_global['item3']!=null?exam_global['item3']:null);
+        modal.find('#item4-update').val(exam_global['item4']!=null?exam_global['item4']:null);
+        $('#answer-update').empty();
+        $("#answer-update").append("<option value='"+0+"'>请选择</option>");
+        if (exam_global['item1']!=null){
+            $("#answer-update").append("<option value='"+(exam_global['item1'])+"'>"+(exam_global['item1'])+"</option>");
+        }
+        if (exam_global['item2']!=null){
+            $("#answer-update").append("<option value='"+(exam_global['item2'])+"'>"+(exam_global['item2'])+"</option>");
+        }
+        if (exam_global['item3']!=null){
+            $("#answer-update").append("<option value='"+(exam_global['item3'])+"'>"+(exam_global['item3'])+"</option>");
+        }
+        if (exam_global['item4']!=null){
+            $("#answer-update").append("<option value='"+(exam_global['item4'])+"'>"+(exam_global['item4'])+"</option>");
+        }
+        $("#answer-update option[value='"+(exam_global['answer']!=null?exam_global['answer']:null)+"']").attr("selected", "selected");
+    })
+    // 修改试题详情
+    function updateExam() {
+        var d = {};
+        d['id'] = exam_id;
+        var t = $('#updateform').serializeArray();
+        $.each(t, function () {
+            if (this.value.length >= 1){
+                d[this.name] = this.value;
+            } else {
+                d[this.name] = null;
+            }
+        });
+        // console.log(d);
+        var updateArray = new Array();
+        updateArray.push(d);
+        $.ajax({
+            type: 'post',
+            url: '/updateExam',
+            data: {'data':updateArray},
+            dateType: 'json',
+            success: function (data) {
+                if(data['flag'] === 'S'){
+                    alert(data['msg']);
+                    $('#updateModal').modal('hide');
+                };
+            },
+            error: function (err, tt, kk) {
+                alert('出现错误:'+JSON.stringify(err)+' 状态:'+tt+' 原因:'+kk);
+            }
+        });
+    }
+    // 刷新界面
+    function refreshExamList() {
+        window.location.href = "/admin/exam_management";
+    }
+    // 删除试题
+    function deleteExam() {
+        var checkedUsers = $('input[type=checkbox]:checked');
+        var checkedID = new Array();
+        $.each(checkedUsers, function () {
+            checkedID.push(parseInt($(this).val()));
+        });
+        console.log(checkedID);
+        if (checkedID.length < 1){
+            alert('请选择要删除的试题');
+        } else {
+            $.ajax({
+                type: 'post',
+                url: '/deleteQuestion',
+                data: {'ids':checkedID},
+                dataType: 'json',
+                success: function (data) {
+                    if (data['flag'] === 'S'){
+                        alert(data['msg']);
+                        window.location.href = "/admin/exam_management";
+                    } else {
+                        alert('用户数据删除失败');
+                    }
+                },
+                error: function (err, tt, kk) {
+                    alert('出现错误:'+JSON.stringify(err)+' 状态:'+tt+' 原因:'+kk);
+                }
+            })
+        }
+    }
 </script>
 {/block}

@@ -19,7 +19,7 @@ function encryptOpenid($array){
         unset($user['password']);
     }
 }
-// 替换试题列表中的分类ID
+// 试题分类ID转名称
 function categoryID2NAME($category, $exam){
     foreach ($exam as $item){
         $item['category'] = $category[$item['category']];

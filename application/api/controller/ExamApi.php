@@ -53,6 +53,12 @@ class ExamApi extends Controller
             ]);
         }
     }
+
+    /**
+     * 依据试题ID获取试题详细信息
+     * @param Request $request
+     * @return \think\response\Json
+     */
     public function getExamWithID(Request $request){
         is_null($request) && $request;
         if ($request->isPost()){
@@ -81,7 +87,71 @@ class ExamApi extends Controller
                 'flag'  =>  'S',
                 'msg'   =>  '成功获取信息',
                 'len'  =>  sizeof($exam_list),
-                'data' =>  $exam_list[0]
+                'data' =>  $exam_list[0],
+                'category'  =>  $category
+            ]);
+        }
+    }
+
+    /**
+     * 更新试题
+     * @param Request $request
+     * @return \think\response\Json
+     */
+    public function updateExamQuestion(Request $request){
+        is_null($request) && $request;
+        if ($request->isPost()){
+            $params = $request->post();
+            $update_data = $params['data'];
+            $exam = new Exam();
+            $ec = new ExamCategory();
+            try{
+                $res = 0;
+                foreach ($update_data as $data){
+                    $cid = $ec->getExamCategoryWithExplain($data['category']);
+                    $data['category'] = $cid[0]['id'];
+                    $res += $exam->updateExam($data);
+                }
+            } catch (Exception $e){
+                return json([
+                    'flag'  =>  'F',
+                    'code'  =>  $e->getCode(),
+                    'msg'   =>  $e->getMessage(),
+                    'file'  =>  $e->getFile(),
+                    'line'  =>  $e->getLine()
+                ]);
+            }
+            return json([
+               'flag'   =>  'S',
+               'data'   =>  $res,
+               'msg'    =>  '题库更新完成'
+            ]);
+        }
+    }
+
+    public function deleteExamQuestionWithID(Request $request){
+        is_null($request) && $request;
+        if ($request->isPost()){
+            $params = $request->post();
+            $ids = $params['ids'];
+            $exam = new Exam();
+            try{
+                $res = 0;
+                foreach ($ids as $id)
+                $res += $exam->deleteOneExam($id);
+            } catch (Exception $e){
+                return json([
+                    'flag'=>'F',
+                    'code' => $e->getCode(),
+                    'msg'  => $e->getMessage(),
+                    'file'    => $e->getFile(),
+                    'line'   => $e->getLine()
+                ]);
+            }
+            return json([
+                'flag'=>'S',
+                'msg'=>'试题删除成功',
+                'data'=>$res,
             ]);
         }
     }

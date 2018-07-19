@@ -17,7 +17,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6" id="new-category-input">
+                    <div class="col-lg-6" id="new-category-input" style="display: none">
                         <label>新建分类</label>
                         <div class="input-group mb-3">
                             <input  type="text" class="form-control" id="category-new" name="new_category" placeholder="请填写新建试卷分类名称" />
@@ -27,11 +27,11 @@
                         </div>
                     </div>
                 </div>
-                <div id="question_panel0">
+                <div id="question_panel0" class="question_panel">
                     <hr>
                     <div class="form-group mb-3">
                         <label>问题描述</label>
-                        <textarea class="form-control" rows="3" id="question-add" name="question_list[]['question']" placeholder="请填写问题描述 ..."></textarea>
+                        <textarea class="form-control" rows="3" id="question-add" name="question" placeholder="请填写问题描述 ..."></textarea>
                     </div>
                     <div class="row">
                         <div class="col-lg-6">
@@ -39,7 +39,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">A</span>
                                 </div>
-                                <input type="text" class="form-control" id="item1-add" name="question_list[]['item1']" placeholder="请填写选项1的内容">
+                                <input type="text" class="form-control" id="item1-add0" name="item1" placeholder="请填写选项1的内容">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -47,7 +47,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">B</span>
                                 </div>
-                                <input type="text" class="form-control" id="item2-add" name="question_list[]['item2']" placeholder="请填写选项2的内容">
+                                <input type="text" class="form-control" id="item2-add0" name="item2" placeholder="请填写选项2的内容">
                             </div>
                         </div>
                     </div>
@@ -57,7 +57,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">C</span>
                                 </div>
-                                <input type="text" class="form-control" id="item3-add" name="question_list[]['item3']" placeholder="请填写选项3的内容">
+                                <input type="text" class="form-control" id="item3-add0" name="item3" placeholder="请填写选项3的内容">
                             </div>
                         </div>
                         <div class="col-lg-6">
@@ -65,7 +65,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">D</span>
                                 </div>
-                                <input type="text" class="form-control" id="item4-add" name="question_list[]['item4']" placeholder="请填写选项4的内容">
+                                <input type="text" class="form-control" id="item4-add0" name="item4" placeholder="请填写选项4的内容">
                             </div>
                         </div>
                     </div>
@@ -75,7 +75,7 @@
                                 <div class="input-group-prepend">
                                     <span class="input-group-text">答案</span>
                                 </div>
-                                <select class="form-control" id="answer-add" name="question_list[]['answer']">
+                                <select class="form-control" id="answer-add0" name="answer">
                                     <option value="0">请选择</option>
                                 </select>
                             </div>
@@ -99,14 +99,17 @@
 <script>
 var count_num = 0;
 var exam_category = null;
+var category_len = 0;
+var postCategory = 0;
     exam_category = JSON.parse('{$category}');
+    // console.log(Object.keys(exam_category).length);
+    category_len = Object.keys(exam_category).length;
     // 阻止form表单默认提交表单的行为
     $('form').submit(function (e) {
         e.preventDefault();
     })
-    // 自动添加分类列表
+    // 自动添加分类下拉框
     $(function () {
-        $('#new-category-input').hide();
         $('#category-add').empty();
         $('#category-add').append("<option value='"+0+"'>请选择</option>");
         // console.log(exam_category);
@@ -114,22 +117,68 @@ var exam_category = null;
             $('#category-add').append("<option value='"+category+"'>"+exam_category[category]+"</option>");
         }
     })
+    // 自动填充答案下拉框
+    $('.question_panel input[type="text"]').change(function () {
+        // console.log($(this).attr('id'))
+        var thisID = $(this).attr('id');
+        var lastNum = thisID.substr(thisID.length-1,1);
+        // console.log(lastNum)
+        var thisSelect = $('#answer-add'+lastNum);
+        thisSelect.empty();
+        // console.log(thisSelect.attr('id'))
+        thisSelect.append("<option value='"+0+"'>请选择</option>");
+        var item1 = $('#item1-add'+lastNum).val();
+        var item2 = $('#item2-add'+lastNum).val();
+        var item3 = $('#item3-add'+lastNum).val();
+        var item4 = $('#item4-add'+lastNum).val();
+        if (item1!=null && item1.length>=1){
+            thisSelect.append("<option value='"+($('#item1-add'+lastNum).val())+"'>"+($('#item1-add'+lastNum).val())+"</option>");
+        }
+        if (item2!=null && item2.length>=1){
+            thisSelect.append("<option value='"+($('#item2-add'+lastNum).val())+"'>"+($('#item2-add'+lastNum).val())+"</option>");
+        }
+        if (item3!=null && item3.length>=1){
+            thisSelect.append("<option value='"+($('#item3-add'+lastNum).val())+"'>"+($('#item3-add'+lastNum).val())+"</option>");
+        }
+        if (item4!=null && item4.length>=1){
+            thisSelect.append("<option value='"+($('#item4-add'+lastNum).val())+"'>"+($('#item4-add'+lastNum).val())+"</option>");
+        }
+    })
     // 显示新建分类编辑框
     function showNewCategory() {
         $('#new-category-input').show();
+        $('#category-new').val(null);
     }
     // 隐藏新建分类编辑框
     function hideNewCategory() {
         $('#new-category-input').hide();
+        var newone = $('#category-new').val();
+        if(newone !== null && newone.length>=1){
+            // console.log('category_len'+category_len)
+            category_len += 1;
+            $('#category-add').append("<option selected='selected' value='"+(newone)+"'>"+newone+"</option>");
+            postCategory = newone;
+        }
     }
     // 添加问题panel
     function addQuestion() {
         // alert('addQuestion')
         count_num += 1;
         var clone_panel = $('#question_panel0').clone(true);
+        // 清空输入的原数据
+        clone_panel.find('textarea').val(null);
+        clone_panel.find('input').val(null);
+        clone_panel.find('select').empty();
+        clone_panel.find('select').append("<option value='0'>请选择</option>")
         clone_panel.attr('id', 'question_panel'+count_num);
+        var item_list = clone_panel.find('input');
+        $.each(item_list, function (index, value) {
+            $(value).attr('id', 'item'+(index+1)+'-add'+count_num);
+        });
+        clone_panel.find('select').attr('id', 'answer-add'+count_num);
         clone_panel.find('button').attr('id', 'delete'+count_num);
-        clone_panel.appendTo('.card-body')
+        clone_panel.appendTo('.card-body');
+        // console.log(clone_panel.find('input'));
     }
     // 删除问题panel
     function deleteQuestion(id) {
@@ -144,6 +193,76 @@ var exam_category = null;
     // 提交试卷信息
     function addExam() {
         //alert('addExam')
+        var d = {};
+        var t = $('#examform').serializeArray();
+        var category = 0;
+        var question = new Array();
+        var item1 = new Array();
+        var item2 = new Array();
+        var item3 = new Array();
+        var item4 = new Array();
+        var answer = new Array();
+        var adddata = new Array();
+        var msg = '';
+
+        // console.log(t);
+        $.each(t, function () {
+           if (this.name === 'category' && this.value === '0'){
+               msg = '请选择试卷类型';
+               return false;
+           } else if(this.name === 'question' && this.value.length <=0){
+               msg = '请补全问题描述';
+               return false;
+           } else if (this.name === 'answer' && this.value === '0') {
+               msg = '请为所有问题设置答案';
+               return false;
+           } else {
+               if(this.name === 'category') category = isNaN(parseInt(this.value))?this.value:parseInt(this.value);
+               if(this.name === 'question') question.push((this.value.length>=1)?this.value:null);
+               if(this.name === 'item1') item1.push((this.value.length>=1)?this.value:null);
+               if(this.name === 'item2') item2.push((this.value.length>=1)?this.value:null);
+               if(this.name === 'item3') item3.push((this.value.length>=1)?this.value:null);
+               if(this.name === 'item4') item4.push((this.value.length>=1)?this.value:null);
+               if(this.name === 'answer') answer.push((this.value.length>=1)?this.value:null);
+           }
+        });
+        if(msg.length >1){
+            alert(msg)
+            return
+        }else{
+            console.log(question+category)
+            for(var i=0; i<question.length; i++){
+                if(d['category'] !== null) d['category'] = category;
+                if (question[i] !== null) d['question'] = question[i];
+                if (item1[i] !== null) d['item1'] = item1[i];
+                if (item2[i] !== null) d['item2'] = item2[i];
+                if (item3[i] !== null) d['item3'] = item3[i];
+                if (item4[i] !== null) d['item4'] = item4[i];
+                if (answer[i] !== null) d['answer'] = answer[i];
+                console.log(d);
+                adddata.push(d);
+                d={};
+            }
+            console.log(adddata);
+            $.ajax({
+                type: 'post',
+                url: '/insertQuestions',
+                data: {'data':adddata, 'category':category},
+                dataType: 'json',
+                success: function (data) {
+                    console.log('后台返回数据')
+                    console.log(data)
+                    if(data['flag']==='S'){
+                        alert(data['msg']);
+                        window.location.href="/admin/exam_add";
+                    }
+                },
+                error: function (err, zt, yy) {
+                    alert("发生错误："+JSON.stringify(err));
+                }
+            })
+            postCategory = 0;
+        }
     }
 </script>
 {/block}

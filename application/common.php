@@ -25,3 +25,9 @@ function categoryID2NAME($category, $exam){
         $item['category'] = $category[$item['category']];
     }
 }
+//
+function categoryNAME2ID($exam_list, $id, $explain){
+    foreach ($exam_list as $item){
+        if ($item['category'] == $explain) $item['category'] = $id;
+    }
+}

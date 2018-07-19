@@ -161,6 +161,12 @@ class ExamApi extends Controller
         }
     }
 
+    /**
+     * 插入新试题
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \Exception
+     */
     public function insertExamQuestion(Request $request){
         is_null($request) && $request;
         if ($request->isPost()){
@@ -184,5 +190,65 @@ class ExamApi extends Controller
                 'data'=>$res,
             ]);
         }
+    }
+    public function insertExamQuestions(Request $request){
+        is_null($request) && $request;
+        if ($request->isPost()){
+            $params = $request->post();
+            $addData = $params['data'];
+            $newCategory = $params['category'];
+            $ec = new ExamCategory();
+            $exam = new Exam();
+
+            try{
+                if(is_numeric($newCategory)){
+                    if(sizeof($addData)==$exam->insertExam($addData)) $msg = '新建试卷导入成功';
+                    else $msg = '新建试卷导入失败';
+                } else {
+                    if(sizeof($ec->where('explain', '=', $newCategory)->field('id')->select())){
+                        $msg = '已存在该试卷类型，此次操作试卷类型将不会增加；但是试题更新正常';
+                        $id = $ec->getExamCategoryWithExplain($newCategory)[0]['id'];
+                        $addData = $this->categoryNAME2ID($addData, $id, $newCategory);
+                        if(sizeof($addData)==$exam->insertExam($addData)) $msg = '新建试卷导入成功';
+                        else $msg = '新建试卷导入失败';
+                    } else {
+                        if($ec->insert(['explain'=>$newCategory])) {
+                            $msg = '新建的试卷类型插入成功';
+                            $id = $ec->getExamCategoryWithExplain($newCategory)[0]['id'];
+                            $addData = $this->categoryNAME2ID($addData, $id, $newCategory);
+                            if(sizeof($addData)==$exam->insertExam($addData)) $msg = '新建试卷导入成功';
+                            else $msg = '新建试卷导入失败';
+                        } else {
+                            $msg = '新建的试卷类型插入失败';
+                        }
+                    };
+                }
+            } catch (Exception $e){
+                return json([
+                    'flag'=>'F',
+                    'code' => $e->getCode(),
+                    'msg'  => $e->getMessage(),
+                    'file'    => $e->getFile(),
+                    'line'   => $e->getLine()
+                ]);
+            }
+
+            return json([
+                'flag'=>'S',
+                'msg'=>$msg,
+            ]);
+        }
+    }
+    private function categoryNAME2ID($exam_list, $id, $explain){
+//        echo($id);
+        $exam = [];
+        foreach ($exam_list as $item){
+           if ($item['category'] == $explain) {
+               $item['category'] = $id;
+//               echo $item['category'];
+           }
+           array_push($exam,$item);
+        }
+        return $exam;
     }
 }

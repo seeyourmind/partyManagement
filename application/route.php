@@ -35,4 +35,5 @@ return [
     'admin/user_management' => 'admin/userManagement/index',
     'admin/user_management/searchUser' => 'admin/userManagement/searchUser',
     'admin/exam_management' => 'admin/examManagement/index',
+    'admin/exam_add' => 'admin/examManagement/addExam',
 ];

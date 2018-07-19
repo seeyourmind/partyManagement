@@ -1,0 +1,149 @@
+{extend name="public/base" /}
+{block name="content_main"}
+<section class="content">
+    <div class="card card-primary card-outline">
+        <div class="card-header">
+            <h3 class="card-title">新建试卷</h3>
+        </div>
+        <form id="examform" role="form">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-6">
+                        <label>试卷分类</label>
+                        <div class="input-group mb-3">
+                            <select class="form-control" id="category-add" name="category"></select>
+                            <div class="input-group-append">
+                                <button class="btn btn-info" onclick="showNewCategory()"><i class="fa fa-plus"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6" id="new-category-input">
+                        <label>新建分类</label>
+                        <div class="input-group mb-3">
+                            <input  type="text" class="form-control" id="category-new" name="new_category" placeholder="请填写新建试卷分类名称" />
+                            <div class="input-group-append">
+                                <button class="btn btn-success" onclick="hideNewCategory()"><i class="fa fa-check"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="question_panel0">
+                    <hr>
+                    <div class="form-group mb-3">
+                        <label>问题描述</label>
+                        <textarea class="form-control" rows="3" id="question-add" name="question_list[]['question']" placeholder="请填写问题描述 ..."></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">A</span>
+                                </div>
+                                <input type="text" class="form-control" id="item1-add" name="question_list[]['item1']" placeholder="请填写选项1的内容">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">B</span>
+                                </div>
+                                <input type="text" class="form-control" id="item2-add" name="question_list[]['item2']" placeholder="请填写选项2的内容">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">C</span>
+                                </div>
+                                <input type="text" class="form-control" id="item3-add" name="question_list[]['item3']" placeholder="请填写选项3的内容">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">D</span>
+                                </div>
+                                <input type="text" class="form-control" id="item4-add" name="question_list[]['item4']" placeholder="请填写选项4的内容">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">答案</span>
+                                </div>
+                                <select class="form-control" id="answer-add" name="question_list[]['answer']">
+                                    <option value="0">请选择</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <button name="delete" id="delete0" class="btn btn-danger float-right" onclick="deleteQuestion(id)">删除</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+        <!-- /.card-body -->
+        <div class="card-footer">
+            <button name="submit" class="btn btn-primary" onclick="addExam()">提交</button>
+            <button name="add" class="btn btn-info float-right" onclick="addQuestion()">添加</button>
+        </div>
+    </div>
+</section>
+{/block}
+{block name="user_js"}
+<script>
+var count_num = 0;
+var exam_category = null;
+    exam_category = JSON.parse('{$category}');
+    // 阻止form表单默认提交表单的行为
+    $('form').submit(function (e) {
+        e.preventDefault();
+    })
+    // 自动添加分类列表
+    $(function () {
+        $('#new-category-input').hide();
+        $('#category-add').empty();
+        $('#category-add').append("<option value='"+0+"'>请选择</option>");
+        // console.log(exam_category);
+        for (var category in exam_category){
+            $('#category-add').append("<option value='"+category+"'>"+exam_category[category]+"</option>");
+        }
+    })
+    // 显示新建分类编辑框
+    function showNewCategory() {
+        $('#new-category-input').show();
+    }
+    // 隐藏新建分类编辑框
+    function hideNewCategory() {
+        $('#new-category-input').hide();
+    }
+    // 添加问题panel
+    function addQuestion() {
+        // alert('addQuestion')
+        count_num += 1;
+        var clone_panel = $('#question_panel0').clone(true);
+        clone_panel.attr('id', 'question_panel'+count_num);
+        clone_panel.find('button').attr('id', 'delete'+count_num);
+        clone_panel.appendTo('.card-body')
+    }
+    // 删除问题panel
+    function deleteQuestion(id) {
+        // console.log(id);
+        var bparents = $('button[id='+id+']').parents();
+        // console.log(bparents)
+        if(id!=='delete0') {
+            count_num -= 1;
+            $(bparents[2]).remove();
+        }
+    }
+    // 提交试卷信息
+    function addExam() {
+        //alert('addExam')
+    }
+</script>
+{/block}

@@ -9,9 +9,14 @@
 namespace app\admin\controller;
 
 
+use app\api\model\Article;
+
 class ArticleManagement extends Base
 {
     public function index(){
+        $article = new Article();
+        $res = $article->getAllArticles();
+        $this->view->assign('articles', $res);
         $this->view->assign('content_header', '浏览文章');
         $this->view->assign('menu_open3', 'menu-open');
         $this->view->assign('active31', 'active');

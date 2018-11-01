@@ -1,7 +1,109 @@
 {extend name="public/base" /}
 {block name="user_css"}
+<style>
+    .over-text{
+        text-overflow:ellipsis;overflow:hidden;white-space: nowrap;
+    }
+</style>
 {/block}
 {block name="content_main"}
+<section class="content">
+    <div class="row">
+        <!-- USER LIST -->
+        <div class="col-md-9">
+            <div class="card card-primary card-outline">
+                <!--  HEAD -->
+                <div class="card-header">
+                    <h3 class="card-title">Exam List</h3>
+                    <!-- SEARCH -->
+                    <div class="card-tools">
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="searchUser" class="form-control" placeholder="Search Keywords">
+                            <div class="input-group-append">
+                                <div class="btn btn-primary">
+                                    <span onclick="searchForUser()"><i class="fa fa-search"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- TOOL -->
+                <div class="card-body p-0">
+                    <div class="mailbox-controls">
+                        <!-- Check all button -->
+                        <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
+                        </button>
+                        <!-- delete button -->
+                        <button type="button" class="btn btn-default btn-sm" onclick="deleteExam()"><i class="fa fa-trash-o"></i></button>
+                        <!-- refresh button -->
+                        <button type="button" class="btn btn-default btn-sm" onclick="refreshExamList()"><i class="fa fa-refresh"></i></button>
+                        <div class="float-right">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addModal">添加试题</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- LIST -->
+                    <div class="table-responsive mailbox-messages">
+                        <table class="table table-hover table-striped" style="table-layout: fixed">
+                            <tbody id="user_list_tb">
+                            <tr>
+                                <th class="mailbox-subject" width="10%">选择</th>
+                                <th class="mailbox-subject" width="25%">发布时间</th>
+                                <th class="mailbox-subject" width="45%">文章标题</th>
+                                <th class="mailbox-subject" width="20%">发布单位</th>
+                            </tr>
+                            {volist name='articles' id='article'}
+                            <tr>
+                                <td><input type="checkbox" value="{$article.id}"></td>
+                                <td class="mailbox-subject"><p class="over-text">{$article.time}</p></td>
+                                <td class="article-title-href" id="{$article.id}"><p class="over-text"><a id="article_id" href="#"><b>{$article.title}</b></a></p></td>
+                                <td class="mailbox-subject"><p class="over-text">{$article.level1}</p></td>
+                            </tr>
+                            {/volist}
+                            </tbody>
+                        </table>
+                        <!-- /.table -->
+                    </div>
+                    <!-- /.mail-box-messages -->
+                </div>
+                <!-- /.card-body -->
+                <!-- 分页 -->
+                <div class="card-footer p-0">
+                    <div class="mailbox-controls">
+                        <div class="float-right">
+                            {$articles->render()}
+                        </div>
+                        <!-- /.float-right -->
+                    </div>
+                </div>
+            </div>
+            <!-- /. box -->
+        </div>
+</section>
+<!-- 查看文章详情模态框 -->
+<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="card card-primary modal-content">
+            <div class="card-header modal-header">
+                <h3 class="card-title" id="article_title"></h3>
+            </div>
+            <div class="card-body modal-body" id="article_content">
+            </div>
+            <!-- /.card-body -->
+            <div class="card-footer modal-footer">
+                <button name="cancel" class="btn btn-info" onclick="#()">确定</button>
+                <button name="modify" class="btn btn-danger float-right" data-dismiss="modal">修改</button>
+            </div>
+        </div>
+    </div>
+</div>
 {/block}
 {block name="user_js"}
+<script>
+    $('.article-title-href').click(function (e) {
+        var a_id = e.currentTarget.id;
+        console.log(e.currentTarget.id)
+    });
+</script>
 {/block}

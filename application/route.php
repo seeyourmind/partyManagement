@@ -30,6 +30,8 @@ return [
     'deleteQuestion' => 'api/ExamApi/deleteExamQuestionWithID',
     'insertQuestion' => 'api/ExamApi/insertExamQuestion',
     'insertQuestions' => 'api/ExamApi/insertExamQuestions',
+    'insertArticle' => 'api/ArticleApi/insertArticle',
+    'getAllArticles' => 'api/ArticleApi/getAllArticles',
     'admin/login' => 'admin/login/login',
     'admin/login/check_in' => 'admin/login/check_in',
     'admin' => 'admin/index/index',

@@ -42,7 +42,7 @@
             </div>
         </div>
     </form>
-    <button name="submit" class="btn btn-primary" onclick="addNewArticle()">提交</button>
+    <button name="submit" class="btn btn-primary" onclick="addNewArticle()">发布</button>
     <button name="cancel" class="btn btn-danger" onclick="#">取消</button>
 </section>
 {/block}
@@ -83,15 +83,46 @@
             }
         });
         if(data.length>1){
-            d['ckdata'] = data;
+            d['content'] = data;
         } else {
             null_msg += 'ckdata不能为空;'
         }
         if (null_msg.length>=4){
-            alert(null_msg);
+            swal('Oops!', null_msg, 'warning');
         } else {
-
+            var update = formDate();
+            d['time'] = update;
+            console.log(new Array(d));
+            $.ajax({
+                type: 'post',
+                url: '/insertArticle',
+                data: {'data':new Array(d)},
+                dataType: 'json',
+                success: function (res) {
+                    console.log('后台返回数据',res)
+                    if(res.flag === 'S'){
+                        swal('恭喜！', res.msg, 'success', 'OK');
+                    } else {
+                        swal('Oops!', res.mag, 'info');
+                    }
+                },
+                error: function (err, zt, yy) {
+                    swal('发生错误', JSON.stringify(err), 'error');
+                }
+            });
         }
+    }
+
+    // 格式化当前时间
+    function formDate() {
+        var date = new Date();
+        var yy = date.getFullYear() + '-';
+        var MM = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+        var dd = date.getDate()<10? ('0'+(date.getDate())+' '):(date.getDate() + ' ');
+        var HH = date.getHours() + ':';
+        var mm = date.getMinutes() + ':';
+        var ss = date.getSeconds();
+        return yy+MM+dd+HH+mm+ss;
     }
 </script>
 {/block}

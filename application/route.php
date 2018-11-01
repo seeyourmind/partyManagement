@@ -37,4 +37,6 @@ return [
     'admin/user_management/searchUser' => 'admin/userManagement/searchUser',
     'admin/exam_management' => 'admin/examManagement/index',
     'admin/exam_add' => 'admin/examManagement/addExam',
+    'admin/article_management' => 'admin/articleManagement/index',
+    'admin/new_article' => 'admin/articleManagement/newArticle',
 ];

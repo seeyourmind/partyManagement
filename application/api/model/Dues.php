@@ -31,7 +31,7 @@ class Dues extends Model
      * @throws \think\exception\DbException
      */
     public function getDuesWithUserID($userid){
-        $res = Dues::where('userid', '=', $userid)->select();
+        $res = Dues::where('u_id', '=', $userid)->select();
         return $res;
     }
 

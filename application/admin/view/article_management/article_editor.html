@@ -1,0 +1,97 @@
+{extend name="public/base" /}
+{block name="user_css"}
+{/block}
+{block name="content_main"}
+<section class="content"  style="width: 90%;margin-left: 2%;">
+    <form id="article_form" role="form">
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text">标题</span>
+            </div>
+            <input type="text" class="form-control" id="title" name="title" placeholder="请输入文章标题">
+        </div>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">一级类别</span>
+                    </div>
+                    <select class="form-control" id="level1" name="level1">
+                        <option value="">请选择文章所属一级类别</option>
+                        <option>文件精神</option>
+                        <option>党章党史</option>
+                        <option>新闻中心</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">二级类别</span>
+                    </div>
+                    <input type="text" class="form-control" id="level2" name="level2" placeholder="请输入文章所属二级类别">
+                </div>
+            </div>
+        </div>
+        <!-- CkKeditor -->
+        <div class="document-editor">
+            <div class="document-editor__toolbar" id="toolbar-container"></div>
+            <div class="document-editor__editable-container" id="ckeditor">
+                <div class="document-editor__editable">
+                </div>
+            </div>
+        </div>
+    </form>
+    <button name="submit" class="btn btn-primary" onclick="addNewArticle()">提交</button>
+    <button name="cancel" class="btn btn-danger" onclick="#">取消</button>
+</section>
+{/block}
+{block name="user_js"}
+<script>
+    var ckeditor;
+    const web_head = '<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />';
+
+    document.addEventListener("DOMContentLoaded", function(event){
+        console.log("DOM fully loaded and parsed");
+        DecoupledEditor
+            .create(document.querySelector('#ckeditor'))
+            .then(
+                editor_ => {const toolbarContainer = document.querySelector( '#toolbar-container' );
+                toolbarContainer.appendChild( editor_.ui.view.toolbar.element );
+                ckeditor = editor_;})
+            .catch(
+                error => {console.error( error );}
+        );
+    })
+
+    // 添加新文章
+    function addNewArticle() {
+        console.log('add new article', true);
+        var null_msg = '';
+        var d = {};
+        var t = $('#article_form').serializeArray();
+        var data = '';
+        const ckeditor_data = ckeditor.getData();
+        if (ckeditor_data.length>2){
+            data = web_head + ckeditor_data;
+        }
+        $.each(t, function () {
+            if(this.value.length>1){
+                d[this.name] = this.value;
+            } else {
+                null_msg += this.name + '不能为空;';
+            }
+        });
+        if(data.length>1){
+            d['ckdata'] = data;
+        } else {
+            null_msg += 'ckdata不能为空;'
+        }
+        if (null_msg.length>=4){
+            alert(null_msg);
+        } else {
+
+        }
+    }
+</script>
+{/block}

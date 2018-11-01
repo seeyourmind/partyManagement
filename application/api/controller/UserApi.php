@@ -186,9 +186,7 @@ class UserApi extends Controller
                     'data'=>$user_info[$result_len-1]
                 ]);
             }
-        }
-
-        if ($request->isAjax()){
+        } else if ($request->isAjax()){
             $user_id = $_POST['id'];
             $user = new Userinfo();
 
@@ -209,6 +207,11 @@ class UserApi extends Controller
                 'flag'=>'S',
                 'length'=>sizeof($user_info),
                 'data'=>$user_info
+            ]);
+        } else {
+            return json([
+                'flag'=>'F',
+                'data'=>'您使用了错误的方式访问服务器，请使用POST或AJAX'
             ]);
         }
     }

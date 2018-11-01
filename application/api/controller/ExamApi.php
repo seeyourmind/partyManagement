@@ -173,6 +173,7 @@ class ExamApi extends Controller
             $params = $request->post();
             $addData = $params['data'];
             $exam = new Exam();
+
             try{
                 $res = $exam->insertExam($addData);
             } catch (Exception $e){
@@ -191,6 +192,13 @@ class ExamApi extends Controller
             ]);
         }
     }
+
+    /**
+     * 插入多条试题记录
+     * @param Request $request
+     * @return \think\response\Json
+     * @throws \Exception
+     */
     public function insertExamQuestions(Request $request){
         is_null($request) && $request;
         if ($request->isPost()){
@@ -229,7 +237,8 @@ class ExamApi extends Controller
                     'code' => $e->getCode(),
                     'msg'  => $e->getMessage(),
                     'file'    => $e->getFile(),
-                    'line'   => $e->getLine()
+                    'line'   => $e->getLine(),
+                    'emsg' => $msg
                 ]);
             }
 

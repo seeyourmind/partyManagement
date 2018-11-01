@@ -1,4 +1,6 @@
 {extend name="public/base" /}
+{block name="user_css"}
+{/block}
 {block name="content_main"}
 <section class="content">
     <div class="card card-primary card-outline">
@@ -255,6 +257,8 @@ var postCategory = 0;
                     if(data['flag']==='S'){
                         alert(data['msg']);
                         window.location.href="/admin/exam_add";
+                    } else {
+                        alert(data['msg']);
                     }
                 },
                 error: function (err, zt, yy) {

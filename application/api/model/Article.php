@@ -32,7 +32,20 @@ class Article extends Model
      * @throws \think\exception\DbException
      */
     public function getAllArticles(){
-        $res = Article::paginate(10);
+        $res = Article::field('id, time, title, level1')->order('time', 'desc')->paginate(10);
+        return $res;
+    }
+
+    /**
+     * 通过ID获取文章详情
+     * @param $id
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function  getArticleWithID($id){
+        $res = Article::where('id', '=', $id)->select();
         return $res;
     }
 }

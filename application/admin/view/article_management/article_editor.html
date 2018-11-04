@@ -8,40 +8,38 @@
             <div class="input-group-prepend">
                 <span class="input-group-text">标题</span>
             </div>
-            <input type="text" class="form-control" id="title" name="title" placeholder="请输入文章标题">
+            <input type="text" class="form-control" id="title" name="title" placeholder="请输入文章标题" value="{$article.title}">
         </div>
         <div class="row">
             <div class="col-lg-6">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">一级类别</span>
+                        <span class="input-group-text">发布单位</span>
                     </div>
-                    <select class="form-control" id="level1" name="level1">
-                        <option value="">请选择文章所属一级类别</option>
-                        <option>文件精神</option>
-                        <option>党章党史</option>
-                        <option>新闻中心</option>
-                    </select>
+                    <input type="text" class="form-control" id="level1" name="level1" placeholder="请输入发布单位全称" value="{$article.level1}">
                 </div>
             </div>
             <div class="col-lg-6">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text">二级类别</span>
+                        <span class="input-group-text">文章分类</span>
                     </div>
-                    <input type="text" class="form-control" id="level2" name="level2" placeholder="请输入文章所属二级类别">
+                    <input type="text" class="form-control" id="level2" name="level2" placeholder="请输入文章所属类别" value="{$article.level2}">
                 </div>
             </div>
         </div>
         <!-- CkKeditor -->
+
         <div class="document-editor">
-            <div class="document-editor__toolbar" id="toolbar-container"></div>
-            <div class="document-editor__editable-container" id="ckeditor">
-                <div class="document-editor__editable">
+            <div id="toolbar-container"></div>
+            <div id="ckeditor">
+                <div>
+                    {$article.content}
                 </div>
             </div>
         </div>
     </form>
+    <br/>
     <button name="submit" class="btn btn-primary" onclick="addNewArticle()">发布</button>
     <button name="cancel" class="btn btn-danger" onclick="#">取消</button>
 </section>
@@ -54,7 +52,11 @@
     document.addEventListener("DOMContentLoaded", function(event){
         console.log("DOM fully loaded and parsed");
         DecoupledEditor
-            .create(document.querySelector('#ckeditor'))
+            .create(document.querySelector('#ckeditor'), {
+                ckfinder: {
+                    uploadUrl: 'http://localhost/uploadImage'
+                }
+            })
             .then(
                 editor_ => {const toolbarContainer = document.querySelector( '#toolbar-container' );
                 toolbarContainer.appendChild( editor_.ui.view.toolbar.element );

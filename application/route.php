@@ -32,6 +32,8 @@ return [
     'insertQuestions' => 'api/ExamApi/insertExamQuestions',
     'insertArticle' => 'api/ArticleApi/insertArticle',
     'getAllArticles' => 'api/ArticleApi/getAllArticles',
+    'getArticleWithID' => 'api/ArticleApi/getArticleWithID',
+    'uploadImage' => 'api/UploadApi/uploadImage',
     'admin/login' => 'admin/login/login',
     'admin/login/check_in' => 'admin/login/check_in',
     'admin' => 'admin/index/index',

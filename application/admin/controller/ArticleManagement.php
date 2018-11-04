@@ -10,6 +10,7 @@ namespace app\admin\controller;
 
 
 use app\api\model\Article;
+use think\Request;
 
 class ArticleManagement extends Base
 {
@@ -23,7 +24,17 @@ class ArticleManagement extends Base
         return $this->view->fetch("article_browser");
     }
 
-    public function newArticle(){
+    public function newArticle(Request $request){
+        if(!is_null($request) && $request->isGet()){
+            $id = $request->get('aid');
+            if(sizeof($id)>=1){
+                $article = new Article();
+                $res = $article->getArticleWithID($id);
+                $this->view->assign('article', $res[0]);
+            } else {
+                $this->view->assign('article', null);
+            }
+        }
         $this->view->assign('content_header', '新建文章');
         $this->view->assign('menu_open3', 'menu-open');
         $this->view->assign('active32', 'active');

@@ -229,7 +229,7 @@ var postCategory = 0;
            }
         });
         if(msg.length >1){
-            alert(msg)
+            swal('Oops！', msg, 'warning');
             return
         }else{
             console.log(question+category)
@@ -255,14 +255,14 @@ var postCategory = 0;
                     console.log('后台返回数据')
                     console.log(data)
                     if(data['flag']==='S'){
-                        alert(data['msg']);
+                        swal('恭喜!', data['msg'], 'success');
                         window.location.href="/admin/exam_add";
                     } else {
-                        alert(data['msg']);
+                        swal('Oops!', data['msg'], 'info');
                     }
                 },
                 error: function (err, zt, yy) {
-                    alert("发生错误："+JSON.stringify(err));
+                    swal('发生错误', JSON.stringify(err), 'error');
                 }
             })
             postCategory = 0;

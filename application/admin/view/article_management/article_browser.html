@@ -82,8 +82,8 @@
         </div>
 </section>
 <!-- 查看文章详情模态框 -->
-<div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog">
+<div class="modal fade" id="articleDetailModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
         <div class="card card-primary modal-content">
             <div class="card-header modal-header">
                 <h3 class="card-title" id="article_title"></h3>
@@ -92,8 +92,8 @@
             </div>
             <!-- /.card-body -->
             <div class="card-footer modal-footer">
-                <button name="cancel" class="btn btn-info" onclick="#()">确定</button>
-                <button name="modify" class="btn btn-danger float-right" data-dismiss="modal">修改</button>
+                <button name="cancel" class="btn btn-info" data-dismiss="modal">确定</button>
+                <button name="modify" class="btn btn-danger float-right" data-dismiss="modal" onclick="gotoModify()">修改</button>
             </div>
         </div>
     </div>
@@ -101,9 +101,41 @@
 {/block}
 {block name="user_js"}
 <script>
+    var article_id = null;
     $('.article-title-href').click(function (e) {
         var a_id = e.currentTarget.id;
         console.log(e.currentTarget.id)
+        $.ajax({
+            type: 'post',
+            url: '/getArticleWithID',
+            data: {'aid': a_id},
+            dataType: 'json',
+            success: function (res) {
+                console.log(res);
+                if(res.flag === 'S'){
+                    article_id = a_id;
+                    $('#articleDetailModal').modal('show');
+                    $('#article_title').append(res.msg.title);
+                    $('#article_content').append(res.msg.content);
+                } else {
+                    article_id = null;
+                    swal('Oops!', res.msg, 'info');
+                }
+            },
+            error: function (err, zt, yy) {
+                article_id = null;
+                console.log(err);
+                swal('发生错误', JSON.stringify(err), 'error');
+            }
+        });
     });
+    // 跳转至修改文章界面
+    function gotoModify(){
+        // swal('console log', 'article_id:' + article_id, 'success');
+        if(article_id != null){
+            // swal('console log', 'toUrl:'+toUrl, 'success');
+            window.location.href = '/admin/new_article?aid='+article_id;
+        }
+    }
 </script>
 {/block}

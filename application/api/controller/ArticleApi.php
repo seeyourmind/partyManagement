@@ -59,6 +59,11 @@ class ArticleApi extends Controller
         }
     }
 
+    /**
+     * 获取所有文章列表
+     * @param Request $request
+     * @return \think\response\Json
+     */
     public function getAllArticles(Request $request){
         is_null($request) && $request;
         if($request->isGet()){
@@ -70,6 +75,40 @@ class ArticleApi extends Controller
                 if(sizeof($res)>0){
                     $flag = 'S';
                     $msg = $res;
+                }
+                return json([
+                    'flag' => $flag,
+                    'msg' => $msg
+                ]);
+            } catch (Exception $e){
+                return json([
+                    'flag'=>'F',
+                    'code' => $e->getCode(),
+                    'msg'  => $e->getMessage(),
+                    'file'    => $e->getFile(),
+                    'line'   => $e->getLine()
+                ]);
+            }
+        } else {
+            return json([
+                'flag' => 'F',
+                'msg' => '您的访问方式有误，请使用POST方式访问服务器！'
+            ]);
+        }
+    }
+
+    public function getArticleWithID(Request $request){
+        is_null($request) && $request;
+        if ($request->isPost()){
+            $a_id = $request->post('aid');
+            $article = new Article();
+            $flag = 'F';
+            $msg = '未获取到任何数据';
+            try{
+                $res = $article->getArticleWithID($a_id);
+                if(sizeof($res) >= 1){
+                    $flag = 'S';
+                    $msg = $res[0];
                 }
                 return json([
                     'flag' => $flag,

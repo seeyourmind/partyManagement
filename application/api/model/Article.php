@@ -32,7 +32,7 @@ class Article extends Model
      * @throws \think\exception\DbException
      */
     public function getAllArticles(){
-        $res = Article::field('id, time, title, level1')->order('time', 'desc')->paginate(10);
+        $res = Article::order('time', 'desc')->paginate(10);
         return $res;
     }
 

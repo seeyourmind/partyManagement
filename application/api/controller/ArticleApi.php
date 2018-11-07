@@ -70,15 +70,18 @@ class ArticleApi extends Controller
             $article = new Article();
             $flag = 'F';
             $msg = '未获取到任何数据';
+
             try{
                 $res = $article->getAllArticles();
+                $str_list = matchCenterImage($res);
                 if(sizeof($res)>0){
                     $flag = 'S';
                     $msg = $res;
                 }
                 return json([
                     'flag' => $flag,
-                    'msg' => $msg
+                    'msg' => $msg,
+                    'url_list'=>$str_list
                 ]);
             } catch (Exception $e){
                 return json([

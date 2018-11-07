@@ -25,9 +25,23 @@ function categoryID2NAME($category, $exam){
         $item['category'] = $category[$item['category']];
     }
 }
-//
+// 试题分类名称转ID
 function categoryNAME2ID($exam_list, $id, $explain){
     foreach ($exam_list as $item){
         if ($item['category'] == $explain) $item['category'] = $id;
     }
+}
+// 提取图片路径
+function matchCenterImage($article_list){
+    $match_str = '#<figure class="image"><img src="/uploads/images/[0-9]*/([a-zA-Z0-9]*)\.[a-zA-Z]*"></figure>#';
+    $main_image_list = [];
+    foreach ($article_list as $article){
+        preg_match($match_str, $article['content'], $arr);
+        $whole_str = current($arr);
+        $start = stripos($whole_str, 'src="')+5;
+        $end = stripos($whole_str, '"></figure>');
+        $image_url = substr($whole_str, $start, $end-$start);
+        array_push($main_image_list, $whole_str?$image_url:'');
+    }
+    return $main_image_list;
 }

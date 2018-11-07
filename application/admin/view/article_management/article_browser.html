@@ -89,6 +89,7 @@
                 <h3 class="card-title" id="article_title"></h3>
             </div>
             <div class="card-body modal-body" id="article_content">
+                <div id="editor"><p>This is some sample content.</p></div>
             </div>
             <!-- /.card-body -->
             <div class="card-footer modal-footer">
@@ -100,23 +101,57 @@
 </div>
 {/block}
 {block name="user_js"}
+<script src="__ADMIN__/plugins/ckeditor5-build-balloon/ckeditor.js"></script>
 <script>
     var article_id = null;
+    var balloon_editor = null;
+    document.addEventListener("DOMContentLoaded", function(event) {
+        balloon_editor = BalloonEditor
+            .create( document.querySelector( '#editor' ))
+            .then( newEditor => {
+            balloon_editor = newEditor;
+            } )
+            .catch( error => {
+            console.error( error );
+        });
+    });
+
+    // 列表内选择框
+    $('.mailbox-messages input[type="checkbox"]').iCheck({
+        checkboxClass: 'icheckbox_flat-blue',
+        radioClass   : 'iradio_flat-blue'
+    })
+    // 全选
+    $('.checkbox-toggle').click(function () {
+        var clicks = $(this).data('clicks')
+        if (clicks) {
+            //Uncheck all checkboxes
+            $('.mailbox-messages input[type=\'checkbox\']').iCheck('uncheck')
+            $('.fa', this).removeClass('fa-check-square-o').addClass('fa-square-o')
+        } else {
+            //Check all checkboxes
+            $('.mailbox-messages input[type=\'checkbox\']').iCheck('check')
+            $('.fa', this).removeClass('fa-square-o').addClass('fa-check-square-o')
+        }
+        $(this).data('clicks', !clicks)
+    })
+
     $('.article-title-href').click(function (e) {
         var a_id = e.currentTarget.id;
-        console.log(e.currentTarget.id)
+        // console.log(e.currentTarget.id, balloon_editor.getData())
+        $('#article_title').empty();
         $.ajax({
             type: 'post',
             url: '/getArticleWithID',
             data: {'aid': a_id},
             dataType: 'json',
             success: function (res) {
-                console.log(res);
+                // console.log(res);
                 if(res.flag === 'S'){
                     article_id = a_id;
                     $('#articleDetailModal').modal('show');
                     $('#article_title').append(res.msg.title);
-                    $('#article_content').append(res.msg.content);
+                    balloon_editor.setData(res.msg.content);
                 } else {
                     article_id = null;
                     swal('Oops!', res.msg, 'info');
@@ -124,7 +159,7 @@
             },
             error: function (err, zt, yy) {
                 article_id = null;
-                console.log(err);
+                // console.log(err);
                 swal('发生错误', JSON.stringify(err), 'error');
             }
         });

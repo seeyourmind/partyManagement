@@ -1,0 +1,165 @@
+{extend name='public/base' /}
+{block name="user_css"}
+{/block}
+{block name='content_main'}
+<section class="content">
+    <div class="row">
+        <!-- USER LIST -->
+        <div class="col-md-9">
+            <div class="card card-primary card-outline">
+                <!--  HEAD -->
+                <div class="card-header">
+                    <h3 class="card-title">Activities List</h3>
+                    <!-- SEARCH -->
+                    <div class="card-tools">
+                        <div class="input-group input-group-sm">
+                            <input type="text" name="searchUser" class="form-control" placeholder="Search Activity By theme">
+                            <div class="input-group-append">
+                                <div class="btn btn-primary">
+                                    <span onclick="searchForActivity()"><i class="fa fa-search"></i></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- TOOL -->
+                <div class="card-body p-0">
+                    <div class="mailbox-controls">
+                        <!-- Check all button -->
+                        <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
+                        </button>
+                        <!-- delete button -->
+                        <button type="button" class="btn btn-default btn-sm" onclick="deleteActivity()"><i class="fa fa-trash-o"></i></button>
+                        <!-- refresh button -->
+                        <button type="button" class="btn btn-default btn-sm" onclick="refreshActivity()"><i class="fa fa-refresh"></i></button>
+                        <div class="float-right">
+                            <div class="btn-group">
+                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addModal">添加活动</button>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- LIST -->
+                    <div class="table-responsive mailbox-messages">
+                        <table class="table table-hover table-striped" style="table-layout: fixed">
+                            <tbody id="user_list_tb">
+                            <tr>
+                                <th class="mailbox-subject" width="10%">选择</th>
+                                <th class="mailbox-subject" width="8%">ID</a></th>
+                                <th class="mailbox-subject" width="10%">主题</th>
+                                <th class="mailbox-subject" width="13%">地点</th>
+                                <th class="mailbox-subject" width="13%">开始时间</th>
+                                <th class="mailbox-subject" width="13%">结束时间</th>
+                            </tr>
+                            {volist name='activities' id='activity'}
+                            <tr>
+                                <td><input type="checkbox" value="{$activity.id}"></td>
+                                <td class="mailbox-name"><p style="text-overflow:ellipsis;overflow:hidden;white-space: nowrap;"><a id="activity_id" href="#"><b>{$activity.id}</b></a></p></td>
+                                <td class="mailbox-subject"><p style="text-overflow:ellipsis;overflow:hidden;white-space: nowrap;">{$activity.name}</p></td>
+                                <td class="mailbox-subject"><p style="text-overflow:ellipsis;overflow:hidden;white-space: nowrap;">{$activity.address}</p></td>
+                                <td class="mailbox-subject"><p style="text-overflow:ellipsis;overflow:hidden;white-space: nowrap;">{$activity.start_time}</p></td>
+                                <td class="mailbox-subject"><p style="text-overflow:ellipsis;overflow:hidden;white-space: nowrap;">{$activity.end_time}</p></td>
+                            </tr>
+                            {/volist}
+                            </tbody>
+                        </table>
+                        <!-- /.table -->
+                    </div>
+                    <!-- /.mail-box-messages -->
+                </div>
+                <!-- /.card-body -->
+                <div class="card-footer p-0">
+                    <div class="mailbox-controls">
+                        <div class="float-right">
+                            {$activities->render()}
+                        </div>
+                        <!-- /.float-right -->
+                    </div>
+                </div>
+            </div>
+            <!-- /. box -->
+        </div>
+        <!-- /.col -->
+        <!-- 右边试题详情卡 -->
+        <div class="col-md-3">
+            <!-- Profile Image -->
+            <div id="activity_right_card" class="card card-primary card-outline" style="display: none">
+                <div class="card-body box-profile">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <b>编号：</b><span id="activityid">XXXX</span>
+                        </div>
+                        <div class="col-lg-6">
+                            <b>活动主题：</b><span id="activitytheme">XXXX</span>
+                        </div>
+                    </div>
+                    <hr>
+                    <strong>活动描述:</strong><br>
+                    <p class="text-muted" id="activitydescribe">
+                        获得五四表彰先进个人奖
+                    </p>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <span id="activitystart">A. XXXX</span>
+                        </div>
+                        <div class="col-lg-6">
+                            <span id="activityend">B. XXXX</span>
+                        </div>
+                    </div>
+
+                    <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#updateModal"><b>修改</b></a>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+        </div>
+    </div>
+    <!-- /.row -->
+</section>
+<!-- 修改试题详情模态框 -->
+
+<!-- 添加试题模态框 -->
+
+{/block}
+{block name='user_js'}
+<script>
+    //显示右侧详细活动面板
+    $('#activity_id').click(function (e) {
+        e.preventDefault();
+        $('#activity_right_card').show();
+        var activity_id = e.target.outerText;
+        console.log(activity_id);
+        $.ajax({
+            type: 'post',
+            url: '/getActivityWithID',
+            data: {'id':activity_id},
+            dataType: 'json',
+            success: function (data) {
+                console.log(data['msg']);
+                var activity = data['msg'];
+                activity_global = activity;
+
+                var activityID = (activity.id != null && activity.id>=1)?activity.id:'暂无';
+                var activityTHEME = (activity.name != null && (activity.name).length>=1)?activity.name:'暂无';
+                var activityDESCRIBE = (activity.describe != null && (activity.describe).length>=1)?activity.describe:'暂无';
+                var activitySTARTTIME = (activity.item1 != null && (activity.item1).length>=1)?'<b>A.</b> '+activity.item1:'';
+                var activityENDTIME = (activity.item2 != null && (activity.item2).length>=1)?'<b>B.</b> '+activity.item2:'';
+                var activityADDRESS = (activity.item3 != null && (activity.item3).length>=1)?'<b>C.</b> '+activity.item3:'';
+
+                $('#examid').html(examid);
+                $('#examcategory').html(examcategory);
+                $('#examquestion').html(examquestion);
+                $('#exama').html(exama);
+                $('#examb').html(examb);
+                $('#examc').html(examc);
+                $('#examd').html(examd);
+                $('#examanswer').html(examanswer);
+            },
+            error: function (err, tt, kk) {
+                alert('出现错误:'+JSON.stringify(err)+' 状态:'+tt+' 原因:'+kk);
+            }
+        })
+    })
+    
+})
+</script>
+{/block}

@@ -43,4 +43,5 @@ return [
     'admin/exam_add' => 'admin/examManagement/addExam',
     'admin/article_management' => 'admin/articleManagement/index',
     'admin/new_article' => 'admin/articleManagement/newArticle',
+    'admin/activities_management' => 'admin/activitiesManagement/index'
 ];

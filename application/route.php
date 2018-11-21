@@ -34,6 +34,7 @@ return [
     'getAllArticles' => 'api/ArticleApi/getAllArticles',
     'getArticleWithID' => 'api/ArticleApi/getArticleWithID',
     'uploadImage' => 'api/UploadApi/uploadImage',
+
     'admin/login' => 'admin/login/login',
     'admin/login/check_in' => 'admin/login/check_in',
     'admin' => 'admin/index/index',
@@ -43,5 +44,12 @@ return [
     'admin/exam_add' => 'admin/examManagement/addExam',
     'admin/article_management' => 'admin/articleManagement/index',
     'admin/new_article' => 'admin/articleManagement/newArticle',
-    'admin/activities_management' => 'admin/activitiesManagement/index'
+    'admin/activities_management' => 'admin/activitiesManagement/index',
+
+    'wxapi/get_wechatid_by_jscode' => 'wxapi/loginAPI/get_wechatid_by_jscode',
+    'wxapi/verify_registration' => 'wxapi/loginAPI/use_wechatid_register',
+    'wxapi/get_userinfo_by_wechatid' => 'wxapi/loginAPI/get_userinfo_by_wechatid',
+    'wxapi/get_all_exam_category' => 'wxapi/examAPI/get_all_exam_category',
+    'wxapi/get_exam_questions' => 'wxapi/examAPI/get_exam_questions',
+    'wxapi/get_exam_score' => 'wxapi/examAPI/get_exam_score'
 ];

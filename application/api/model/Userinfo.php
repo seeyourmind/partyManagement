@@ -39,7 +39,7 @@ class Userinfo extends Model
     /**
      * 更新用户数据
      * @param $data
-     * @return int
+     * @return $this
      */
     public function updateUserInfo($data){
         $res = Userinfo::where('id','=',$data['id'])->update($data);
@@ -78,6 +78,35 @@ class Userinfo extends Model
     public function getUserinfoWithName($name){
         $res = Userinfo::where('name','=',$name)->paginate(12);
 
+        return $res;
+    }
+// wxapi ---------------------------------------------------------------------------------------------------------------
+    /**
+     * 获取用户个人信息，依据WeChatID
+     * @param $wechatid
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getUserinfoByWechatid($wechatid){
+        $res = Userinfo::field('id,name,birthday,sex,nation,league_time,party_apply_time,stage,stage_time,general_branch,branch,sponsor,assessor,honor')->where('openID', '=', $wechatid)->select();
+
+        return $res;
+    }
+
+    /**
+     * 验证用户WeChatID与用户信息是否绑定
+     * @param $wechatid
+     * @param $jobnmuber
+     * @param $name
+     * @param $sex
+     * @return mixed
+     * @throws \think\db\exception\BindParamException
+     * @throws \think\exception\PDOException
+     */
+    public function verifyRegistrationWechatid($wechatid, $jobnmuber, $name, $sex){
+        $res = Userinfo::execute("UPDATE userinfo SET openID='$wechatid' WHERE id='$jobnmuber' AND NAME='$name' AND sex='$sex'");
         return $res;
     }
 }

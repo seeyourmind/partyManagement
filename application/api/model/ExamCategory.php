@@ -15,8 +15,6 @@ class ExamCategory extends Model
     /**
      * 获取全部试卷分类信息
      * @return false|\PDOStatement|string|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
     public function getExamCategory(){
@@ -86,5 +84,29 @@ class ExamCategory extends Model
         $res = ExamCategory::where('id','>',0)->delete();
 
         return sizeof($res);
+    }
+
+    //wxapi-------------------------------------------------------------------------------------------------------------
+    /**
+     * 微信端获取所有试题分类列表
+     * @return false|static[]
+     * @throws \think\exception\DbException
+     */
+    public function getWXExamCategory(){
+        $res = ExamCategory::all();
+        return $res;
+    }
+
+    /**
+     * 获取试题分类编号，依据分类说明
+     * @param $category
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function hasWXExamCategory($category){
+        $res = ExamCategory::field('id')->where('id', '=', $category)->select();
+        return $res;
     }
 }

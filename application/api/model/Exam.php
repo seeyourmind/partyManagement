@@ -120,4 +120,24 @@ class Exam extends Model
 
         return sizeof($res);
     }
+    //wxapi-------------------------------------------------------------------------------------------------------------
+    /**
+     * 微信端获取考试试题
+     * @param $count
+     * @param $category
+     * @return mixed
+     * @throws \think\db\exception\BindParamException
+     * @throws \think\exception\PDOException
+     */
+    public function getWXQuestions($count, $category){
+        $res = Exam::query("SELECT id,question,item1,item2,item3,item4  FROM exam WHERE category='$category' ORDER BY RAND() LIMIT $count");
+
+        return $res;
+    }
+
+    public function getWXAnswers($ids){
+        $res = Exam::query("SELECT id,answer FROM exam WHERE id IN ($ids)");
+
+        return $res;
+    }
 }

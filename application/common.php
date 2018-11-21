@@ -45,3 +45,34 @@ function matchCenterImage($article_list){
     }
     return $main_image_list;
 }
+// 提取试卷答案的ID
+function getAnswerIDs($list){
+    $ids = [];
+    foreach ($list as $item){
+        array_push($ids, $item['id']);
+    }
+    return $ids;
+}
+// 计算成绩
+function getExamScore($user, $answer){
+    $user_map = [];
+    $answer_map = [];
+    foreach ($user as $item) $user_map[$item['id']] = $item['answer'];
+    foreach ($answer as $item) $answer_map[$item['id']] = $item['answer'];
+    $score = sizeof(array_intersect_assoc($user_map, $answer_map));
+    return $score;
+}
+// 检查WeChatID是否存在
+function checkWechatId($wechatId){
+    try{
+        $userinfo = new \app\api\model\Userinfo();
+        $res = $userinfo->getUserinfoByWechatid($wechatId);
+        if($res){
+            return true;
+        } else {
+            return false;
+        }
+    } catch (Exception $e){
+        return false;
+    }
+}

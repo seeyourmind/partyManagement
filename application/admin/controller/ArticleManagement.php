@@ -10,6 +10,7 @@ namespace app\admin\controller;
 
 
 use app\api\model\Article;
+use app\api\model\ArticleCategory;
 use think\Request;
 
 class ArticleManagement extends Base
@@ -30,9 +31,17 @@ class ArticleManagement extends Base
             if(sizeof($id)>=1){
                 $article = new Article();
                 $res = $article->getArticleWithID($id);
+                $this->view->assign('category', json_encode([]));
                 $this->view->assign('article', $res[0]);
+                $this->view->assign('select_hidden', 'hidden');
+                $this->view->assign('input_hidden', '');
             } else {
+                $article_category = new ArticleCategory();
+                $category_of_article = $article_category->getArticleCategory();
+                $this->view->assign('category', json_encode($category_of_article));
                 $this->view->assign('article', null);
+                $this->view->assign('select_hidden', '');
+                $this->view->assign('input_hidden', 'hidden');
             }
         }
         $this->view->assign('content_header', '新建文章');

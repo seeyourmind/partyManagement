@@ -51,5 +51,9 @@ return [
     'wxapi/get_userinfo_by_wechatid' => 'wxapi/loginAPI/get_userinfo_by_wechatid',
     'wxapi/get_all_exam_category' => 'wxapi/examAPI/get_all_exam_category',
     'wxapi/get_exam_questions' => 'wxapi/examAPI/get_exam_questions',
-    'wxapi/get_exam_score' => 'wxapi/examAPI/get_exam_score'
+    'wxapi/get_exam_score' => 'wxapi/examAPI/get_exam_score',
+    'wxapi/get_user_read_message_list' => 'wxapi/articleAPI/get_user_read_message_list',
+    'wxapi/user_watch_article' => 'wxapi/articleAPI/user_watch_article',
+    'wxapi/get_user_not_read_message_count' => 'wxapi/articleAPI/get_user_not_read_message_count',
+    'wxapi/get_latest_three_article' => 'wxapi/articleAPI/get_latest_three_article'
 ];

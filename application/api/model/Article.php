@@ -9,6 +9,7 @@
 namespace app\api\model;
 
 
+use think\Db;
 use think\Model;
 
 class Article extends Model
@@ -20,10 +21,9 @@ class Article extends Model
      * @throws \Exception
      */
     public function insterArticle($data){
-        $article = new Article();
-        $res = $article->allowField(true)->saveAll($data);
+        $res = Db::name('article')->insertGetId($data);
 
-        return sizeof($res);
+        return $res;
     }
 
     /**
@@ -46,6 +46,19 @@ class Article extends Model
      */
     public function  getArticleWithID($id){
         $res = Article::where('id', '=', $id)->select();
+        return $res;
+    }
+
+    /**
+     * 获取最新三则文章
+     * @param $category
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getLatestThressArticleWithCategory($category){
+        $res = Article::where('level2', '=', $category)->order('time', 'desc')->limit(3)->select();
         return $res;
     }
 }

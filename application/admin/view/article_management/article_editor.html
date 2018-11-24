@@ -24,7 +24,8 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text">文章分类</span>
                     </div>
-                    <input type="text" class="form-control" id="level2" name="level2" placeholder="请输入文章所属类别" value="{$article.level2}">
+                    <select class="form-control" id="level2-select" name ="level2_s" {$select_hidden}></select>
+                    <input {$input_hidden} type="text" class="form-control" id="level2-input" name="level2_i" placeholder="请输入文章所属类别" value="{$article.level2}">
                 </div>
             </div>
         </div>
@@ -48,9 +49,10 @@
 <script src="__ADMIN__/plugins/ckeditor5-build-decoupled-document/ckeditor.js"></script>
 <script src="__ADMIN__/pluhins/photoCompresser/PhotoCompresser.js"></script>
 <script>
+    var category_of_article = JSON.parse('{$category}');
     var ckeditor;
     const web_head = '<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />';
-
+    // 富文本编辑器
     document.addEventListener("DOMContentLoaded", function(event){
         console.log("DOM fully loaded and parsed");
         DecoupledEditor
@@ -61,33 +63,50 @@
             })
             .then(
                 editor_ => {const toolbarContainer = document.querySelector( '#toolbar-container' );
-                toolbarContainer.appendChild( editor_.ui.view.toolbar.element );
-                ckeditor = editor_;})
-            .catch(
-                error => {console.error( error );}
-        );
+        toolbarContainer.appendChild( editor_.ui.view.toolbar.element );
+        ckeditor = editor_;})
+    .catch(
+            error => {console.error( error );}
+    );
     });
-
+    // 获取分类列表
+    $(function () {
+        $("#level2-select").empty();
+        $('#level2-select').append("<option value='"+0+"'>请选择</option>");
+        // console.log(category_of_article);
+        for (var category in category_of_article){
+            // console.log('category', category);
+            $('#level2-select').append("<option value='"+category_of_article[category]['level2']+"'>"+category_of_article[category]['level2']+"</option>");
+        }
+    });
     // 添加新文章
     function addNewArticle() {
-        console.log('add new article', true);
+        // console.log('add new article', true);
         var null_msg = '';
         var d = {};
         var t = $('#article_form').serializeArray();
         var data = '';
         const ckeditor_data = ckeditor.getData();
-        console.log('ckeditor:', ckeditor_data)
+        // console.log('ckeditor:', ckeditor_data)
         if (ckeditor_data != "<p>&nbsp;</p>"){
             console.log('bu deng yu')
             data = ckeditor_data;
         }
         $.each(t, function () {
             if(this.value.length>1){
-                d[this.name] = this.value;
+                if(this.name == 'level2_i' || this.name == 'level2_s'){
+                    d['level2'] = this.value;
+                } else {
+                    d[this.name] = this.value;
+                }
             } else {
-                null_msg += this.name + '不能为空;';
+                if(this.name == 'level2_i' || this.name== 'level2_s'){
+                } else {
+                    null_msg += this.name + '不能为空;';
+                }
             }
         });
+        if(d['level2']){}else{null_msg += '文章分类不能为空;'}
         if(data.length>1){
             d['content'] = web_head + data;
         } else {
@@ -95,17 +114,18 @@
         }
         if (null_msg.length>=4){
             swal('Oops!', null_msg, 'warning');
+            // console.log(new Array(d));
         } else {
             var update = formDate();
             d['time'] = update;
-            console.log(new Array(d));
+            // console.log(new Array(d));
             $.ajax({
                 type: 'post',
                 url: '/insertArticle',
-                data: {'data':new Array(d)},
+                data: {'data': d},
                 dataType: 'json',
                 success: function (res) {
-                    console.log('后台返回数据',res)
+                    // console.log('后台返回数据',res)
                     if(res.flag === 'S'){
                         swal('恭喜！', res.msg, 'success', 'OK');
                     } else {
@@ -130,44 +150,45 @@
         var ss = date.getSeconds();
         return yy+MM+dd+HH+mm+ss;
     }
-/*
-    // 自定义上传适配器
-    class UploadAdapter {
-        constructor(loader) {
-            this.loader = loader;
-        }
-        upload() {
-            return new Promise((resolve, reject) => {
-                var file = this.loader.file;
-            uploadImageFile(this.loader.file, function (data) {
-                $.ajax({
-                    url: '/uploadImage',
-                    type: 'POST',
-                    data: data,
-                    dataType: 'json',
-                    processData: false,
-                    contentType: false,
-                    success: function (data) {
-                        console.log(data);
-                        if (data.res) {
-                            resolve({
-                                default: data.url
-                            });
-                        } else {
-                            reject(data.msg);
+    /*
+        // 自定义上传适配器
+        class UploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+            upload() {
+                return new Promise((resolve, reject) => {
+                    var file = this.loader.file;
+                uploadImageFile(this.loader.file, function (data) {
+                    $.ajax({
+                        url: '/uploadImage',
+                        type: 'POST',
+                        data: data,
+                        dataType: 'json',
+                        processData: false,
+                        contentType: false,
+                        success: function (data) {
+                            console.log(data);
+                            if (data.res) {
+                                resolve({
+                                    default: data.url
+                                });
+                            } else {
+                                reject(data.msg);
+                            }
                         }
-                    }
+                    });
                 });
             });
-        });
+            }
+            abort() {
+            }
         }
-        abort() {
-        }
-    }
-    // 加载适配器
-    ckeditor.plugins.get('FileRepository').createUploadAdapter = (loader)=>{
-        return new UploadAdapter(loader);
-    };
-*/
+        // 加载适配器
+        ckeditor.plugins.get('FileRepository').createUploadAdapter = (loader)=>{
+            return new UploadAdapter(loader);
+        };
+    */
+
 </script>
 {/block}

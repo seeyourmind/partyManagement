@@ -66,9 +66,9 @@ function getExamScore($user, $answer){
 function checkWechatId($wechatId){
     try{
         $userinfo = new \app\api\model\Userinfo();
-        $res = $userinfo->getUserinfoByWechatid($wechatId);
+        $res = $userinfo->getUseridByWechatid($wechatId);
         if($res){
-            return true;
+            return $res[0]['z_id'];
         } else {
             return false;
         }

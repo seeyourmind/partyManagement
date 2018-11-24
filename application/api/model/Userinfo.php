@@ -95,6 +95,11 @@ class Userinfo extends Model
         return $res;
     }
 
+    public function getUseridByWechatid($wechatid){
+        $res = Userinfo::field('z_id')->where('openID', '=', $wechatid)->select();
+        return $res;
+    }
+
     /**
      * 验证用户WeChatID与用户信息是否绑定
      * @param $wechatid

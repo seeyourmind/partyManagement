@@ -10,6 +10,7 @@ namespace app\api\controller;
 
 
 use app\api\model\Article;
+use app\api\model\HotArticle;
 use think\Controller;
 use think\Exception;
 use think\Request;
@@ -18,6 +19,8 @@ class ArticleApi extends Controller
 {
     /**
      * 发布新文章
+     * 1. insert into article
+     * 2. insert into hot_article
      * @param Request $request
      * @return \think\response\Json
      * @throws \Exception
@@ -29,19 +32,30 @@ class ArticleApi extends Controller
             $flag = 'F';
             $msg = '服务器未获取到数据';
             $article = new Article();
+            $hot_article = new HotArticle();
             try{
-                $res = $article->insterArticle($data);
-                if($res===sizeof($data)){
-                    $flag = 'S';
-                    $msg = '文章发布成功！';
+                $res1 = $article->insterArticle($data);
+                if(intval($res1)){
+                    $res2 = $hot_article->insertHotArticle(array('aid'=>intval($res1)));
+                    if($res2){
+                        return json([
+                            'flag' => 'S',
+                            'msg' => '文章发布成功'
+                        ]);
+                    } else {
+                        return json([
+                            'flag' => 'F',
+                            'msg' => '新建文章失败，请重新提交',
+                            'res' => '2'
+                        ]);
+                    }
                 } else {
-                    $flag = 'F';
-                    $msg = '文章发布失败1！';
+                    return json([
+                        'flag' => 'F',
+                        'msg' => '新建文章失败，请重新提交',
+                        'res' => 1
+                    ]);
                 }
-                return json([
-                    'flag' => $flag,
-                    'msg' => $msg
-                ]);
             } catch (Exception $e){
                 return json([
                     'flag'=>'F',
@@ -100,6 +114,11 @@ class ArticleApi extends Controller
         }
     }
 
+    /**
+     * 获取文章
+     * @param Request $request
+     * @return \think\response\Json
+     */
     public function getArticleWithID(Request $request){
         is_null($request) && $request;
         if ($request->isPost()){

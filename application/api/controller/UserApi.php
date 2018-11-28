@@ -331,7 +331,7 @@ class UserApi extends Controller
                 'msg' => '请选择上传的文件'
             ]);
         }
-        $info = $files->move(ROOT_PATH.'public'.DS.'uploads');
+        $info = $files->move(ROOT_PATH.'uploads'.DS.'excel');
         if ($info){
             //$this->success('文件上传成功');
             //获取文件名

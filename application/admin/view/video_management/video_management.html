@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>PHP</title>
+    <!--引入jQuery-->
+    <script type="text/javascript" src="__ADMIN__/plugins/jquery/jquery.min.js"></script>
+    <!--引入CSS-->
+    <link rel="stylesheet" type="text/css" href="__ADMIN__/plugins/WebUploader/webuploader.css">
+    <!--引入JS-->
+    <script type="text/javascript" src="__ADMIN__/plugins/WebUploader/webuploader.js"></script>
+    <!--引入MD5-->
+    <script type="text/javascript" src="__ADMIN__/plugins/MD5/md5.js"></script>
+</head>
+<body>
+<div id="thelist" class="uploader-list"></div>
+<div class="btns">
+    <table style="width: 300px;" border="1">
+        <tr align="right">
+            <td>
+                <div id="picker" style="float:left">选择文件</div>
+            </td>
+            <td>
+                <button id="ctlBtn" class="btn btn-default" style="padding:8px 15px;">开始上传</button>
+            </td>
+        </tr>
+    </table>
+</div>
+</body>
+<script>
+    const SWF_PATCH = '__ADMIN__/plugins/WebUploader/Uploader.swf';
+    const SERVERURL = '/uploadVideo';
+    const EXTENSIONS = '3gp,mp4,rmvb,mov,avi,m4v,mkv';
+    const MIMETYPE = 'video/*,audio/*,application/*';
+
+    function upload () {
+        var video_file = $("#video_file")[0].files[0];
+        console.log(video_file);
+        const SLICESIZE = 45 * 1024 * 1024;//每次切割的大小，这里是10MB//此处可做修改
+        var start = 0;   //初始化截取开始位置
+        var end = 0;   //初始化截取终止位置
+
+        if(video_file){
+            var fd = new FormData();
+            fd.append('video_file', video_file);
+            fd.append('file_name', video_file['name']);
+            $.ajax({
+                type: 'POST',
+                url: SERVERURL,
+                data: fd,
+                cache: false,
+                timeout: 1000,
+                processData: false,
+                contentType: false,
+                dataType: 'json'
+            }).then(function ($res) {
+                console.log($res)
+            })
+        }
+    }
+
+    $(function (){
+        console.log('this is init function')
+        var chunkSize = 10 * 1024 * 1024;        //分块大小
+        var uniqueFileName = null;          //文件唯一标识符
+        var md5Mark = null;
+        var _userInfo = {
+            md5: '',
+            openid: '12345',
+            time: new Date().getTime()
+        };
+        var _formData = new FormData();
+
+        var _backEndUrl = SERVERURL; //后台接口地址
+
+        WebUploader.Uploader.register({
+            "before-send-file": "beforeSendFile"
+            , "before-send": "beforeSend"
+            , "after-send-file": "afterSendFile"
+        }, {
+            beforeSendFile: function(file){
+                console.log('beforeSendFile::验证文件::md5mark')
+                console.log(file);
+                _formData.append('file', file);
+                //秒传验证
+                var task = new $.Deferred();
+                var start = new Date().getTime();
+                (new WebUploader.Uploader()).md5File(file, 0, 10*1024*1024).progress(function(percentage){
+                    console.log('percentage:', percentage);
+                }).then(function(val){
+
+                    md5Mark = val;
+                    console.log('md5mark', val);
+                    _userInfo.md5 = val;
+
+                    $.ajax({
+                        type: "POST",
+                        url: _backEndUrl,
+                        data: {
+                            status: "md5Check",
+                            md5: val
+                        },
+                        cache: false,
+                        timeout: 1000, //todo 超时的话，只能认为该文件不曾上传过
+                        dataType: "json"
+                    }).then(function(data, textStatus, jqXHR){
+
+                        if(data.ifExist){   //若存在，这返回失败给WebUploader，表明该文件不需要上传
+                            task.reject();
+
+                            uploader.skipFile(file);
+                            file.path = data.path;
+                            UploadComlate(file);
+                        }else{
+                            task.resolve();
+                            //拿到上传文件的唯一名称，用于断点续传
+                            uniqueFileName = hex_md5(_userInfo.openid+_userInfo.time);
+                        }
+                    }, function(jqXHR, textStatus, errorThrown){    //任何形式的验证失败，都触发重新上传
+                        task.resolve();
+                        //拿到上传文件的唯一名称，用于断点续传
+                        uniqueFileName = hex_md5(_userInfo.openid+_userInfo.time);
+                    });
+                });
+                return $.when(task);
+            }
+            , beforeSend: function(block){
+                console.log('beforeSend::验证分片::chunkCheck')
+                //分片验证是否已传过，用于断点续传
+                var task = new $.Deferred();
+                $.ajax({
+                    type: "POST"
+                    , url: _backEndUrl
+                    , data: {
+                        status: "chunkCheck"
+                        , name: uniqueFileName
+                        , chunkIndex: block.chunk
+                        , size: block.end - block.start
+                    }
+                    , cache: false
+                    , timeout: 1000 //todo 超时的话，只能认为该分片未上传过
+                    , dataType: "json"
+                }).then(function(data, textStatus, jqXHR){
+                    if(data.ifExist){   //若存在，返回失败给WebUploader，表明该分块不需要上传
+                        task.reject();
+                    }else{
+                        task.resolve();
+                    }
+                }, function(jqXHR, textStatus, errorThrown){    //任何形式的验证失败，都触发重新上传
+                    task.resolve();
+                });
+
+                return $.when(task);
+            }
+            , afterSendFile: function(file){
+                console.log('afterSendFile::完成上传')
+                var chunksTotal = 0;
+                if((chunksTotal = Math.ceil(file.size/chunkSize)) > 1){
+                    //合并请求
+                    var task = new $.Deferred();
+                    $.ajax({
+                        type: "POST"
+                        , url: _backEndUrl
+                        , data: {
+                            status: "chunksMerge"
+                            , name: uniqueFileName
+                            , chunks: chunksTotal
+                            , ext: file.ext
+                            , md5: md5Mark
+                        }
+                        , cache: false
+                        , dataType: "json"
+                    }).then(function(data, textStatus, jqXHR){
+
+                        //todo 检查响应是否正常
+
+                        task.resolve();
+                        file.path = data.path;
+                        UploadComlate(file);
+
+                    }, function(jqXHR, textStatus, errorThrown){
+                        task.reject();
+                    });
+
+                    return $.when(task);
+                }else{
+                    UploadComlate(file);
+                }
+            }
+        });
+
+        var uploader = WebUploader.create({
+            swf: SWF_PATCH,
+            server: _backEndUrl,     //服务器处理文件的路径
+            pick: "#picker",        //指定选择文件的按钮，此处放的是id
+            resize: false,
+            // dnd: "#theList",        //上传文件的拖拽容器（即，如果选择用拖拽的方式选择文件进行上传，应该要把文件拖拽到的区域容器）
+            // paste: document.body,   //[可选] [默认值：undefined]指定监听paste事件的容器，如果不指定，不启用此功能。此功能为通过粘贴来添加截屏的图片。建议设置为document.body
+            // disableGlobalDnd: true, //[可选] [默认值：false]是否禁掉整个页面的拖拽功能，如果不禁用，图片拖进来的时候会默认被浏览器打开。
+            compress: false, //是否压缩
+            prepareNextFile: true, //预先准备下一个文件
+            chunked: true, //是否启用分片
+            chunkSize: chunkSize, //分片大小
+            chunkRetry: 2, //[可选] [默认值：2]如果某个分片由于网络问题出错，允许自动重传多少次？
+            threads: 1, //[可选] [默认值：3] 上传并发数。允许同时最大上传进程数。
+            formData: {},
+            fileNumLimit: 1,
+            // fileSingleSizeLimit: 50 * 1024 * 1024,// 限制在50M
+            duplicate: true, //去重，根据文件名、大小、修改时间生成hash key
+            accept: {
+                title: '大文件上传',  //文字描述
+                extensions: EXTENSIONS,     //允许的文件后缀，不带点，多个用逗号分割。,jpg,png,
+                mimeTypes: MIMETYPE,      //多个用逗号分割。image/*,
+            },
+        });
+
+        /**
+         * 验证文件格式以及文件大小
+         */
+        uploader.on("error",function (type,handler){
+            if (type=="Q_TYPE_DENIED"){
+                console.log('请上传MP4格式的视频~');
+                // swal({
+                //     title:'',
+                //     text: '请上传MP4格式的视频~',
+                //     type: "warning",
+                //     confirmButtonColor: "#DD6B55",
+                //     confirmButtonText: "我知道了",
+                // });
+            }else if(type=="F_EXCEED_SIZE"){
+                console.log('视频大小不能超过50M哦~');
+                // swal({
+                //     title:'',
+                //     text: '视频大小不能超过50M哦~',
+                //     type: "warning",
+                //     confirmButtonColor: "#DD6B55",
+                //     confirmButtonText: "我知道了",
+                // });
+            }
+        });
+
+        uploader.on("fileQueued", function(file){
+            console.log('fileQueued');
+            $('#thelist').show();
+            $("#thelist").append('<li id="'+file.id+'" class="upload_li">' +
+                ' <img /> <span class="file_name upload_li">'+file.name+'</span></li><li class="upload_li"><span class="itemUpload weui-btn weui-btn_mini weui-btn_primary">上传</span><span class="itemStop weui-btn weui-btn_mini weui-btn_default">暂停</span><span class="itemDel weui-btn weui-btn_mini weui-btn_warn">删除</span></li><li class="upload_li">' +
+                '<div id="percentage'+file.id+'" class="percentage"><div class="weui-progress__bar"><div class="weui-progress__inner-bar js_progress" style="width: 0%;"></div> <b id="pers"></b> </div></div>' +
+                '</li>');
+            var $img = $("#" + file.id).find("img");
+            //生成缩略图
+            uploader.makeThumb(file, function(error, src){
+                if(error){
+                    $img.replaceWith("<span class='no_view'>视频暂不能预览</span>");
+                }
+                $img.attr("src", src);
+            });
+
+        });
+
+        $("#thelist").on("click", ".itemUpload", function(){
+            console.log('文件开始上传');
+            uploader.upload();
+
+            //"上传"-->"暂停"
+            $(this).hide();
+            $(".itemStop").css('display','inline-block');
+            $(".itemStop").show();
+        });
+
+        $("#thelist").on("click", ".itemStop", function(){
+            console.log('文件暂停上传');
+            uploader.stop(true);
+
+            //"暂停"-->"上传"
+            $(this).hide();
+            $(".itemUpload").show();
+        });
+
+        //todo 如果要删除的文件正在上传（包括暂停），则需要发送给后端一个请求用来清除服务器端的缓存文件
+        $("#thelist").on("click", ".itemDel", function(){
+            uploader.removeFile($('.upload_li').attr("id"));	//从上传文件列表中删除
+
+            $('.upload_li').remove();	//从上传列表dom中删除
+        });
+
+        //正在上传
+        uploader.on("uploadProgress", function(file, percentage){
+            console.log('uploader.on(uploadProgress::percentage');
+            $(".percentage").find('.js_progress').css("width",percentage * 100 + "%");
+            // $(".percentage").find('#pers').text(parseFloat(percentage * 100).toFixed(2) + "%");
+            $(".percentage").find('#pers').text(parseInt(percentage * 100) + "%");
+        });
+        //上传成功
+        uploader.on( 'uploadSuccess', function( file ) {
+            console.log('uploader.on(uploadSuccess::');
+            $( '#'+file.id ).find('p.state').text('已上传');
+        });
+        //上传失败
+        uploader.on( 'uploadError', function( file, response ) {
+            console.log('uploader.on(uploadError::', response);
+            $( '#'+file.id ).find('p.state').text('上传出错');
+        });
+        //上传完成
+        uploader.on( 'uploadComplete', function( file , response) {
+            console.log('uploader.on(uploadComplete::', response);
+            $( '#'+file.id ).find('.progress').fadeOut();
+        });
+
+        function UploadComlate(file){
+            console.log(file);
+            if(file && file.name){
+                $('#vedio').val(file.name);
+                $(".percentage").find('#pers').html("<span style='color:green;'>上传完毕</span>");
+                $(".itemStop").hide();
+                $(".itemUpload").hide();
+                $(".itemDel").hide();
+            }else{
+                $(".percentage").find('#pers').html("<span style='color:red;'>上传失败，请您检查网络状况~</span>");
+                $(".itemStop").hide();
+                $(".itemUpload").hide();
+            }
+        }
+    })
+</script>
+</html>

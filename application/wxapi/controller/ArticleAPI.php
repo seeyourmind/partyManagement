@@ -208,7 +208,8 @@ class ArticleAPI
             $category = $request->post('category');
 
             //用户身份验证
-            if((!checkWechatId($wechat_id)) || !$category){
+            $uid = checkWechatId($wechat_id);
+            if(!$uid || !$category){
                 return json([
                     'flag' => 'F',
                     'msg' => '非法用户访问'
@@ -217,7 +218,7 @@ class ArticleAPI
                 try{
                     $article = new Article();
                     $category = $category == 1? '通知公告': '时事新闻';
-                    $res = $article->getLatestThressArticleWithCategory($category);
+                    $res = $article->getLatestThressArticleWithCategory($category, $uid);
                     return json([
                         'flag' => 'S',
                         'msg' => $res

@@ -52,13 +52,33 @@ class Article extends Model
     /**
      * 获取最新三则文章
      * @param $category
+     * @param $uid
+     * @return mixed
+     */
+    public function getLatestThressArticleWithCategory($category, $uid){
+        if ($category == '通知公告'){
+            $res = Db::query("SELECT id, level1 AS department, level2 AS category, title, time, 
+                                    IF(id IN (SELECT aid FROM user_message WHERE uid = $uid), TRUE, FALSE) AS have_read 
+                                    FROM article WHERE level2 = '$category' ORDER BY TIME DESC LIMIT 3");
+        } else {
+            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot
+                                    FROM article, hot_article
+                                    WHERE level2 = '时事新闻' AND article.id = hot_article.aid
+                                    ORDER BY TIME DESC LIMIT 3");
+        }
+        return $res;
+    }
+
+    /**
+     * 获取指定ID的文章内容
+     * @param $id
      * @return false|\PDOStatement|string|\think\Collection
      * @throws \think\db\exception\DataNotFoundException
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function getLatestThressArticleWithCategory($category){
-        $res = Article::where('level2', '=', $category)->order('time', 'desc')->limit(3)->select();
-        return $res;
+    public function getContentWithArticleId($id){
+        $res = Article::field('title, content')->where('id', '=', $id)->select();
+        return $res[0];
     }
 }

@@ -34,6 +34,7 @@ return [
     'getAllArticles' => 'api/ArticleApi/getAllArticles',
     'getArticleWithID' => 'api/ArticleApi/getArticleWithID',
     'uploadImage' => 'api/UploadApi/uploadImage',
+    'uploadVideo' => 'api/UploadApi/uploadVideoFromMine',
 
     'admin/login' => 'admin/login/login',
     'admin/login/check_in' => 'admin/login/check_in',
@@ -45,6 +46,9 @@ return [
     'admin/article_management' => 'admin/articleManagement/index',
     'admin/new_article' => 'admin/articleManagement/newArticle',
     'admin/activities_management' => 'admin/activitiesManagement/index',
+    'admin/video_management' => 'admin/video_management/index',
+
+    'wxapi/article_detail' => 'admin/article_detail/index',
 
     'wxapi/get_wechatid_by_jscode' => 'wxapi/loginAPI/get_wechatid_by_jscode',
     'wxapi/verify_registration' => 'wxapi/loginAPI/use_wechatid_register',
@@ -55,5 +59,6 @@ return [
     'wxapi/get_user_read_message_list' => 'wxapi/articleAPI/get_user_read_message_list',
     'wxapi/user_watch_article' => 'wxapi/articleAPI/user_watch_article',
     'wxapi/get_user_not_read_message_count' => 'wxapi/articleAPI/get_user_not_read_message_count',
-    'wxapi/get_latest_three_article' => 'wxapi/articleAPI/get_latest_three_article'
+    'wxapi/get_latest_three_article' => 'wxapi/articleAPI/get_latest_three_article',
+
 ];

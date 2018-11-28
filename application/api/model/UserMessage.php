@@ -45,9 +45,9 @@ class UserMessage extends Model
      * @return mixed
      */
     public function getReadOrNotMessages($uid){
-        $res = Db::query("SELECT id, level1 AS department, level2 AS category, title, content, time, have_read FROM (
-        SELECT *, '0' AS have_read FROM article WHERE level2='通知公告' AND id NOT IN ( SELECT aid FROM user_message WHERE uid = $uid )
-        UNION SELECT *, '1' AS have_read FROM article WHERE level2='通知公告' AND id IN ( SELECT aid FROM user_message WHERE uid = $uid )
+        $res = Db::query("SELECT id, level1 AS department, title, time, have_read FROM (
+        SELECT *, false AS have_read FROM article WHERE level2='通知公告' AND id NOT IN ( SELECT aid FROM user_message WHERE uid = $uid )
+        UNION SELECT *, true AS have_read FROM article WHERE level2='通知公告' AND id IN ( SELECT aid FROM user_message WHERE uid = $uid )
         ) AS tablea ORDER BY time DESC");
 
         return $res;

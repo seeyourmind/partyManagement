@@ -51,6 +51,7 @@
 <script>
     var category_of_article = JSON.parse('{$category}');
     var ckeditor;
+    var upload_url_cke = 'http://localhsot';
     const web_head = '<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no" />';
     // 富文本编辑器
     document.addEventListener("DOMContentLoaded", function(event){
@@ -58,7 +59,7 @@
         DecoupledEditor
             .create(document.querySelector('#ckeditor'), {
                 ckfinder: {
-                    uploadUrl: 'http://214v063q02.iask.in/uploadImage'
+                    uploadUrl: upload_url_cke + '/uploadImage'
                 }
             })
             .then(

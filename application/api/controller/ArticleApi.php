@@ -28,9 +28,26 @@ class ArticleApi extends Controller
     public function insertArticle(Request $request) {
         is_null($request) && $request;
         if($request->isPost()){
-            $data = $request->post()['data'];
-            $flag = 'F';
-            $msg = '服务器未获取到数据';
+            $data = array(
+                'title' => $request->post('title'),
+                'level1' => $request->post('level1'),
+                'level2' => $request->post('level2'),
+                'content' => $request->post('content'),
+                'time' => $request->post('time')
+                );
+
+            $cover_file = $request->file('cover');
+            $msg = '';
+            if(!empty($cover_file)){
+                //todo 上传封面，并保存
+                $info = $cover_file->move(ROOT_PATH.'uploads'.DS.'images');
+                if($info){
+                    $cover_path = $info->getSaveName();
+                    $cover_path = str_replace('\\', '/', $cover_path);
+                    $msg = 'FS';
+                    $data['cover'] = $cover_path;
+                }
+            }
             $article = new Article();
             $hot_article = new HotArticle();
             try{
@@ -40,7 +57,7 @@ class ArticleApi extends Controller
                     if($res2){
                         return json([
                             'flag' => 'S',
-                            'msg' => '文章发布成功'
+                            'msg' => '文章发布成功'.$msg
                         ]);
                     } else {
                         return json([

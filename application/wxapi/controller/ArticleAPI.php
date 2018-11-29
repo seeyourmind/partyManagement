@@ -18,6 +18,62 @@ use think\Request;
 class ArticleAPI
 {
     /**
+     * 获取新闻列表
+     * 支持分页
+     * @param Request $request
+     * @return \think\response\Json
+     */
+    public function get_all_news_list(Request $request){
+        is_null($request) && $request;
+        if($request->isPost()){
+            $wechat_id = $request->post('wechatId');
+            $c_page = $request->post('cPage');
+            $page_num = $request->post('pageNum');
+
+            if(!checkWechatId($wechat_id)){
+                return json([
+                    'flag' => 'F',
+                    'msg' => '非法用户访问'
+                ]);
+            } elseif($c_page<=0 || $page_num<0) {
+                return json([
+                    'flag' => 'F',
+                    'msg' => '请确保您输入的参数有效'
+                ]);
+            } else {
+                try{
+                    $article = new Article();
+                    $res = $article->getAllNewsList($c_page, $page_num);
+                    if ($res){
+                        return json([
+                            'flag' => 'S',
+                            'msg' => $res
+                        ]);
+                    } else {
+                        return json([
+                            'flag' => 'F',
+                            'msg' => '未获取该用户的消息列表'
+                        ]);
+                    }
+                } catch (Exception $e){
+                    return json([
+                        'flag'  =>  'F',
+                        'code'  =>  $e->getCode(),
+                        'msg'   =>  $e->getMessage(),
+                        'file'  =>  $e->getFile(),
+                        'line'  =>  $e->getLine()
+                    ]);
+                }
+            }
+        } else {
+            return json([
+                'flag' => 'F',
+                'msg' => '您使用的请求方式无效，请使用POST方式请求服务器'
+            ]);
+        }
+    }
+
+    /**
      * 获取用户消息列表
      * @param Request $request
      * @return \think\response\Json
@@ -26,6 +82,9 @@ class ArticleAPI
         is_null($request) && $request;
         if($request->isPost()){
             $wechat_id = $request->post('wechatId');
+            $c_page = $request->post('cPage');
+            $page_num = $request->post('pageNum');
+
             // 用户身份校验
             $uid = checkWechatId($wechat_id);
             if(!$uid){
@@ -33,10 +92,15 @@ class ArticleAPI
                     'flag' => 'F',
                     'msg' => '非法用户访问'
                 ]);
+            } elseif($c_page<=0 || $page_num<0){
+                return json([
+                    'flag' => 'F',
+                    'msg' => '请确保您输入的参数有效'
+                ]);
             } else {
                 try{
                     $user_message = new UserMessage();
-                    $res = $user_message->getReadOrNotMessages($uid);
+                    $res = $user_message->getReadOrNotMessages($uid, $page_num, $c_page);
                     if ($res){
                         return json([
                             'flag' => 'S',

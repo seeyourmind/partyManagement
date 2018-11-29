@@ -24,6 +24,11 @@
                 <button id="ctlBtn" class="btn btn-default" style="padding:8px 15px;">开始上传</button>
             </td>
         </tr>
+        <tr>
+            <td>
+                <input id="vDetail" type="text" placeholder="请输入视频文件的描述" />
+            </td>
+        </tr>
     </table>
 </div>
 </body>
@@ -64,12 +69,6 @@
         var chunkSize = 10 * 1024 * 1024;        //分块大小
         var uniqueFileName = null;          //文件唯一标识符
         var md5Mark = null;
-        var _userInfo = {
-            md5: '',
-            openid: '12345',
-            time: new Date().getTime()
-        };
-        var _formData = new FormData();
 
         var _backEndUrl = SERVERURL; //后台接口地址
 
@@ -81,7 +80,7 @@
             beforeSendFile: function(file){
                 console.log('beforeSendFile::验证文件::md5mark')
                 console.log(file);
-                _formData.append('file', file);
+
                 //秒传验证
                 var task = new $.Deferred();
                 var start = new Date().getTime();
@@ -91,7 +90,6 @@
 
                     md5Mark = val;
                     console.log('md5mark', val);
-                    _userInfo.md5 = val;
 
                     $.ajax({
                         type: "POST",
@@ -114,12 +112,12 @@
                         }else{
                             task.resolve();
                             //拿到上传文件的唯一名称，用于断点续传
-                            uniqueFileName = hex_md5(_userInfo.openid+_userInfo.time);
+                            uniqueFileName = hex_md5($('#detail').val()+start);
                         }
                     }, function(jqXHR, textStatus, errorThrown){    //任何形式的验证失败，都触发重新上传
                         task.resolve();
                         //拿到上传文件的唯一名称，用于断点续传
-                        uniqueFileName = hex_md5(_userInfo.openid+_userInfo.time);
+                        uniqueFileName = hex_md5($('#detail').val()+start);
                     });
                 });
                 return $.when(task);
@@ -167,15 +165,15 @@
                             , chunks: chunksTotal
                             , ext: file.ext
                             , md5: md5Mark
+                            , detail: $('#vDetail').val()
                         }
                         , cache: false
                         , dataType: "json"
                     }).then(function(data, textStatus, jqXHR){
-
+                        console.log('chunk merge', data);
                         //todo 检查响应是否正常
-
                         task.resolve();
-                        file.path = data.path;
+                        file.path = data.flag;
                         UploadComlate(file);
 
                     }, function(jqXHR, textStatus, errorThrown){
@@ -307,8 +305,8 @@
         });
 
         function UploadComlate(file){
-            console.log(file);
-            if(file && file.name){
+            console.log('uploadComplete ',file);
+            if(file && file.name && (file.path === 'S')){
                 $('#vedio').val(file.name);
                 $(".percentage").find('#pers').html("<span style='color:green;'>上传完毕</span>");
                 $(".itemStop").hide();

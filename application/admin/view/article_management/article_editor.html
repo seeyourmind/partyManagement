@@ -4,11 +4,25 @@
 {block name="content_main"}
 <section class="content"  style="width: 90%;margin-left: 2%;">
     <form id="article_form" role="form">
-        <div class="input-group mb-3">
-            <div class="input-group-prepend">
-                <span class="input-group-text">标题</span>
+        <div class="row">
+            <div class="col-lg-6">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">标题</span>
+                    </div>
+                    <input type="text" class="form-control" id="title" name="title" placeholder="请输入文章标题" value="{$article.title}">
+                </div>
             </div>
-            <input type="text" class="form-control" id="title" name="title" placeholder="请输入文章标题" value="{$article.title}">
+            <div class="col-lg-6">
+                <div class="input-group mb-3">
+                    <div class="input-group">
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="coverImage" name="file" accept="image/*">
+                            <label class="custom-file-label" for="coverImage" id="coverImageLabel">{$article.cover?$article.cover:'请选择需要上传的文章封面'}</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="row">
             <div class="col-lg-6">
@@ -80,6 +94,12 @@
             $('#level2-select').append("<option value='"+category_of_article[category]['level2']+"'>"+category_of_article[category]['level2']+"</option>");
         }
     });
+    // 获取封面文件路径
+    $('#coverImage[type="file"]').change(function () {
+        var coverFiles = $('#coverImage[type="file"]')[0].files[0];
+        $('#coverImageLabel').html(coverFiles.name);
+        console.log(coverFiles);
+    });
     // 添加新文章
     function addNewArticle() {
         // console.log('add new article', true);
@@ -87,6 +107,8 @@
         var d = {};
         var t = $('#article_form').serializeArray();
         var data = '';
+        var fd = new FormData();
+
         const ckeditor_data = ckeditor.getData();
         // console.log('ckeditor:', ckeditor_data)
         if (ckeditor_data != "<p>&nbsp;</p>"){
@@ -97,8 +119,12 @@
             if(this.value.length>1){
                 if(this.name == 'level2_i' || this.name == 'level2_s'){
                     d['level2'] = this.value;
+                    fd.append('level2', this.value);
+                } else if(this.name == 'file') {
+                    console.log('cover get ')
                 } else {
                     d[this.name] = this.value;
+                    fd.append(this.name, this.value);
                 }
             } else {
                 if(this.name == 'level2_i' || this.name== 'level2_s'){
@@ -110,6 +136,7 @@
         if(d['level2']){}else{null_msg += '文章分类不能为空;'}
         if(data.length>1){
             d['content'] = web_head + data;
+            fd.append('content', web_head+data);
         } else {
             null_msg += 'ckdata不能为空;'
         }
@@ -117,20 +144,25 @@
             swal('Oops!', null_msg, 'warning');
             // console.log(new Array(d));
         } else {
-            var update = formDate();
-            d['time'] = update;
-            // console.log(new Array(d));
+            d['time'] = formDate();
+            fd.append('time', formDate());
+            fd.append('cover', $('#coverImage[type="file"]')[0].files[0]);
+            console.log(d);
             $.ajax({
                 type: 'post',
                 url: '/insertArticle',
-                data: {'data': d},
+                data: fd,
                 dataType: 'json',
+                contentType: false, // 注意这里应设为false
+                processData: false,
+                cache: false,
                 success: function (res) {
                     // console.log('后台返回数据',res)
                     if(res.flag === 'S'){
                         swal('恭喜！', res.msg, 'success', 'OK');
                     } else {
                         swal('Oops!', res.mag, 'info');
+                        console.log(res);
                     }
                 },
                 error: function (err, zt, yy) {

@@ -69,6 +69,22 @@ class Article extends Model
         return $res;
     }
 
+    public function getAllNewsList($current_page=null, $page_num=null){
+        if(is_null($current_page) || is_null($page_num)){
+            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot
+                                    FROM article, hot_article
+                                    WHERE level2 = '时事新闻' AND article.id = hot_article.aid
+                                    ORDER BY TIME DESC");
+        } else {
+            $start = ($current_page - 1) * $page_num;
+            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot
+                                    FROM article, hot_article
+                                    WHERE level2 = '时事新闻' AND article.id = hot_article.aid
+                                    ORDER BY TIME DESC LIMIT $start, $page_num");
+        }
+        return $res;
+    }
+
     /**
      * 获取指定ID的文章内容
      * @param $id

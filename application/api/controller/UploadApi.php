@@ -8,6 +8,7 @@
 
 namespace app\api\controller;
 
+use app\api\model\VideoManagement;
 use think\Controller;
 use think\Log;
 use think\Request;
@@ -278,10 +279,18 @@ class UploadApi extends Controller
                 }
                 flock($out, LOCK_UN);
                 Log::record('解锁');
+
+                $vm = new VideoManagement();
+                if($vm->insertNewVideo('uploads'.DS.'video'.DS.$file_md5_name.'.'.$file_ext, $_POST['detail'])){
+                    die('{"flag":"S", "msg":"视频上传成功"}');
+                } else {
+                    die('{"flag": "F", "msg":"视频上传失败"}');
+                }
+            } else {
+                die('{"flag": "F", "msg":"视频上传失败"}');
             }
             @fclose($out);
             session_destroy();
-            die('{"status":1}');
         }
     }
 }

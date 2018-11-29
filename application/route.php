@@ -60,5 +60,6 @@ return [
     'wxapi/user_watch_article' => 'wxapi/articleAPI/user_watch_article',
     'wxapi/get_user_not_read_message_count' => 'wxapi/articleAPI/get_user_not_read_message_count',
     'wxapi/get_latest_three_article' => 'wxapi/articleAPI/get_latest_three_article',
+    'wxapi/get_all_news_list' => 'wxapi/articleAPI/get_all_news_list',
 
 ];

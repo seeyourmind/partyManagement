@@ -41,18 +41,35 @@ class UserMessage extends Model
 
     /**
      * 获取用户已读消息和未读消息列表
-     * @param $wechatid
+     * 支持分页
+     * @param $uid
+     * @param null $page_num
+     * @param null $current_page
      * @return mixed
      */
-    public function getReadOrNotMessages($uid){
-        $res = Db::query("SELECT id, level1 AS department, title, time, have_read FROM (
-        SELECT *, false AS have_read FROM article WHERE level2='通知公告' AND id NOT IN ( SELECT aid FROM user_message WHERE uid = $uid )
-        UNION SELECT *, true AS have_read FROM article WHERE level2='通知公告' AND id IN ( SELECT aid FROM user_message WHERE uid = $uid )
-        ) AS tablea ORDER BY time DESC");
+    public function getReadOrNotMessages($uid, $page_num=null, $current_page=null){
+        if(is_null($current_page)||is_null($page_num)){
+            $res = Db::query("SELECT id, level1 AS department, title, time, IF(id IN (SELECT aid FROM user_message WHERE uid = $uid), TRUE, FALSE) AS have_read
+                                    FROM article
+                                    WHERE level2='通知公告'
+                                    ORDER BY time DESC");
+
+        } else {
+            $start = ($current_page - 1) * $page_num;
+            $res = Db::query("SELECT id, level1 AS department, title, time, IF(id IN (SELECT aid FROM user_message WHERE uid = $uid), TRUE, FALSE) AS have_read
+                                    FROM article
+                                    WHERE level2='通知公告'
+                                    ORDER BY time DESC LIMIT $start,$page_num");
+        }
 
         return $res;
     }
 
+    /**
+     * 获取未读消息条数
+     * @param $uid
+     * @return mixed
+     */
     public function getNotReadMessagesCount($uid){
         $res = Db::query("SELECT COUNT(*) AS count_ FROM article WHERE level2='通知公告' AND id NOT IN (SELECT aid FROM user_message WHERE uid = $uid)");
         return $res;

@@ -48,6 +48,8 @@ class UserManagement extends Base
         }
 
         $this->view->assign('users', $result);
+        $this->view->assign('content_header', '党员信息管理');
+        $this->view->assign('active1', 'active');
         return $this->view->fetch('user_management');
     }
 }

@@ -13,7 +13,7 @@
                     <!-- SEARCH -->
                     <div class="card-tools">
                         <div class="input-group input-group-sm">
-                            <input type="text" name="searchUser" class="form-control" placeholder="Search Activity By theme">
+                            <input type="text" name="searchActivity" class="form-control" placeholder="Search Activity By theme">
                             <div class="input-group-append">
                                 <div class="btn btn-primary">
                                     <span onclick="searchForActivity()"><i class="fa fa-search"></i></span>
@@ -34,7 +34,7 @@
                         <button type="button" class="btn btn-default btn-sm" onclick="refreshActivity()"><i class="fa fa-refresh"></i></button>
                         <div class="float-right">
                             <div class="btn-group">
-                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addModal">添加活动</button>
+                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#insertModal">新建活动</button>
                             </div>
                         </div>
                     </div>
@@ -84,28 +84,15 @@
             <!-- Profile Image -->
             <div id="activity_right_card" class="card card-primary card-outline" style="display: none">
                 <div class="card-body box-profile">
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <b>编号：</b><span id="activityid">XXXX</span>
-                        </div>
-                        <div class="col-lg-6">
-                            <b>活动主题：</b><span id="activitytheme">XXXX</span>
-                        </div>
-                    </div>
+                    <b>活动主题：</b><span id="activitytheme">XXXX</span><br>
+                    <b>活动地点：</b><span id="activityaddress">XXXX</span>
                     <hr>
                     <strong>活动描述:</strong><br>
                     <p class="text-muted" id="activitydescribe">
-                        获得五四表彰先进个人奖
+                        XXXXXXXXXX
                     </p>
-                    <div class="row">
-                        <div class="col-lg-6">
-                            <span id="activitystart">A. XXXX</span>
-                        </div>
-                        <div class="col-lg-6">
-                            <span id="activityend">B. XXXX</span>
-                        </div>
-                    </div>
-
+                    <b>时间：</b><span id="activitystart">XXXX</span>
+                    <b> 至 </b><span id="activityend">XXXX</span>
                     <a href="#" class="btn btn-primary btn-block" data-toggle="modal" data-target="#updateModal"><b>修改</b></a>
                 </div>
                 <!-- /.card-body -->
@@ -115,15 +102,169 @@
     </div>
     <!-- /.row -->
 </section>
-<!-- 修改试题详情模态框 -->
-
+<!-- 修改活动详情模态框 -->
+<div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="addOneModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="card card-primary modal-content">
+            <div class="card-header modal-header">
+                <h3 class="card-title">修改活动</h3>
+            </div>
+            <form id="updateform" role="form" style="background-color: #FFFFFF">
+                <div class="card-body modal-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="theme-update">活动主题</label>
+                                <input type="text" class="form-control" id="theme-update" name="name" placeholder="请填写活动主题">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="address-update">活动地点</label>
+                                <input type="text" class="form-control" id="address-update" name="address" placeholder="请填写活动地点">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="describe-update">活动描述</label>
+                        <textarea class="form-control" rows="2" id="describe-update" name="describe" placeholder="请填写活动描述......"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="start-update">开始时间</label>
+                                <input type="datetime-local" class="form-control" id="start-update" name="start_time" placeholder="格式：1921/07/01 00:00">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="end-update">结束时间</label>
+                                <input type="datetime-local" class="form-control" id="end-update" name="end_time" placeholder="格式：1921/07/01 00:00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- /.card-body -->
+            <div class="card-footer modal-footer">
+                <button name="submit" class="btn btn-info" onclick="updateActivity()">修改</button>
+                <button name="cancel" class="btn btn-default float-right" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- 添加试题模态框 -->
-
+<div class="modal fade" id="insertModal" tabindex="-1" role="dialog" aria-labelledby="addOneModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog">
+        <div class="card card-primary modal-content">
+            <div class="card-header modal-header">
+                <h3 class="card-title">新建活动</h3>
+            </div>
+            <form id="insertform" role="form" style="background-color: #FFFFFF">
+                <div class="card-body modal-body">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="theme-insert">活动主题</label>
+                                <input type="text" class="form-control" id="theme-insert" name="name" placeholder="请填写活动主题">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="address-insert">活动地点</label>
+                                <input type="text" class="form-control" id="address-insert" name="address" placeholder="请填写活动地点">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-3">
+                        <label for="describe-insert">活动描述</label>
+                        <textarea class="form-control" rows="2" id="describe-insert" name="describe" placeholder="请填写活动描述......"></textarea>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="start-insert">开始时间</label>
+                                <input type="datetime-local" class="form-control" id="start-insert" name="start_time" placeholder="格式：1921/07/01 00:00">
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+                            <div class="form-group mb-3">
+                                <label for="end-insert">结束时间</label>
+                                <input type="datetime-local" class="form-control" id="end-insert" name="end_time" placeholder="格式：1921/07/01 00:00">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <!-- /.card-body -->
+            <div class="card-footer modal-footer">
+                <button name="submit" class="btn btn-info" onclick="insertActivity()">新建</button>
+                <button name="cancel" class="btn btn-default float-right" data-dismiss="modal">取消</button>
+            </div>
+        </div>
+    </div>
+</div>
 {/block}
 {block name='user_js'}
 <script>
+    var activity_global = null; //全局变量，用来保存一则活动信息
+
+    // 全选设置
+    $('.mailbox-messages input[type="checkbox"]').iCheck({
+        checkboxClass: 'icheckbox_flat-blue',
+        radioClass   : 'iradio_flat-blue'
+    })
+    // 复选框处理函数
+    $('.checkbox-toggle').click(function () {
+        var clicks = $(this).data('clicks')
+        if (clicks) {
+            //Uncheck all checkboxes
+            $('.mailbox-messages input[type=\'checkbox\']').iCheck('uncheck')
+            $('.fa', this).removeClass('fa-check-square-o').addClass('fa-square-o')
+        } else {
+            //Check all checkboxes
+            $('.mailbox-messages input[type=\'checkbox\']').iCheck('check')
+            $('.fa', this).removeClass('fa-square-o').addClass('fa-check-square-o')
+        }
+        $(this).data('clicks', !clicks)
+    })
+    // 删除选中内容
+    function deleteActivity(){
+        var checkedActivities = $('input[type=checkbox]:checked');
+        var checkedID = new Array();
+        $.each(checkedActivities, function () {
+            checkedID.push($(this).val());
+        });
+        console.log(checkedID);
+        if (checkedID.length < 1){
+            alert('请选择要删除的用户');
+        } else {
+            $.ajax({
+                type: 'post',
+                url: '/deleteActivityBYID',
+                data: {'acids':checkedID},
+                dataType: 'json',
+                success: function (res) {
+                    if (res['flag'] === 'S'){
+                        swal('恭喜!', res['msg'], 'success');
+                        window.location.href = "/admin/activities_management";
+                    } else {
+                        swal('Oops!',res['msg'], 'info');
+                    }
+                },
+                error: function (err, tt, kk) {
+                    swal('发生错误', '原因:'+kk, 'error');
+                }
+            })
+        }
+    }
+    // 刷新列表
+    function refreshActivity() {
+        window.location.href="/admin/activities_management";
+    }
+
     //显示右侧详细活动面板
-    $('#activity_id').click(function (e) {
+    $('.mailbox-name').click(function (e) {
         e.preventDefault();
         $('#activity_right_card').show();
         var activity_id = e.target.outerText;
@@ -131,7 +272,7 @@
         $.ajax({
             type: 'post',
             url: '/getActivityWithID',
-            data: {'id':activity_id},
+            data: {'acid':activity_id},
             dataType: 'json',
             success: function (data) {
                 console.log(data['msg']);
@@ -141,25 +282,121 @@
                 var activityID = (activity.id != null && activity.id>=1)?activity.id:'暂无';
                 var activityTHEME = (activity.name != null && (activity.name).length>=1)?activity.name:'暂无';
                 var activityDESCRIBE = (activity.describe != null && (activity.describe).length>=1)?activity.describe:'暂无';
-                var activitySTARTTIME = (activity.item1 != null && (activity.item1).length>=1)?'<b>A.</b> '+activity.item1:'';
-                var activityENDTIME = (activity.item2 != null && (activity.item2).length>=1)?'<b>B.</b> '+activity.item2:'';
-                var activityADDRESS = (activity.item3 != null && (activity.item3).length>=1)?'<b>C.</b> '+activity.item3:'';
+                var activitySTARTTIME = (activity.start_time!= null && (activity.start_time).length>=1)?activity.start_time.slice(0, -3):'暂无';
+                var activityENDTIME = (activity.end_time != null && (activity.end_time).length>=1)?activity.end_time.slice(0, -3):'暂无';
+                var activityADDRESS = (activity.address != null && (activity.address).length>=1)?activity.address:'暂无';
 
-                $('#examid').html(examid);
-                $('#examcategory').html(examcategory);
-                $('#examquestion').html(examquestion);
-                $('#exama').html(exama);
-                $('#examb').html(examb);
-                $('#examc').html(examc);
-                $('#examd').html(examd);
-                $('#examanswer').html(examanswer);
+                $('#activityid').html(activityID);
+                $('#activitytheme').html(activityTHEME);
+                $('#activitydescribe').html(activityDESCRIBE);
+                $('#activityaddress').html(activityADDRESS);
+                $('#activitystart').html(activitySTARTTIME);
+                $('#activityend').html(activityENDTIME);
             },
             error: function (err, tt, kk) {
                 alert('出现错误:'+JSON.stringify(err)+' 状态:'+tt+' 原因:'+kk);
             }
         })
+    });
+    // 向修改模态框写入数据
+    $('#updateModal').on('show.bs.modal', function (e) {
+        $('#activity_right_card').hide();
+        var modal = $(this);
+        modal.find('#theme-update').val(activity_global['name']!=null?activity_global['name']:null);
+        modal.find('#address-update').val(activity_global['address']!=null?activity_global['address']:null);
+        modal.find('#describe-update').val(activity_global['describe']!=null?activity_global['describe']:null);
+        modal.find('#start-update').val(activity_global['start_time']!=null?changeTimeForm(activity_global['start_time']):null);
+        modal.find('#end-update').val(activity_global['end_time']!=null?changeTimeForm(activity_global['end_time']):null);
     })
-    
-})
+    // 修改活动详情
+    function updateActivity() {
+        var d = {};
+        var t = $('#updateform').serializeArray();
+        var param_msg = '';
+        $.each(t, function() {
+            if (this.value.length >= 1){
+                d[this.name] = this.value;
+            } else {
+                param_msg += this.name+'不能为空';
+            }
+        });
+        d['id'] = activity_global['id'];
+        console.log('date=>', d);
+        if(param_msg.length >= 4){
+            swal('Oops!', param_msg, 'info');
+        } else {
+            $.ajax({
+                type: 'post',
+                url: '/updateActivity',
+                data: {data: d},
+                dataType: 'json',
+                success: function (res) {
+                    if(res.flag === 'S'){
+                        $('#updateModal').modal('hide');
+                        swal('恭喜！', res.msg, 'success');
+                    } else {
+                        swal('Oops!', res.msg, 'info');
+                    }
+                },
+                error: function (err, zt, yy) {
+                    swal('发生错误', JSON.stringify(err), 'error');
+                }
+            });
+        }
+    }
+
+    // 新建活动详情
+    function insertActivity() {
+        var d = {};
+        var t = $('#insertform').serializeArray();
+        var param_msg = '';
+        $.each(t, function() {
+            if (this.value.length >= 1){
+                d[this.name] = this.value;
+            } else {
+                param_msg += this.name+'不能为空';
+            }
+        });
+        console.log('date=>', d);
+        if(param_msg.length >= 4){
+            swal('Oops!', param_msg, 'info');
+        } else {
+            $.ajax({
+                type: 'post',
+                url: '/insertNewActivity',
+                data: {data: d},
+                dataType: 'json',
+                success: function (res) {
+                    if(res.flag === 'S'){
+                        $('#insertModal').modal('hide');
+                        swal('恭喜！', res.msg, 'success');
+                    } else {
+                        swal('Oops!', res.msg, 'info');
+                    }
+                },
+                error: function (err, zt, yy) {
+                    swal('发生错误', JSON.stringify(err), 'error');
+                }
+            });
+        }
+    }
+    // 按主题查询活动
+    function searchForActivity() {
+        var theme_key = $("input[ name='searchActivity']").val();
+        if (theme_key) {
+            window.location.href="/admin/activities_management/searchActivity?key="+theme_key;
+        } else {
+            swal('Oops!', '请输入正确的活动主题关键字', 'info');
+        }
+    }
+
+    // 改变时间的格式
+    function changeTimeForm(time_str) {
+        var time_arr = time_str.split(' ');
+        var result = time_arr[0]+'T'+time_arr[1];
+        // console.log('time_arr:', time_arr);
+        return result;
+    }
+
 </script>
 {/block}

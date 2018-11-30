@@ -35,6 +35,10 @@ return [
     'getArticleWithID' => 'api/ArticleApi/getArticleWithID',
     'uploadImage' => 'api/UploadApi/uploadImage',
     'uploadVideo' => 'api/UploadApi/uploadVideoFromMine',
+    'getActivityWithId' => 'api/ActivityApi/getActivityWithId',
+    'updateActivity' => 'api/ActivityApi/updateActivity',
+    'deleteActivityByID' => 'api/ActivityApi/deleteActivityByID',
+    'insertNewActivity' => 'api/ActivityApi/insertNewActivity',
 
     'admin/login' => 'admin/login/login',
     'admin/login/check_in' => 'admin/login/check_in',
@@ -46,6 +50,7 @@ return [
     'admin/article_management' => 'admin/articleManagement/index',
     'admin/new_article' => 'admin/articleManagement/newArticle',
     'admin/activities_management' => 'admin/activitiesManagement/index',
+    'admin/activities_management/searchActivity' => 'admin/activitiesManagement/searchActivity',
     'admin/video_management' => 'admin/video_management/index',
 
     'wxapi/article_detail' => 'admin/article_detail/index',

@@ -13,7 +13,7 @@ use app\extra\Vupload;
 use think\Controller;
 use think\Request;
 
-class VideoAPI extends Controller
+class VideoApi extends Controller
 {
 
     public function upload_video(Request $request)

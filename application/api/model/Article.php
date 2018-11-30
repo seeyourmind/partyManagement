@@ -69,6 +69,13 @@ class Article extends Model
         return $res;
     }
 
+    /**
+     * 获取新闻列表
+     * 支持分页
+     * @param null $current_page
+     * @param null $page_num
+     * @return mixed
+     */
     public function getAllNewsList($current_page=null, $page_num=null){
         if(is_null($current_page) || is_null($page_num)){
             $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot

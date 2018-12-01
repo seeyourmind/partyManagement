@@ -1,70 +1,187 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-    <title>PHP</title>
-    <!--引入jQuery-->
-    <script type="text/javascript" src="__ADMIN__/plugins/jquery/jquery.min.js"></script>
-    <!--引入CSS-->
-    <link rel="stylesheet" type="text/css" href="__ADMIN__/plugins/WebUploader/webuploader.css">
-    <!--引入JS-->
-    <script type="text/javascript" src="__ADMIN__/plugins/WebUploader/webuploader.js"></script>
-    <!--引入MD5-->
-    <script type="text/javascript" src="__ADMIN__/plugins/MD5/md5.js"></script>
-</head>
-<body>
-<div id="thelist" class="uploader-list"></div>
-<div class="btns">
-    <table style="width: 300px;" border="1">
-        <tr align="right">
-            <td>
-                <div id="picker" style="float:left">选择文件</div>
-            </td>
-            <td>
-                <button id="ctlBtn" class="btn btn-default" style="padding:8px 15px;">开始上传</button>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <input id="vDetail" type="text" placeholder="请输入视频文件的描述" />
-            </td>
-        </tr>
-    </table>
-</div>
-</body>
+{extend name="public/base" />
+{block name="user_css"}
+<!--引入CSS-->
+<link rel="stylesheet" type="text/css" href="__ADMIN__/plugins/WebUploader/webuploader.css">
+<style>
+    .video-box{
+        background-color: #000000;
+        border-radius: 10px;
+        width: 200px;
+        height: 200px;
+        margin: 10px;
+        float: left;
+        position: relative;
+    }
+    .video-mask{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 200px;
+        background-color: rgba(0,0,0,0.7);
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        display: none;
+    }
+    .video-mask p{
+        position: absolute;
+        bottom: 0;
+    }
+    .video-mask span{
+        position: absolute;
+        bottom: 0;
+        top: 80px;
+    }
+    .video-mask span:hover{
+        color: #5d6974;
+    }
+    video{
+        width: 200px;
+        height: 200px;
+    }
+    .upload-video-info-panel{
+        box-shadow: -1px 1px 2px #c1c6d7;
+        border: 1px solid #f0f0f0;
+        border-radius: 10px;
+        padding: 10px;
+        display: none;
+    }
+    .upload-video-button-group{
+        position: absolute;
+        bottom: 10px;
+        right: 50px;
+    }
+</style>
+{/block}
+{block name="content_main"}
+<section class="content">
+    <div class="card card-primary card-outline" style="width: 95%">
+        <!--  HEAD -->
+        <div class="card-header">
+            <h3 class="card-title">Video List</h3>
+            <!-- SEARCH -->
+            <div class="card-tools">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="searchVideo" class="form-control" placeholder="Search Keywords">
+                    <div class="input-group-append">
+                        <div class="btn btn-primary">
+                            <span onclick="searchVideo()"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- TOOL -->
+        <div class="card-body p-0">
+            <div class="mailbox-controls">
+                <!-- refresh button -->
+                <button type="button" class="btn btn-default btn-sm" onclick="refreshVideoList()"><i class="fa fa-refresh"></i></button>
+                <div class="float-right">
+                    <div class="btn-group">
+                        <button id="show-panel-button" type="button" class="btn btn-success btn-sm" onclick="showUploadPanel()">上传视频</button>
+                        <button id="close-panel-button" type="button" class="btn btn-danger btn-sm" onclick="hideUploadPanel()" style="display: none;">关闭上传</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 上传视频面板 -->
+        <div id="upload-video-panel" class="card-body modal-body" style="display: none;">
+            <div class="row">
+                <div class="form-group mb-3 col-lg-6">
+                    <label for="category-upload">视频分类</label>
+                    <input type="text" class="form-control" id="category-upload" placeholder="请填写视频分类信息">
+                    <div class="form-group mb-3" style="margin-top: 10px;" id="picker">选择视频</div>
+                </div>
+                <div class="col-lg-6 upload-video-info-panel" id="thelist">
+                    <b id="video-name">视频名称：</b><br>
+                    <b id="video-size">视频大小：</b><br>
+                    <div class="progress active" style="margin-top: 10px;">
+                        <div class="progress-bar bg-success  progress-striped" role="progressbar"
+                             aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+                             style="width: 0%;">
+                        </div><b id="progress-text">准备中...</b>
+                    </div>
+                    <div id="upload-result-msg"></div>
+                    <div class="row upload-video-button-group">
+                        <button type="button" class="itemUpload btn btn-success btn-sm">上传</button>
+                        <button type="button" class="itemStop btn btn-warning btn-sm">暂停</button>
+                        <button type="button" class="itemDel btn btn-danger btn-sm">删除</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 视频列表 -->
+        <div id="videos-body">
+            {volist name='video_list' id='video'}
+            <div class="video-box" id="box_id">
+                <video preload="metadata">
+                    <source src="/uploads/video/e9c0968ed27faa463b2973c44b9594dd.mp4#t=0" type="video/mp4">
+                </video>
+                <div class="video-mask" id="mask_id">
+                    <div class="row">
+                        <span style="left: 20px;"><i class="fa fa-play-circle fa-3x"></i></span>
+                        <span style="right: 20px;"><i class="fa fa-trash fa-3x"></i></span>
+                    </div>
+                    <p>视频的标题<br>视频的分类</p>
+                </div>
+            </div>
+            {/volist}
+        </div>
+        <!-- 分页 -->
+        <div class="card-footer p-0">
+            <div class="mailbox-controls">
+                <div class="float-right">
+
+                </div>
+                <!-- /.float-right -->
+            </div>
+        </div>
+    </div>
+</section>
+{/block}
+{block name="user_js"}
+<!--引入JS-->
+<script type="text/javascript" src="__ADMIN__/plugins/WebUploader/webuploader.js"></script>
+<!--引入MD5-->
+<script type="text/javascript" src="__ADMIN__/plugins/MD5/md5.js"></script>
 <script>
     const SWF_PATCH = '__ADMIN__/plugins/WebUploader/Uploader.swf';
     const SERVERURL = '/uploadVideo';
     const EXTENSIONS = '3gp,mp4,rmvb,mov,avi,m4v,mkv';
     const MIMETYPE = 'video/*,audio/*,application/*';
+    var web_uploader_gl = null;
 
-    function upload () {
-        var video_file = $("#video_file")[0].files[0];
-        console.log(video_file);
-        const SLICESIZE = 45 * 1024 * 1024;//每次切割的大小，这里是10MB//此处可做修改
-        var start = 0;   //初始化截取开始位置
-        var end = 0;   //初始化截取终止位置
-
-        if(video_file){
-            var fd = new FormData();
-            fd.append('video_file', video_file);
-            fd.append('file_name', video_file['name']);
-            $.ajax({
-                type: 'POST',
-                url: SERVERURL,
-                data: fd,
-                cache: false,
-                timeout: 1000,
-                processData: false,
-                contentType: false,
-                dataType: 'json'
-            }).then(function ($res) {
-                console.log($res)
-            })
+    // 视频单元的遮罩控制
+    $(document).ready(function () {
+        $(".video-box").mouseover(function () {
+            $(".video-mask", this).show();
+        })
+        $(".video-box").mouseout(function () {
+            $(".video-mask", this).hide();
+        })
+    })
+    
+    // 显示上传面版
+    function showUploadPanel() {
+        $("#upload-video-panel").show();
+        $("#close-panel-button").show();
+        $("#show-panel-button").hide();
+        if(!web_uploader_gl){
+            initWebUploader();
         }
     }
+    // 隐藏上传面版
+    function hideUploadPanel() {
+        $("#upload-video-panel").hide();
+        $("#close-panel-button").hide();
+        $(".upload-video-info-panel").hide();
+        $("#show-panel-button").show();
+        $("#category-upload").val("");
+    }
 
-    $(function (){
+    // 初始化WebUploader
+    function initWebUploader () {
         console.log('this is init function')
         var chunkSize = 10 * 1024 * 1024;        //分块大小
         var uniqueFileName = null;          //文件唯一标识符
@@ -165,7 +282,7 @@
                             , chunks: chunksTotal
                             , ext: file.ext
                             , md5: md5Mark
-                            , detail: $('#vDetail').val()
+                            , detail: $('#category-upload').val()
                         }
                         , cache: false
                         , dataType: "json"
@@ -187,7 +304,7 @@
             }
         });
 
-        var uploader = WebUploader.create({
+        web_uploader_gl = new WebUploader.Uploader({
             swf: SWF_PATCH,
             server: _backEndUrl,     //服务器处理文件的路径
             pick: "#picker",        //指定选择文件的按钮，此处放的是id
@@ -204,7 +321,7 @@
             formData: {},
             fileNumLimit: 1,
             // fileSingleSizeLimit: 50 * 1024 * 1024,// 限制在50M
-            duplicate: true, //去重，根据文件名、大小、修改时间生成hash key
+            duplicate: false, //去重，根据文件名、大小、修改时间生成hash key
             accept: {
                 title: '大文件上传',  //文字描述
                 extensions: EXTENSIONS,     //允许的文件后缀，不带点，多个用逗号分割。,jpg,png,
@@ -215,7 +332,7 @@
         /**
          * 验证文件格式以及文件大小
          */
-        uploader.on("error",function (type,handler){
+        web_uploader_gl.on("error",function (type,handler){
             if (type=="Q_TYPE_DENIED"){
                 console.log('请上传MP4格式的视频~');
                 // swal({
@@ -237,87 +354,87 @@
             }
         });
 
-        uploader.on("fileQueued", function(file){
+        web_uploader_gl.on("fileQueued", function(file){
             console.log('fileQueued');
             $('#thelist').show();
-            $("#thelist").append('<li id="'+file.id+'" class="upload_li">' +
-                ' <img /> <span class="file_name upload_li">'+file.name+'</span></li><li class="upload_li"><span class="itemUpload weui-btn weui-btn_mini weui-btn_primary">上传</span><span class="itemStop weui-btn weui-btn_mini weui-btn_default">暂停</span><span class="itemDel weui-btn weui-btn_mini weui-btn_warn">删除</span></li><li class="upload_li">' +
-                '<div id="percentage'+file.id+'" class="percentage"><div class="weui-progress__bar"><div class="weui-progress__inner-bar js_progress" style="width: 0%;"></div> <b id="pers"></b> </div></div>' +
-                '</li>');
-            var $img = $("#" + file.id).find("img");
-            //生成缩略图
-            uploader.makeThumb(file, function(error, src){
-                if(error){
-                    $img.replaceWith("<span class='no_view'>视频暂不能预览</span>");
-                }
-                $img.attr("src", src);
-            });
-
+            $("#video-name").text('视频名称：'+file.name);
+            $("#video-size").text('视频大小：'+(file.size/1024/1024).toFixed(2)+'MB');
         });
+
+        $('#picker').click(function () {
+            web_uploader_gl.reset();
+            $("#upload-result-msg").html("");
+            $(".progress-bar").css("width","0%");
+            $(".progress").find('#progress-text').text("准备中...");
+        })
 
         $("#thelist").on("click", ".itemUpload", function(){
             console.log('文件开始上传');
-            uploader.upload();
-
-            //"上传"-->"暂停"
-            $(this).hide();
-            $(".itemStop").css('display','inline-block');
-            $(".itemStop").show();
+            web_uploader_gl.upload();
         });
 
         $("#thelist").on("click", ".itemStop", function(){
             console.log('文件暂停上传');
-            uploader.stop(true);
-
-            //"暂停"-->"上传"
-            $(this).hide();
-            $(".itemUpload").show();
+            web_uploader_gl.stop(true);
         });
 
         //todo 如果要删除的文件正在上传（包括暂停），则需要发送给后端一个请求用来清除服务器端的缓存文件
-        $("#thelist").on("click", ".itemDel", function(){
-            uploader.removeFile($('.upload_li').attr("id"));	//从上传文件列表中删除
-
+        $("#thelist").on("click", ".itemDel", function(file){
+            web_uploader_gl.removeFile(file);	//从上传文件列表中删除
             $('.upload_li').remove();	//从上传列表dom中删除
         });
 
         //正在上传
-        uploader.on("uploadProgress", function(file, percentage){
-            console.log('uploader.on(uploadProgress::percentage');
-            $(".percentage").find('.js_progress').css("width",percentage * 100 + "%");
-            // $(".percentage").find('#pers').text(parseFloat(percentage * 100).toFixed(2) + "%");
-            $(".percentage").find('#pers').text(parseInt(percentage * 100) + "%");
+        web_uploader_gl.on("uploadProgress", function(file, percentage){
+            console.log('uploader.on(uploadProgress::percentage', file);
+            $(".progress-bar").css("width",percentage * 100 + "%");
+            $(".progress").find('#progress-text').text(parseInt(percentage * 100) + "%");
         });
         //上传成功
-        uploader.on( 'uploadSuccess', function( file ) {
+        web_uploader_gl.on( 'uploadSuccess', function( file ) {
             console.log('uploader.on(uploadSuccess::');
-            $( '#'+file.id ).find('p.state').text('已上传');
+            web_uploader_gl.removeFile(file);
+            $('#upload-result-msg').css("color", "green")
+            $("#upload-result-msg").html("<b>上传完毕！</b>")
+            $(".progress-bar").css("width","100%");
         });
         //上传失败
-        uploader.on( 'uploadError', function( file, response ) {
+        web_uploader_gl.on( 'uploadError', function( file, response ) {
             console.log('uploader.on(uploadError::', response);
-            $( '#'+file.id ).find('p.state').text('上传出错');
+            $('#upload-result-msg').css("color", "red")
+            $("#upload-result-msg").html("<b>上传失败！</b>")
+            $(".progress-bar").css("width","0%");
+            $(".progress").find('#progress-text').css("color", "red");
+            $(".progress").find('#progress-text').text("上传出错");
         });
         //上传完成
-        uploader.on( 'uploadComplete', function( file , response) {
+        web_uploader_gl.on( 'uploadComplete', function( file , response) {
             console.log('uploader.on(uploadComplete::', response);
-            $( '#'+file.id ).find('.progress').fadeOut();
+            web_uploader_gl.reset();
         });
 
         function UploadComlate(file){
             console.log('uploadComplete ',file);
             if(file && file.name && (file.path === 'S')){
-                $('#vedio').val(file.name);
-                $(".percentage").find('#pers').html("<span style='color:green;'>上传完毕</span>");
-                $(".itemStop").hide();
-                $(".itemUpload").hide();
-                $(".itemDel").hide();
+                $('#upload-result-msg').css("color", "green")
+                $("#upload-result-msg").html("<b>上传完毕！</b>")
             }else{
-                $(".percentage").find('#pers').html("<span style='color:red;'>上传失败，请您检查网络状况~</span>");
-                $(".itemStop").hide();
-                $(".itemUpload").hide();
+                $('#upload-result-msg').css("color", "red")
+                $("#upload-result-msg").html("<b>上传失败！</b>")
             }
         }
-    })
+
+        $("#close-panel-button").click(function () {
+            web_uploader_gl.reset();
+            console.log('注销uploeader=>',web_uploader_gl)
+        })
+    }
+
+    // 搜索视频
+    function searchVideo () {}
+
+    // 刷新视频列表
+    function refreshVideoList() {}
+
 </script>
-</html>
+{/block}

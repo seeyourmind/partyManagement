@@ -8,78 +8,74 @@
 {/block}
 {block name="content_main"}
 <section class="content">
-    <div class="row">
-        <!-- USER LIST -->
-        <div class="col-md-9">
-            <div class="card card-primary card-outline">
-                <!--  HEAD -->
-                <div class="card-header">
-                    <h3 class="card-title">Exam List</h3>
-                    <!-- SEARCH -->
-                    <div class="card-tools">
-                        <div class="input-group input-group-sm">
-                            <input type="text" name="searchUser" class="form-control" placeholder="Search Keywords">
-                            <div class="input-group-append">
-                                <div class="btn btn-primary">
-                                    <span onclick="searchForUser()"><i class="fa fa-search"></i></span>
-                                </div>
-                            </div>
+    <div class="card card-primary card-outline" style="width: 95%">
+        <!--  HEAD -->
+        <div class="card-header">
+            <h3 class="card-title">Exam List</h3>
+            <!-- SEARCH -->
+            <div class="card-tools">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="searchUser" class="form-control" placeholder="Search Keywords">
+                    <div class="input-group-append">
+                        <div class="btn btn-primary">
+                            <span onclick="searchForUser()"><i class="fa fa-search"></i></span>
                         </div>
-                    </div>
-                </div>
-                <!-- TOOL -->
-                <div class="card-body p-0">
-                    <div class="mailbox-controls">
-                        <!-- Check all button -->
-                        <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
-                        </button>
-                        <!-- delete button -->
-                        <button type="button" class="btn btn-default btn-sm" onclick="deleteExam()"><i class="fa fa-trash-o"></i></button>
-                        <!-- refresh button -->
-                        <button type="button" class="btn btn-default btn-sm" onclick="refreshExamList()"><i class="fa fa-refresh"></i></button>
-                        <div class="float-right">
-                            <div class="btn-group">
-                                <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addModal">添加试题</button>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- LIST -->
-                    <div class="table-responsive mailbox-messages">
-                        <table class="table table-hover table-striped" style="table-layout: fixed">
-                            <tbody id="user_list_tb">
-                            <tr>
-                                <th class="mailbox-subject" width="10%">选择</th>
-                                <th class="mailbox-subject" width="25%">发布时间</th>
-                                <th class="mailbox-subject" width="45%">文章标题</th>
-                                <th class="mailbox-subject" width="20%">发布单位</th>
-                            </tr>
-                            {volist name='articles' id='article'}
-                            <tr>
-                                <td><input type="checkbox" value="{$article.id}"></td>
-                                <td class="mailbox-subject"><p class="over-text">{$article.time}</p></td>
-                                <td class="article-title-href" id="{$article.id}"><p class="over-text"><a id="article_id" href="#"><b>{$article.title}</b></a></p></td>
-                                <td class="mailbox-subject"><p class="over-text">{$article.level1}</p></td>
-                            </tr>
-                            {/volist}
-                            </tbody>
-                        </table>
-                        <!-- /.table -->
-                    </div>
-                    <!-- /.mail-box-messages -->
-                </div>
-                <!-- /.card-body -->
-                <!-- 分页 -->
-                <div class="card-footer p-0">
-                    <div class="mailbox-controls">
-                        <div class="float-right">
-                            {$articles->render()}
-                        </div>
-                        <!-- /.float-right -->
                     </div>
                 </div>
             </div>
-            <!-- /. box -->
         </div>
+        <!-- TOOL -->
+        <div class="card-body p-0">
+            <div class="mailbox-controls">
+                <!-- Check all button -->
+                <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
+                </button>
+                <!-- delete button -->
+                <button type="button" class="btn btn-default btn-sm" onclick="deleteExam()"><i class="fa fa-trash-o"></i></button>
+                <!-- refresh button -->
+                <button type="button" class="btn btn-default btn-sm" onclick="refreshExamList()"><i class="fa fa-refresh"></i></button>
+                <div class="float-right">
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addModal">添加试题</button>
+                    </div>
+                </div>
+            </div>
+            <!-- LIST -->
+            <div class="table-responsive mailbox-messages">
+                <table class="table table-hover table-striped" style="table-layout: fixed">
+                    <tbody id="user_list_tb">
+                    <tr>
+                        <th class="mailbox-subject" width="10%">选择</th>
+                        <th class="mailbox-subject" width="25%">发布时间</th>
+                        <th class="mailbox-subject" width="45%">文章标题</th>
+                        <th class="mailbox-subject" width="20%">发布单位</th>
+                    </tr>
+                    {volist name='articles' id='article'}
+                    <tr>
+                        <td><input type="checkbox" value="{$article.id}"></td>
+                        <td class="mailbox-subject"><p class="over-text">{$article.time}</p></td>
+                        <td class="article-title-href" id="{$article.id}"><p class="over-text"><a id="article_id" href="#"><b>{$article.title}</b></a></p></td>
+                        <td class="mailbox-subject"><p class="over-text">{$article.level1}</p></td>
+                    </tr>
+                    {/volist}
+                    </tbody>
+                </table>
+                <!-- /.table -->
+            </div>
+            <!-- /.mail-box-messages -->
+
+        </div>
+        <!-- /.card-body -->
+        <!-- 分页 -->
+        <div class="card-footer p-0">
+            <div class="mailbox-controls">
+                <div class="float-right">
+                    {$articles->render()}
+                </div>
+                <!-- /.float-right -->
+            </div>
+        </div>
+    </div>
 </section>
 <!-- 查看文章详情模态框 -->
 <div class="modal fade" id="articleDetailModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">

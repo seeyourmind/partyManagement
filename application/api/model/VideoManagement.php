@@ -17,7 +17,8 @@ class VideoManagement extends Model
     {
         $res = VideoManagement::allowField(true)->insert([
             'path' => $path,
-            'detail' => $detail
+            'detail' => $detail,
+            'up_time' => date("Y-m-d H:i:s")
         ]);
         return $res;
     }

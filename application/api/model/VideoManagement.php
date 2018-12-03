@@ -13,6 +13,12 @@ use think\Model;
 
 class VideoManagement extends Model
 {
+    /**
+     * 新建视频信息
+     * @param $path
+     * @param $detail
+     * @return int|string
+     */
     public function insertNewVideo($path, $detail)
     {
         $res = VideoManagement::allowField(true)->insert([
@@ -20,6 +26,48 @@ class VideoManagement extends Model
             'detail' => $detail,
             'up_time' => date("Y-m-d H:i:s")
         ]);
+        return $res;
+    }
+
+    /**
+     * 获取视频列表
+     * @return \think\Paginator
+     * @throws \think\exception\DbException
+     */
+    public function getAllVideo()
+    {
+        $res = VideoManagement::paginate(18);
+        return $res;
+    }
+
+    /**
+     * 获取ID视频路径
+     * @param $id
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getVideoByID($id)
+    {
+        $res = VideoManagement::field('path')->where('id', '=', $id)->select();
+        return $res;
+    }
+
+    /**
+     * 删除视频信息
+     * @param $id
+     * @return int
+     */
+    public function deleteVideoByID($id)
+    {
+        $res = VideoManagement::where('id', '=', $id)->delete();
+        return $res;
+    }
+
+    public function searcherVideoByKeywords($keywords)
+    {
+        $res = VideoManagement::where('detail', 'like', "%{$keywords}%")->paginate(12);
         return $res;
     }
 }

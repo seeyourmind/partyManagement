@@ -93,8 +93,8 @@ class UploadApi extends Controller
         // usleep(5000);
         // Settings
         // $targetDir = ini_get("upload_tmp_dir") . DIRECTORY_SEPARATOR . "plupload";
-        $targetDir = ROOT_PATH.'uploads'.DS.'video'.DS.'tmp';
-        $uploadDir = ROOT_PATH.'uploads'.DS.'video';
+        $targetDir = ROOT_PATH.'public'.DS.'uploads'.DS.'video'.DS.'tmp';
+        $uploadDir = ROOT_PATH.'public'.DS.'uploads'.DS.'video';
         $cleanupTargetDir = true; // Remove old files
         $maxFileAge = 5 * 3600; // Temp file age in seconds
         // Create target dir

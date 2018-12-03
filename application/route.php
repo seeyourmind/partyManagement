@@ -39,6 +39,13 @@ return [
     'updateActivity' => 'api/ActivityApi/updateActivity',
     'deleteActivityByID' => 'api/ActivityApi/deleteActivityByID',
     'insertNewActivity' => 'api/ActivityApi/insertNewActivity',
+    'getAllVideos' => 'api/VideoApi/getAllVideos',
+    'getVideoByID' => 'api/VideoApi/getVideoByID',
+    'deleteVideoByID' => 'api/VideoApi/deleteVideoByID',
+    'searchVideoByKW' => 'api/VideoApi/searchVideoByKW',
+
+//    'uploads/video' => 'api/Uploads/video',
+//    'uploads/images' => 'api/Uploads/images',
 
     'admin/login' => 'admin/login/login',
     'admin/login/check_in' => 'admin/login/check_in',
@@ -52,6 +59,7 @@ return [
     'admin/activities_management' => 'admin/activitiesManagement/index',
     'admin/activities_management/searchActivity' => 'admin/activitiesManagement/searchActivity',
     'admin/video_management' => 'admin/video_management/index',
+    'admin/video_management/searchVideo' => 'admin/video_management/searchVideoBykw',
 
     'wxapi/article_detail' => 'admin/article_detail/index',
 

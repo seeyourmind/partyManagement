@@ -75,9 +75,7 @@ class Activities extends Model
     /**
      * 主题关键字搜索
      * @param $key
-     * @return false|\PDOStatement|string|\think\Collection
-     * @throws \think\db\exception\DataNotFoundException
-     * @throws \think\db\exception\ModelNotFoundException
+     * @return \think\Paginator
      * @throws \think\exception\DbException
      */
     public function searchActivityByTheme($key){

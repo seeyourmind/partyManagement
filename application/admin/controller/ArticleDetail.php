@@ -10,9 +10,8 @@ namespace app\admin\controller;
 
 
 use app\api\model\Article;
-use think\Controller;
 
-class ArticleDetail extends Controller
+class ArticleDetail extends Base
 {
     public function index(){
         $article = new Article();

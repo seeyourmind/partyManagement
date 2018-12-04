@@ -27,11 +27,15 @@ class VideoApi extends Controller
         if($request->isPost()){
             try{
                 $vm = new VideoManagement();
-                $res = $vm->getAllVideo();
-                if($res){
+                $id_group = $vm->getIDgroup();
+                $all_videos = $vm->getAllVideo();
+                if($all_videos){
                     return json([
                         'flag' => 'S',
-                        'msg' => $res
+                        'msg' => [
+                            'idGroup' => $id_group,
+                            'videos' => $all_videos
+                        ]
                     ]);
                 } else {
                     return json([
@@ -152,6 +156,11 @@ class VideoApi extends Controller
         }
     }
 
+    /**
+     * 主题关键字搜索
+     * @param Request $request
+     * @return \think\response\Json
+     */
     public function searchVideoByKW(Request $request)
     {
         is_null($request) && $request;

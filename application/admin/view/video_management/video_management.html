@@ -60,6 +60,17 @@
         width: 100%;
         height: 50px;
     }
+    .video-category {
+        background-color: #f0f0f0;
+        box-shadow: #c1c6d7 1px 1px 5px;
+        border-radius: 10px 10px 0 0;
+        font-size: 1.2em;
+        color: #5d6974;
+        font-weight: bold;
+        margin-left: 10px;
+        margin-right: 10px;
+        padding: 5px 10px;
+    }
 </style>
 {/block}
 {block name="content_main"}
@@ -120,24 +131,27 @@
             </div>
         </div>
         <!-- 视频列表 -->
-        <div id="videos-body">
-            {volist name='video_list' id='video'}
-            <div class="video-box" id="box_id">
-                <video preload="metadata">
-                    <source src="http://localhost/{$video.path}#t=0" type="video/mp4">
-                </video>
-                <div class="video-mask" id="mask_id">
-                    <div class="row">
-                        <span class="video-play" id="play-{$video.id}" style="left: 20px;"><i class="fa fa-play-circle fa-3x"></i></span>
-                        <span class="video-delete" id="delete-{$video.id}" style="right: 20px;"><i class="fa fa-trash fa-3x"></i></span>
+        {volist name='id_group' id='idg'}
+            <div class="video-category">{$idg.detail}</div>
+            <div id="videos-body">
+                {volist name=":getVolistDataset($idg.id_count, $video_list)" id='video'}
+                <div class="video-box" id="box_id">
+                    <video preload="metadata">
+                        <source src="http://localhost/{$video.path}#t=0" type="video/mp4">
+                    </video>
+                    <div class="video-mask" id="mask_id">
+                        <div class="row">
+                            <span class="video-play" id="play-{$video.id}" style="left: 20px;"><i class="fa fa-play-circle fa-3x"></i></span>
+                            <span class="video-delete" id="delete-{$video.id}" style="right: 20px;"><i class="fa fa-trash fa-3x"></i></span>
+                        </div>
+                        <p class="video-detail">{$video.file_name}</p>
+                        <p style="font-size: 0.9em">{$video.up_time}</p>
                     </div>
-                    <p class="video-detail">{$video.detail}</p>
-                    <p style="font-size: 0.9em">{$video.up_time}</p>
                 </div>
+                {/volist}
+                <div {$hide} class="info-message"><p>暂时没有任何视频资源</p></div>
             </div>
-            {/volist}
-            <div {$hide} class="info-message"><p>暂时没有任何视频资源</p></div>
-        </div>
+        {/volist}
         <!-- 分页 -->
         <div class="card-footer p-0">
             <div class="mailbox-controls">
@@ -150,11 +164,15 @@
     </div>
 </section>
 <!-- 播放视频模态框 -->
-<div class="modal fade" id="videoPlayer" tabindex="-1" role="dialog" aria-labelledby="videoPlayerLabel" aria-hidden="true">
-    <div class="modal-dialog">
+<div class="modal fade" id="videoPlayer" tabindex="-1" role="dialog" aria-labelledby="videoPlayerLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-body" style="background-color: #000000">
-                <video style="width: 100%;" width="640" height="480" controls></video>
+                <video style="width:100%;height: 480px;" width="640" height="480" controls></video>
+            </div>
+            <div class="modal-footer">
+                <button name="submit" class="btn btn-info" onclick="playVideo()">播放</button>
+                <button name="cancel" class="btn btn-default float-right" onclick="shutdownVideo()">关闭</button>
             </div>
         </div>
     </div>
@@ -389,6 +407,8 @@
             $('#thelist').show();
             $("#video-name").text('视频名称：'+file.name);
             $("#video-size").text('视频大小：'+(file.size/1024/1024).toFixed(2)+'MB');
+            // 按钮显示切换
+            $('.itemStop').hide();
         });
 
         $('#picker').click(function () {
@@ -396,16 +416,27 @@
             $("#upload-result-msg").html("");
             $(".progress-bar").css("width","0%");
             $(".progress").find('#progress-text').text("准备中...");
+            // 按钮显示切换
+            $('.itemStop').hide();
+            $('.itemUpload').show();
         })
 
         $("#thelist").on("click", ".itemUpload", function(){
             console.log('文件开始上传');
             web_uploader_gl.upload();
+
+            // 按钮显示切换
+            $('.itemUpload').hide();
+            $('.itemStop').show();
         });
 
         $("#thelist").on("click", ".itemStop", function(){
             console.log('文件暂停上传');
             web_uploader_gl.stop(true);
+
+            // 按钮显示切换
+            $('.itemStop').hide();
+            $('.itemUpload').show();
         });
 
         //todo 如果要删除的文件正在上传（包括暂停），则需要发送给后端一个请求用来清除服务器端的缓存文件
@@ -434,8 +465,7 @@
             $('#upload-result-msg').css("color", "red")
             $("#upload-result-msg").html("<b>上传失败！</b>")
             $(".progress-bar").css("width","0%");
-            $(".progress").find('#progress-text').css("color", "red");
-            $(".progress").find('#progress-text').text("上传出错");
+            $(".progress").find('#progress-text').text("准备中...");
         });
         //上传完成
         web_uploader_gl.on( 'uploadComplete', function( file , response) {
@@ -549,6 +579,18 @@
             }
         });
     })
+    
+    // 在模态框播放视频
+    function playVideo() {
+        console.log('play:', $(".modal-body video"))
+        $(".modal-body video")[0].play();
+    }
+    // 在模态框关闭视频
+    function shutdownVideo() {
+        $(".modal-body video")[0].pause();
+        $(".modal-body video").html('');
+        $("#videoPlayer").modal('hide');
+    }
 
 </script>
 {/block}

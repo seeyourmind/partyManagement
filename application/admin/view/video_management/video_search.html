@@ -1,0 +1,257 @@
+{extend name="public/base" />
+{block name="user_css"}
+<!--引入CSS-->
+<link rel="stylesheet" type="text/css" href="__ADMIN__/plugins/WebUploader/webuploader.css">
+<style>
+    .video-box{
+        background-color: #000000;
+        border-radius: 10px;
+        width: 200px;
+        height: 200px;
+        margin: 10px;
+        float: left;
+        position: relative;
+    }
+    .video-mask{
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200px;
+        height: 200px;
+        background-color: rgba(0,0,0,0.7);
+        color: white;
+        border-radius: 10px;
+        padding: 20px;
+        display: none;
+    }
+    .video-mask span{
+        position: absolute;
+        bottom: 0;
+        top: 80px;
+    }
+    .video-mask span:hover{
+        color: #5d6974;
+    }
+    video{
+        width: 200px;
+        height: 200px;
+    }
+    .upload-video-info-panel{
+        box-shadow: -1px 1px 2px #c1c6d7;
+        border: 1px solid #f0f0f0;
+        border-radius: 10px;
+        padding: 10px;
+        display: none;
+    }
+    .upload-video-button-group{
+        position: absolute;
+        bottom: 10px;
+        right: 50px;
+    }
+    .video-detail {
+        position: absolute;
+        bottom: 0;
+        width: 170px;
+        height: 50px;
+    }
+    .info-message {
+        color: #5d6974;
+        text-align: center;
+        width: 100%;
+        height: 50px;
+    }
+</style>
+{/block}
+{block name="content_main"}
+<section class="content">
+    <div class="card card-primary card-outline" style="width: 95%">
+        <!--  HEAD -->
+        <div class="card-header">
+            <h3 class="card-title">Video List</h3>
+            <!-- SEARCH -->
+            <div class="card-tools">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="searchVideo" class="form-control" placeholder="Search Keyword">
+                    <div class="input-group-append">
+                        <div class="btn btn-primary">
+                            <span onclick="searchVideo()"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- 视频列表 -->
+        <div id="videos-body">
+            {volist name='video_list' id='video'}
+            <div class="video-box" id="box_id">
+                <video preload="metadata">
+                    <source src="http://localhost/{$video.path}#t=0" type="video/mp4">
+                </video>
+                <div class="video-mask" id="mask_id">
+                    <div class="row">
+                        <span class="video-play" id="play-{$video.id}" style="left: 20px;"><i class="fa fa-play-circle fa-3x"></i></span>
+                        <span class="video-delete" id="delete-{$video.id}" style="right: 20px;"><i class="fa fa-trash fa-3x"></i></span>
+                    </div>
+                    <p class="video-detail">{$video.file_name}</p>
+                    <p style="font-size: 0.9em">{$video.up_time}</p>
+                </div>
+            </div>
+            {/volist}
+            <div {$hide} class="info-message"><p>暂时没有任何视频资源</p></div>
+        </div>
+        <!-- 分页 -->
+        <div class="card-footer p-0">
+            <div class="mailbox-controls">
+                <div class="float-right">
+                    {$video_list->render()}
+                </div>
+                <!-- /.float-right -->
+            </div>
+        </div>
+    </div>
+</section>
+<!-- 播放视频模态框 -->
+<div class="modal fade" id="videoPlayer" tabindex="-1" role="dialog" aria-labelledby="videoPlayerLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" style="background-color: #000000">
+                <video style="width:100%;height: 480px;" width="640" height="480" controls></video>
+            </div>
+            <div class="modal-footer">
+                <button name="submit" class="btn btn-info" onclick="playVideo()">播放</button>
+                <button name="cancel" class="btn btn-default float-right" onclick="shutdownVideo()">关闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+{/block}
+{block name="user_js"}
+<!--引入JS-->
+<script type="text/javascript" src="__ADMIN__/plugins/WebUploader/webuploader.js"></script>
+<!--引入MD5-->
+<script type="text/javascript" src="__ADMIN__/plugins/MD5/md5.js"></script>
+<!--引入jquery.ellipsis-->
+<script type="text/javascript" src="__ADMIN__/plugins/jquery-ellipsis/jquery.ellipsis.js"></script>
+<script>
+    // 超出两行显示省略号
+    $('.video-detail').each(function () {
+        var line_txt = $(this).text();
+        line_txt = line_txt.length>19?line_txt.slice(0,19)+'...':line_txt;
+        $(this).text(line_txt);
+    })
+
+    // 视频单元的遮罩控制
+    $(document).ready(function () {
+        $("#video-detail-line").ellipsis();
+        $(".video-box").mouseover(function () {
+            $(".video-mask", this).show();
+        });
+        $(".video-box").mouseout(function () {
+            $(".video-mask", this).hide();
+        });
+    })
+
+    // 搜索视频
+    function searchVideo () {
+        var kw = $("input[name='searchVideo']").val()
+        console.log("keywords:", kw);
+        if(!kw){
+            swal('Oops！', '请输入正确的搜索关键词', 'warning');
+        } else {
+            window.location.href = '/admin/video_management/searchVideo?k='+kw;
+        }
+    }
+
+    // 刷新视频列表
+    function refreshVideoList() {
+        window.location.href="/admin/video_management";
+    }
+    
+    // 播放视频
+    $(".video-play").click(function (e) {
+        var cur_id = parseInt(e.currentTarget.id.replace(/[^0-9]/ig,""));
+        console.log('e', cur_id);
+
+        $("#videoPlayer").find("video").empty();
+
+        $.ajax({
+            type: 'post',
+            url: '/getVideoByID',
+            data: {id: cur_id},
+            dataType: 'json',
+            success: function (res) {
+                if(res.flag === 'S'){
+                    $("#videoPlayer").find("video").append('<source src="http://localhost/'+res.msg.path+'" type="video/mp4">');
+                    $("#videoPlayer").modal('show');
+                } else {
+                    swal('Oops!', res.msg, 'info');
+                }
+            },
+            error: function (err, tt, kk) {
+                swal('发生错误', '原因:'+kk, 'error');
+            }
+        })
+
+    })
+    
+    // 删除视频
+    $(".video-delete").click(function (e) {
+        var cur_id = parseInt(e.currentTarget.id.replace(/[^0-9]/ig,""));
+        console.log('e', cur_id);
+        swal({
+            title: '删除确认',
+            text: '您确定删除该视频',
+            type: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it',
+        }).then(function(isConfirm) {
+            if (isConfirm.value === true) {
+                $.ajax({
+                    type: 'post',
+                    url: '/deleteVideoByID',
+                    data: {id: cur_id},
+                    dataType: 'json',
+                    success: function (res) {
+                        if (res.flag === 'S') {
+                            swal({
+                                title: '恭喜!',
+                                text: res.msg,
+                                type: 'success',
+                                showCancelButton: false,
+                                confirmButtonText: 'OK'
+                            }).then(function (isConfirm) {
+                                // console.log('isConfirm', isConfirm)
+                                if (isConfirm.value) {
+                                    // console.log('点击了确定');
+                                    window.location.href = "/admin/video_management";
+                                }
+                            });
+                        } else {
+                            swal('Oops!', res.msg, 'info');
+                        }
+                    },
+                    error: function (err, tt, kk) {
+                        swal('发生错误', '原因:' + kk, 'error');
+                    }
+                });
+            } else {
+                swal('Cancelled', '取消删除该视频', 'info');
+            }
+        });
+    })
+    
+    // 在模态框播放视频
+    function playVideo() {
+        console.log('play:', $(".modal-body video"))
+        $(".modal-body video")[0].play();
+    }
+    // 在模态框关闭视频
+    function shutdownVideo() {
+        $(".modal-body video")[0].pause();
+        $(".modal-body video").html('');
+        $("#videoPlayer").modal('hide');
+    }
+
+</script>
+{/block}

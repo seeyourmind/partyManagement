@@ -76,3 +76,22 @@ function checkWechatId($wechatId){
         return false;
     }
 }
+// 获取volist数据集函数
+function getVolistDataset($id_count=null, $video_list){
+    \think\Log::error('id_count '.$id_count.' and '.sizeof($video_list));
+    $return_list = [];
+
+    if($id_count != null){
+        $id_list = explode(',', $id_count);
+        foreach ($video_list as $video){
+            foreach ($id_list as $id){
+                if($video['id'] == intval($id)){
+                    array_push($return_list, $video);
+                }
+            }
+        }
+    }
+    \think\Log::error('id_count '.$id_count.' and '.sizeof($return_list));
+    return $return_list;
+
+}

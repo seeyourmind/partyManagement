@@ -9,6 +9,7 @@
 namespace app\admin\controller;
 
 use think\Exception;
+use think\Log;
 use think\Request;
 
 class VideoManagement extends Base
@@ -16,12 +17,14 @@ class VideoManagement extends Base
     public function index(){
         try{
             $vm = new \app\api\model\VideoManagement();
-            $res = $vm->getAllVideo();
-            $this->view->assign('video_list', $res);
+            $videos = $vm->getAllVideo();
+            $id_group = $vm->getIDgroup();
+            $this->view->assign('video_list', $videos);
+            $this->view->assign('id_group', $id_group);
         } catch (Exception $e){
             throw new \think\exception\HttpException(404, '页面不存在');
         }
-        $this->view->assign('hide', $res->total()>0?'hidden':'');
+        $this->view->assign('hide', $videos->total()>0?'hidden':'');
         $this->view->assign('content_header', '视频管理');
         $this->view->assign('active4', 'active');
 
@@ -42,6 +45,6 @@ class VideoManagement extends Base
         $this->view->assign('content_header', '视频管理');
         $this->view->assign('active4', 'active');
 
-        return $this->view->fetch('video_management');
+        return $this->view->fetch('video_search');
     }
 }

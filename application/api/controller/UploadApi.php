@@ -281,7 +281,8 @@ class UploadApi extends Controller
                 Log::record('解锁');
 
                 $vm = new VideoManagement();
-                if($vm->insertNewVideo('uploads'.DS.'video'.DS.$file_md5_name.'.'.$file_ext, $_POST['detail'])){
+
+                if($vm->insertNewVideo('uploads'.DS.'video'.DS.$file_md5_name.'.'.$file_ext, $_POST['detail'], substr($file_name, 0, (strlen($file_name)-strlen($file_ext)-1)))){
                     die('{"flag":"S", "msg":"视频上传成功"}');
                 } else {
                     die('{"flag": "F", "msg":"视频上传失败"}');

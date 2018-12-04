@@ -19,12 +19,13 @@ class VideoManagement extends Model
      * @param $detail
      * @return int|string
      */
-    public function insertNewVideo($path, $detail)
+    public function insertNewVideo($path, $detail, $name)
     {
         $res = VideoManagement::allowField(true)->insert([
             'path' => $path,
             'detail' => $detail,
-            'up_time' => date("Y-m-d H:i:s")
+            'up_time' => date("Y-m-d H:i:s"),
+            'file_name' => $name
         ]);
         return $res;
     }
@@ -34,9 +35,14 @@ class VideoManagement extends Model
      * @return \think\Paginator
      * @throws \think\exception\DbException
      */
+    public function getIDgroup()
+    {
+        $res = VideoManagement::query('SELECT detail, GROUP_CONCAT(id) AS id_count FROM video_management GROUP BY detail;');
+        return $res;
+    }
     public function getAllVideo()
     {
-        $res = VideoManagement::paginate(18);
+        $res = VideoManagement::order('up_time','desc')->paginate(18);
         return $res;
     }
 

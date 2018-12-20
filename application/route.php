@@ -75,4 +75,6 @@ return [
     'wxapi/get_latest_three_article' => 'wxapi/articleAPI/get_latest_three_article',
     'wxapi/get_all_news_list' => 'wxapi/articleAPI/get_all_news_list',
 
+    'getNineteenBigAnswer' => 'api/ExamApi/getNineteenBigAnswer'
+
 ];

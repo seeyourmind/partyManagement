@@ -168,7 +168,7 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-body" style="background-color: #000000">
-                <video style="width:100%;height: 480px;" width="640" height="480" controls></video>
+                <video id="video-video" style="width:100%;height: 480px;" width="640" height="480" controls></video>
             </div>
             <div class="modal-footer">
                 <button name="submit" class="btn btn-info" onclick="playVideo()">播放</button>
@@ -521,10 +521,12 @@
             success: function (res) {
                 if(res.flag === 'S'){
                     $("#videoPlayer").find("video").append('<source src="http://localhost/'+res.msg.path+'" type="video/mp4">');
+                    document.getElementById("video-video").load();
                     $("#videoPlayer").modal('show');
                 } else {
                     swal('Oops!', res.msg, 'info');
                 }
+                console.log("video:", $(".modal-body video"))
             },
             error: function (err, tt, kk) {
                 swal('发生错误', '原因:'+kk, 'error');

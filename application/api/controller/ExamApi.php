@@ -12,6 +12,7 @@ namespace app\api\controller;
 use app\api\model\Exam;
 use app\api\model\ExamCategory;
 use think\Controller;
+use think\Db;
 use think\Exception;
 use think\Request;
 
@@ -259,5 +260,24 @@ class ExamApi extends Controller
            array_push($exam,$item);
         }
         return $exam;
+    }
+
+
+    public function getNineteenBigAnswer(Request $request){
+        if($request->isPost()){
+            $question = $request->post('question');
+            if($question){
+                $res = Db::query("select answer from nineteen_big where question like '%$question%';");
+                if($res){
+                    return  $res[0]['answer'];
+                } else {
+                    return '未找到答案';
+                }
+            } else {
+                return '没有获取到试题参数';
+            }
+        } else {
+            return '服务器出错';
+        }
     }
 }

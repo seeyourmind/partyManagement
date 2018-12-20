@@ -110,16 +110,26 @@ class LoginAPI extends Controller
 
             if(strlen($wechat_id) && preg_match($pattern_job_number, $job_number) && strlen($name) && preg_match($pattern_sex, $sex)){
                 try{
-                    if($userinfo->verifyRegistrationWechatid($wechat_id, $job_number, $name, $sex)){
-                        return json([
-                            'flag' => 'S',
-                            'msg' => array('isBind'=>true)
-                        ]);
-                    } else {
-                        return json([
-                            'flag' => 'F',
-                            'msg' => '验证失败，未匹配到该用户'
-                        ]);
+                    $res = $userinfo->verifyRegistrationWechatid($wechat_id, $job_number, $name, $sex);
+                    switch ($res){
+                        case -1:
+                            return json([
+                                'flag' => 'F',
+                                'msg' => '验证失败，未匹配到该用户'
+                            ]);
+                            break;
+                        case 0:
+                            return json([
+                                'flag' => 'S',
+                                'msg' => array('isBind'=>true)
+                            ]);
+                            break;
+                        case 1:
+                            return json([
+                                'flag' => 'S',
+                                'msg' => array('isNewBind'=>true)
+                            ]);
+                            break;
                     }
                 } catch (Exception $e){
                     return json([

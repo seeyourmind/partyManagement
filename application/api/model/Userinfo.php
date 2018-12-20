@@ -95,6 +95,14 @@ class Userinfo extends Model
         return $res;
     }
 
+    /**
+     * 根据用户的WeChatID获取对应的ID
+     * @param $wechatid
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function getUseridByWechatid($wechatid){
         $res = Userinfo::field('z_id')->where('openID', '=', $wechatid)->select();
         return $res;
@@ -111,7 +119,12 @@ class Userinfo extends Model
      * @throws \think\exception\PDOException
      */
     public function verifyRegistrationWechatid($wechatid, $jobnmuber, $name, $sex){
-        $res = Userinfo::execute("UPDATE userinfo SET openID='$wechatid' WHERE id='$jobnmuber' AND NAME='$name' AND sex='$sex'");
-        return $res;
+        $res = Userinfo::query("select z_id from userinfo where id='$jobnmuber' and name='$name' and sex='$sex'");
+        if($res){
+            $res = Userinfo::execute("UPDATE userinfo SET openID='$wechatid' WHERE id='$jobnmuber' AND name='$name' AND sex='$sex'");
+            return $res;
+        } else {
+            return -1;
+        }
     }
 }

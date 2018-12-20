@@ -50,4 +50,22 @@ class ArticleManagement extends Base
         return $this->view->fetch("article_editor");
     }
 
+    public function searchArticle(Request $request){
+        if(!is_null($request) && $request->isGet()){
+            $key = $request->get('key');
+            $article = new Article();
+            $res = $article->searcheArticle($key);
+
+            $this->view->assign('articles', $res);
+            $this->view->assign('content_header', '浏览文章');
+            $this->view->assign('menu_open3', 'menu-open');
+            $this->view->assign('active31', 'active');
+        } else {
+            $this->view->assign('articles', []);
+            $this->view->assign('content_header', '浏览文章');
+            $this->view->assign('menu_open3', 'menu-open');
+            $this->view->assign('active31', 'active');
+        }
+        return $this->view->fetch("article_browser");
+    }
 }

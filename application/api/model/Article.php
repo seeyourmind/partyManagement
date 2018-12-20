@@ -104,4 +104,31 @@ class Article extends Model
         $res = Article::field('title, content')->where('id', '=', $id)->select();
         return $res[0];
     }
+
+    /**
+     * 删除指定IDS的文章
+     * @param $ids
+     * @return int
+     */
+    public function deleteArticleByIds($ids){
+        $id_str = $ids[0];
+        foreach ($ids  as $id){
+            if($id_str == $id){continue;}else{
+                $id_str = $id_str.','.$id;
+            }
+        }
+        $res = Article::where("id in ($id_str)")->delete();
+        return $res;
+    }
+
+    /**
+     * 按关键词搜索
+     * @param $key
+     * @return \think\Paginator
+     * @throws \think\exception\DbException
+     */
+    public function searcheArticle($key){
+        $res = Article::where("title like '%{$key}%' or level1 like '%{$key}%'")->paginate(12);
+        return $res;
+    }
 }

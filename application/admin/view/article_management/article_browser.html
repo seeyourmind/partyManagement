@@ -15,10 +15,10 @@
             <!-- SEARCH -->
             <div class="card-tools">
                 <div class="input-group input-group-sm">
-                    <input type="text" name="searchUser" class="form-control" placeholder="Search Keywords">
+                    <input type="text" name="searchArticle" class="form-control" placeholder="Search Keywords">
                     <div class="input-group-append">
                         <div class="btn btn-primary">
-                            <span onclick="searchForUser()"><i class="fa fa-search"></i></span>
+                            <span onclick="searchArticle()"><i class="fa fa-search"></i></span>
                         </div>
                     </div>
                 </div>
@@ -31,12 +31,12 @@
                 <button type="button" class="btn btn-default btn-sm checkbox-toggle"><i class="fa fa-square-o"></i>
                 </button>
                 <!-- delete button -->
-                <button type="button" class="btn btn-default btn-sm" onclick="deleteExam()"><i class="fa fa-trash-o"></i></button>
+                <button type="button" class="btn btn-default btn-sm" onclick="deleteArticle()"><i class="fa fa-trash-o"></i></button>
                 <!-- refresh button -->
-                <button type="button" class="btn btn-default btn-sm" onclick="refreshExamList()"><i class="fa fa-refresh"></i></button>
+                <button type="button" class="btn btn-default btn-sm" onclick="refreshArticleList()"><i class="fa fa-refresh"></i></button>
                 <div class="float-right">
                     <div class="btn-group">
-                        <button type="button" class="btn btn-success btn-sm" data-toggle="modal" data-target="#addModal">添加试题</button>
+                        <button type="button" class="btn btn-success btn-sm" onclick="addNewArticle()">新建文章</button>
                     </div>
                 </div>
             </div>
@@ -132,6 +132,7 @@
         $(this).data('clicks', !clicks)
     })
 
+    // 显示某ID视频信息
     $('.article-title-href').click(function (e) {
         var a_id = e.currentTarget.id;
         // console.log(e.currentTarget.id, balloon_editor.getData())
@@ -160,12 +161,72 @@
             }
         });
     });
+
     // 跳转至修改文章界面
     function gotoModify(){
         // swal('console log', 'article_id:' + article_id, 'success');
         if(article_id != null){
             // swal('console log', 'toUrl:'+toUrl, 'success');
             window.location.href = '/admin/new_article?aid='+article_id;
+        }
+    }
+
+    // 删除文章
+    function deleteArticle(){
+        var checkedActivities = $('input[type=checkbox]:checked');
+        var checkedID = new Array();
+        $.each(checkedActivities, function () {
+            checkedID.push($(this).val());
+        });
+        console.log(checkedID);
+        if (checkedID.length < 1){
+            alert('请选择要删除的用户');
+        } else {
+            $.ajax({
+                type: 'post',
+                url: '/deleteArticlesByIds',
+                data: {'aids':checkedID},
+                dataType: 'json',
+                success: function (res) {
+                    if (res['flag'] === 'S'){
+                        swal({
+                            title: '恭喜！',
+                            text: res.msg,
+                            type: 'success',
+                            showCancelButton: false
+                        }).then(function (isConfirm) {
+                            if(isConfirm.value){
+                                window.location.href = "/admin/article_management";
+                            }
+                        })
+                    } else {
+                        swal('Oops!',res['msg'], 'info');
+                    }
+                },
+                error: function (err, tt, kk) {
+                    swal('发生错误', '原因:'+kk, 'error');
+                }
+            })
+        }
+    }
+
+    // 刷新文章列表
+    function refreshArticleList() {
+        window.location.href = "/admin/article_management";
+    }
+
+    // 新建文章
+    function addNewArticle() {
+        window.location.href = "/admin/new_article";
+    }
+
+    // 搜索文章
+    function searchArticle() {
+        var key = $("input[ name='searchArticle']").val();
+        if (key) {
+            window.location.href="/admin/article_management/searchArticle?key="+key;
+        } else {
+            swal('Oops!', '请输入正确的活动主题关键字', 'info');
         }
     }
 </script>

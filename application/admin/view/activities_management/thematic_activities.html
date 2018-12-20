@@ -246,8 +246,16 @@
                 dataType: 'json',
                 success: function (res) {
                     if (res['flag'] === 'S'){
-                        swal('恭喜!', res['msg'], 'success');
-                        window.location.href = "/admin/activities_management";
+                        swal({
+                            title: '恭喜！',
+                            text: res.msg,
+                            type: 'success',
+                            showCancelButton: false
+                        }).then(function (isConfirm) {
+                            if(isConfirm.value){
+                                window.location.href = "/admin/activities_management";
+                            }
+                        })
                     } else {
                         swal('Oops!',res['msg'], 'info');
                     }
@@ -333,7 +341,16 @@
                 success: function (res) {
                     if(res.flag === 'S'){
                         $('#updateModal').modal('hide');
-                        swal('恭喜！', res.msg, 'success');
+                        swal({
+                            title: '恭喜！',
+                            text: res.msg,
+                            type: 'success',
+                            showCancelButton: false
+                        }).then(function (isConfirm) {
+                            if(isConfirm.value){
+                                window.location.href = "/admin/activities_management";
+                            }
+                        })
                     } else {
                         swal('Oops!', res.msg, 'info');
                     }
@@ -369,7 +386,16 @@
                 success: function (res) {
                     if(res.flag === 'S'){
                         $('#insertModal').modal('hide');
-                        swal('恭喜！', res.msg, 'success');
+                        swal({
+                            title: '恭喜！',
+                            text: res.msg,
+                            type: 'success',
+                            showCancelButton: false
+                        }).then(function (isConfirm) {
+                            if(isConfirm.value){
+                                window.location.href = "/admin/activities_management";
+                            }
+                        })
                     } else {
                         swal('Oops!', res.msg, 'info');
                     }

@@ -13,5 +13,11 @@ use think\Controller;
 
 class Base extends Controller
 {
-
+    public function _initialize()
+    {
+        //判断有无admin_username这个session，如果没有，跳转到登陆界面
+        if(!session('admin_username')){
+            return $this->error('您没有登陆',url('/admin/login'));
+        }
+    }
 }

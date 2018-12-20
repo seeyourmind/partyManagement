@@ -3,13 +3,12 @@
 <!-- 头部meta标签 -->
 {include file="public/header" /}
 {block name="user_css"}
-用户自定义样式
+<!-- 用户自定义样式 -->
 {/block}
 <body class="hold-transition sidebar-mini">
 <div class="wrapper">
     <!-- 顶部导航栏 -->
     {include file="public/navigate" /}
-    <div class="tlinks">Collect from <a href="http://www.cssmoban.com/" >手机网站模板</a></div>
     <!-- 左边菜单栏 -->
     {include file="public/asider" /}
     <!-- Content Wrapper. Contains page content -->
@@ -18,7 +17,7 @@
         {include file="public/content_header" /}
         <!-- Main content -->
         {block name="content_main"}
-        页面主体内容显示块
+        <!-- 页面主体内容显示块 -->
         {/block}
         <!-- /.content -->
     </div>
@@ -29,8 +28,25 @@
 {include file="public/com_js" /}
 <!-- 自定义JS函数块 -->
 {block name="user_js"}
-用户自定义脚本
+<!-- 用户自定义脚本 -->
 {/block}
+<script type="text/javascript">
+    $("#admin-name").click(function (e) {
+        console.log(e)
+        swal({
+            title: '提示',
+            text: '您确定要退出系统吗？',
+            showCancelButton: true,
+            confirmButtonText: '退出',
+            cancelButtonText: '取消'
+        }).then(function (isconfirm) {
+            console.log(isconfirm)
+            if(isconfirm.value){
+                window.location.href = '/admin/login'
+            }
+        })
+    })
+</script>
 </body>
 </html>
 

@@ -78,13 +78,13 @@ class Article extends Model
      */
     public function getAllNewsList($current_page=null, $page_num=null){
         if(is_null($current_page) || is_null($page_num)){
-            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot
+            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot, cover
                                     FROM article, hot_article
                                     WHERE level2 = '时事新闻' AND article.id = hot_article.aid
                                     ORDER BY TIME DESC");
         } else {
             $start = ($current_page - 1) * $page_num;
-            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot
+            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot, cover
                                     FROM article, hot_article
                                     WHERE level2 = '时事新闻' AND article.id = hot_article.aid
                                     ORDER BY TIME DESC LIMIT $start, $page_num");
@@ -102,7 +102,7 @@ class Article extends Model
      */
     public function getContentWithArticleId($id){
         $res = Article::field('title, content')->where('id', '=', $id)->select();
-        return $res[0];
+        return $res;
     }
 
     /**

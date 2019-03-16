@@ -40,7 +40,7 @@ class ArticleApi extends Controller
             $msg = '';
             if(!empty($cover_file)){
                 //todo 上传封面，并保存
-                $info = $cover_file->move(ROOT_PATH.'uploads'.DS.'images');
+                $info = $cover_file->move(ROOT_PATH.'public'.DS.'uploads'.DS.'images');
                 if($info){
                     $cover_path = $info->getSaveName();
                     $cover_path = str_replace('\\', '/', $cover_path);

@@ -31,7 +31,23 @@
 <!-- 用户自定义脚本 -->
 {/block}
 <script type="text/javascript">
+    // 进入用户管理界面
     $("#admin-name").click(function (e) {
+        swal({
+            title: '提示',
+            text: '您是否要进入用户管理界面？',
+            showCancelButton: true,
+            confirmButtonText: '进入',
+            cancelButtonText: '取消'
+        }).then(function (isconfirm) {
+            console.log(isconfirm)
+            if(isconfirm.value){
+                window.location.href = '/admin/admin_management'
+            }
+        })
+    });
+    // 用户退出系统
+    $("#sign-out").click(function (e) {
         console.log(e)
         swal({
             title: '提示',

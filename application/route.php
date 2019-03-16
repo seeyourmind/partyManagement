@@ -51,7 +51,7 @@ return [
 
     'admin/login' => 'admin/login/login',
     'admin/login/check_in' => 'admin/login/check_in',
-    'admin' => 'admin/index/index',
+    'admin/admin_management' => 'admin/admin_management/index',
     'admin/user_management' => 'admin/userManagement/index',
     'admin/user_management/searchUser' => 'admin/userManagement/searchUser',
     'admin/exam_management' => 'admin/examManagement/index',
@@ -77,6 +77,8 @@ return [
     'wxapi/get_user_not_read_message_count' => 'wxapi/articleAPI/get_user_not_read_message_count',
     'wxapi/get_latest_three_article' => 'wxapi/articleAPI/get_latest_three_article',
     'wxapi/get_all_news_list' => 'wxapi/articleAPI/get_all_news_list',
+    'wxapi/news' => 'wxapi/ArticleView/news',
+    'wxapi/messages' => 'wxapi/ArticleView/messages',
 
     'getNineteenBigAnswer' => 'api/ExamApi/getNineteenBigAnswer'
 

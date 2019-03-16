@@ -18,6 +18,8 @@ class Base extends Controller
         //判断有无admin_username这个session，如果没有，跳转到登陆界面
         if(!session('admin_username')){
             return $this->error('您没有登陆',url('/admin/login'));
+        } else {
+            $this->view->assign('username', session('admin_username'));
         }
     }
 }

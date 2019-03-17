@@ -19,13 +19,14 @@ class VideoManagement extends Model
      * @param $detail
      * @return int|string
      */
-    public function insertNewVideo($path, $detail, $name)
+    public function insertNewVideo($path, $detail, $name, $thumbnail)
     {
         $res = VideoManagement::allowField(true)->insert([
             'path' => $path,
             'detail' => $detail,
             'up_time' => date("Y-m-d H:i:s"),
-            'file_name' => $name
+            'file_name' => $name,
+            'thumbnail' => $thumbnail
         ]);
         return $res;
     }
@@ -71,9 +72,41 @@ class VideoManagement extends Model
         return $res;
     }
 
+    /**
+     * 根据关键词查找对应视频
+     * @param $keywords
+     * @return \think\Paginator
+     * @throws \think\exception\DbException
+     */
     public function searcherVideoByKeywords($keywords)
     {
         $res = VideoManagement::where('detail', 'like', "%{$keywords}%")->paginate(12);
+        return $res;
+    }
+
+    /*******************************************************************************************************************
+     * 获取视频分类
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getCategoryForWX(){
+        //$res = VideoManagement::query('SELECT detail FROM video_management GROUP BY detail');
+        $res = VideoManagement::group('detail')->field('detail')->select();
+        return $res;
+    }
+
+    /**
+     * 获取一类视频
+     * @param $category
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getVideoByCategoryForWX($category){
+        $res = VideoManagement::where('detail', '=', $category)->select();
         return $res;
     }
 }

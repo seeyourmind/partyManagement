@@ -32,16 +32,22 @@ class ArticleView extends Controller
                         return $this->view->fetch('article');
                     } else {
                         return json([
+                            'flag' => 'F',
                             'msg' => '未读取到指定ID的新闻内容'
                         ]);
                     }
                 } catch (Exception $e){
                     return json([
-                        'msg' => '获取文章内容时出错，请稍候重试'
+                        'flag'  =>  'F',
+                        'code'  =>  $e->getCode(),
+                        'msg'   =>  '获取文章内容时出错，请稍候重试',
+                        'file'  =>  $e->getFile(),
+                        'line'  =>  $e->getLine()
                     ]);
                 }
             } else {
                 return json([
+                    'flag' => 'F',
                     'msg' => '服务器未读取到指定的新闻ID'
                 ]);
             }
@@ -68,16 +74,22 @@ class ArticleView extends Controller
                         return $this->view->fetch('article');
                     } else {
                         return json([
+                            'flag' => 'F',
                             'msg' => '未读取到指定ID的新闻内容'
                         ]);
                     }
                 } catch (Exception $e){
                     return json([
-                        'msg' => '获取文章内容时出错，请稍候重试'
+                        'flag'  =>  'F',
+                        'code'  =>  $e->getCode(),
+                        'msg'   =>  '获取文章内容时出错，请稍候重试',
+                        'file'  =>  $e->getFile(),
+                        'line'  =>  $e->getLine()
                     ]);
                 }
             } else {
                 return json([
+                    'flag' => 'F',
                     'msg' => '服务器未读取到指定的新闻ID'
                 ]);
             }

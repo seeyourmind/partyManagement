@@ -27,7 +27,7 @@ class UploadApi extends Controller
 //                'image' => $image
 //            ]);
             if(!empty($image)){
-                $info = $image->move((ROOT_PATH.'uploads'.DS.'images'));
+                $info = $image->move((ROOT_PATH.'public'.DS.'uploads'.DS.'images'));
                 if($info){
                     $filePath = $info->getSaveName();
                     $filePath = str_replace('\\', '/', $filePath);
@@ -132,7 +132,10 @@ class UploadApi extends Controller
                     die('{"jsonrpc" : "2.0", "error" : {"code": 100, "message": "Failed to open temp directory."}, "id" : "id"}');
                 }
                 while (($file = readdir($dir)) !== false) {
+                    Log::error('readdir file path => '.$file);
                     $tmpfilePath = $targetDir . DIRECTORY_SEPARATOR . $file;
+                    //$tmpfilePath = $targetDir . DIRECTORY_SEPARATOR;
+                    Log::error('tmp file path => '.$tmpfilePath);
                     // If temp file is current file proceed to the next
                     if ($tmpfilePath == "{$filePath}_{$chunk}.part" || $tmpfilePath == "{$filePath}_{$chunk}.parttmp") {
                         Log::record('If temp file is current file proceed to the next');
@@ -282,7 +285,13 @@ class UploadApi extends Controller
 
                 $vm = new VideoManagement();
 
-                if($vm->insertNewVideo('uploads'.DS.'video'.DS.$file_md5_name.'.'.$file_ext, $_POST['detail'], substr($file_name, 0, (strlen($file_name)-strlen($file_ext)-1)))){
+                if($vm->insertNewVideo('uploads'.DS.'video'.DS.$file_md5_name.'.'.$file_ext, $_POST['detail'], substr($file_name, 0, (strlen($file_name)-strlen($file_ext)-1)), 'uploads'.DS.'video'.DS.'thumbnail'.DS.$file_md5_name.'.png')){
+                    Log::error('开始保存缩略图');
+                    $video_file = $uploadDir.DS.$file_md5_name.'.'.$file_ext;
+                    $video_jpeg = $uploadDir.DS.'thumbnail'.DS.$file_md5_name.'.png';
+                    $ffmpeg_cmd = "ffmpeg -i $video_file -y -f mjpeg -ss 3 -t 2 -s 200*200 $video_jpeg";
+                    exec($ffmpeg_cmd);
+                    Log::error('结束保存缩略图');
                     die('{"flag":"S", "msg":"视频上传成功"}');
                 } else {
                     die('{"flag": "F", "msg":"视频上传失败"}');

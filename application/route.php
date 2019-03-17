@@ -79,6 +79,8 @@ return [
     'wxapi/get_all_news_list' => 'wxapi/articleAPI/get_all_news_list',
     'wxapi/news' => 'wxapi/ArticleView/news',
     'wxapi/messages' => 'wxapi/ArticleView/messages',
+    'wxapi/get_video_category' => 'wxapi/videoAPI/get_category',
+    'wxapi/get_video_list' => 'wxapi/videoAPI/get_video_list_by_category',
 
     'getNineteenBigAnswer' => 'api/ExamApi/getNineteenBigAnswer'
 

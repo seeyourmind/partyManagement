@@ -57,11 +57,19 @@ class Article extends Model
      */
     public function getLatestThressArticleWithCategory($category, $uid){
         if ($category == '通知公告'){
-            $res = Db::query("SELECT id, level1 AS department, level2 AS category, title, time, 
+//            $res = Db::query("SELECT id, level1 AS department, level2 AS category, title, time, cover,
+//                                    IF(id IN (SELECT aid FROM user_message WHERE uid = $uid), TRUE, FALSE) AS have_read
+//                                    FROM article WHERE level2 = '通知公告' ORDER BY TIME DESC LIMIT 3");
+            $res0 = Db::query("SELECT id, level1 AS department, level2 AS category, title, TIME, cover, 
                                     IF(id IN (SELECT aid FROM user_message WHERE uid = $uid), TRUE, FALSE) AS have_read 
-                                    FROM article WHERE level2 = '$category' ORDER BY TIME DESC LIMIT 3");
+                                    FROM article WHERE level2 = '通知公告' HAVING have_read = FALSE ORDER BY TIME DESC LIMIT 3");
+            $res1 = Db::query("SELECT id, level1 AS department, level2 AS category, title, TIME, cover, 
+                                    IF(id IN (SELECT aid FROM user_message WHERE uid = $uid), TRUE, FALSE) AS have_read 
+                                    FROM article WHERE level2 = '通知公告' HAVING have_read = TRUE ORDER BY TIME DESC LIMIT 3");
+            $res = $res0 + $res1;
+            $res = array_slice($res, 0, 3);
         } else {
-            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot
+            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot, cover 
                                     FROM article, hot_article
                                     WHERE level2 = '时事新闻' AND article.id = hot_article.aid
                                     ORDER BY TIME DESC LIMIT 3");
@@ -78,13 +86,13 @@ class Article extends Model
      */
     public function getAllNewsList($current_page=null, $page_num=null){
         if(is_null($current_page) || is_null($page_num)){
-            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot, cover
+            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot, cover 
                                     FROM article, hot_article
                                     WHERE level2 = '时事新闻' AND article.id = hot_article.aid
                                     ORDER BY TIME DESC");
         } else {
             $start = ($current_page - 1) * $page_num;
-            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot, cover
+            $res = Db::query("SELECT article.id, level1 AS department, level2 AS category, title, time, hot, cover 
                                     FROM article, hot_article
                                     WHERE level2 = '时事新闻' AND article.id = hot_article.aid
                                     ORDER BY TIME DESC LIMIT $start, $page_num");

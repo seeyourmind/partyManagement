@@ -29,38 +29,98 @@
 <!-- 管理员列表 -->
 <div class="list-group" style="width: 50%; margin-left: auto; margin-right: auto;">
   <a href="#" class="list-group-item active">
-    <span class="badge" style="background-color: green; color: #fff;font-size: 1em;padding: 5px;">添加</span>
+    <span class="badge" style="background-color: green; color: #fff;font-size: 1em;padding: 6px;">添加</span>
     <h4 class="list-group-item-heading">
       管理员列表
     </h4>
   </a>
   <a href="#" class="list-group-item">
-    <span class="badge" style="background-color: red">删除</span>
-    <h4 class="list-group-item-heading">
-      管理员名
-    </h4>
-    <p class="list-group-item-text">
-      上次登录系统时间：2018年12月20日 20:30:00
-    </p>
-  </a>
-  <a href="#" class="list-group-item">
-    <span class="badge" style="background-color: red">删除</span>
-    <h4 class="list-group-item-heading">
-      管理员名
-    </h4>
-    <p class="list-group-item-text">
-      上次登录系统时间：2018年12月20日 20:30:00
-    </p>
-  </a>
-  <a href="#" class="list-group-item">
-    <span class="badge" style="background-color: red">删除</span>
-    <h4 class="list-group-item-heading">
-      管理员名
-    </h4>
+    <span class="badge" style="background-color: red" onclick="deleteAdmin()">删除</span>
+    <span class="badge" style="background-color: green" onclick="$('#myModal').modal('show');">修改</span>
+    <h4 class="list-group-item-heading"> 管理员名 </h4>
     <p class="list-group-item-text">
       上次登录系统时间：2018年12月20日 20:30:00
     </p>
   </a>
 </div>
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" style="width: 30%" >
+    <div class="card card-primary modal-content">
+      <div class="card-header modal-header">
+        <h4>管理员权限列表</h4>
+      </div>
+      <div class="card-body modal-body">
+        <div class="table-responsive mailbox-messages">
+          <table class="table table-hover table-striped">
+            <tbody id="user_list_tb">
+            <tr>
+              <td><input type="checkbox" value="0"></td>
+              <td class="mailbox-name">超级管理权限</td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" value="1"></td>
+              <td class="mailbox-name">党员信息管理</td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" value="2"></td>
+              <td class="mailbox-name">试卷信息管理</td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" value="3"></td>
+              <td class="mailbox-name">文章管理</td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" value="4"></td>
+              <td class="mailbox-name">视频管理</td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" value="5"></td>
+              <td class="mailbox-name">专题活动管理</td>
+            </tr>
+            </tbody>
+          </table>
+          <!-- /.table -->
+        </div>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer modal-footer">
+        <button name="modify" class="btn btn-info" data-dismiss="modal" onclick="modifyAdmin()">保存</button>
+        <button name="cancel" class="btn btn-danger float-right" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
 </body>
+<script type="text/javascript">
+  function deleteAdmin() {
+      swal({
+          title: '提示',
+          text: '是否删除该管理员？',
+          showCancelButton: true,
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+      }).then(function (isconfirm) {
+          console.log(isconfirm)
+          if(isconfirm.value){
+              window.location.href = '/admin/admin_management'
+          }
+      })
+  }
+
+  $('tr').click(function () {
+      $(this).find('input[type="checkbox"]').click();
+  })
+
+  function modifyAdmin() {
+      var checkedUsers = $('input[type=checkbox]:checked');
+      var authorityCoding = '';
+      for(var i=0;i<checkedUsers.length;i++){
+          if(checkedUsers[i].value =='0') {
+              authorityCoding = '0';
+              break;
+          }
+          authorityCoding += checkedUsers[i].value;
+      }
+  }
+</script>
 </html>

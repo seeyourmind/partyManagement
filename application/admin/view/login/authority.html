@@ -1,0 +1,13 @@
+{extend name="public/base" /}
+{block name="content_main"}
+{/block}
+{block name="user_js"}
+<script>
+    swal({
+        title: 'Sorry！',
+        text: '您再无操作此模块的权限',
+        type: 'error',
+        showCancelButton: false
+    })
+</script>
+{/block}

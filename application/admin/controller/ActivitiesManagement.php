@@ -10,18 +10,28 @@ namespace app\admin\controller;
 
 
 use app\api\model\Activities;
+use app\api\model\AdminUser;
 use think\Exception;
 use think\Request;
 
 class ActivitiesManagement extends Base
 {
     public function index(){
-        $activities = new Activities();
-        $res = $activities->getAllActivities();
-        $this->view->assign('activities', $res);
-        $this->view->assign('content_header', '专题活动管理');
-        $this->view->assign('active5', 'active');
-        return $this->view->fetch('thematic_activities');
+        $admin = new AdminUser();
+        $authority = $admin->getUserAuthority(1);
+
+        if($authority[0]['authority']=='0' || stristr($authority[0]['authority'],'5')!=false){
+            $activities = new Activities();
+            $res = $activities->getAllActivities();
+            $this->view->assign('activities', $res);
+            $this->view->assign('content_header', '专题活动管理');
+            $this->view->assign('active5', 'active');
+            return $this->view->fetch('thematic_activities');
+        } else {
+            $this->view->assign('content_header', '专题活动管理');
+            $this->view->assign('active5', 'active');
+            return $this->view->fetch('/login/authority');
+        }
     }
 
     public function searchActivity(Request $request){

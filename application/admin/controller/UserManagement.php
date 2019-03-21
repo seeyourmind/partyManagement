@@ -8,6 +8,7 @@
 
 namespace app\admin\controller;
 
+use app\api\model\AdminUser;
 use app\api\model\Userinfo;
 use think\Exception;
 use think\Request;
@@ -15,14 +16,23 @@ use think\Request;
 class UserManagement extends Base
 {
     public function index(){
-        $userinfo = new Userinfo();
-        $user = [['name'=>'请选择需要查看的用户','stage'=>null,'id'=>null,'sex'=>null,'nation'=>null,'birthday'=>null]];
+        $admin = new AdminUser();
+        $authority = $admin->getUserAuthority(1);
 
-        $user = $userinfo->getUserinfo();
-        $this->view->assign('users',$user);
-        $this->view->assign('content_header', '党员信息管理');
-        $this->view->assign('active1', 'active');
-        return $this->view->fetch('user_management');
+        if($authority[0]['authority']=='0' || stristr($authority[0]['authority'],'1')!=false){
+            $userinfo = new Userinfo();
+            $user = [['name'=>'请选择需要查看的用户','stage'=>null,'id'=>null,'sex'=>null,'nation'=>null,'birthday'=>null]];
+
+            $user = $userinfo->getUserinfo();
+            $this->view->assign('users',$user);
+            $this->view->assign('content_header', '党员信息管理');
+            $this->view->assign('active1', 'active');
+            return $this->view->fetch('user_management');
+        } else {
+            $this->view->assign('content_header', '党员信息管理');
+            $this->view->assign('active1', 'active');
+            return $this->view->fetch('/login/authority');
+        }
     }
 
     public function searchUser(Request $request){

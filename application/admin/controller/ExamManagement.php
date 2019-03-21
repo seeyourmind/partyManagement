@@ -8,6 +8,7 @@
 
 namespace app\admin\controller;
 
+use app\api\model\AdminUser;
 use app\api\model\Exam;
 use app\api\model\ExamCategory;
 
@@ -22,36 +23,56 @@ class ExamManagement extends Base
      * @throws \think\exception\DbException
      */
     public function index(){
-        $ec = new ExamCategory();
-        $exam = new Exam();
-        $ec_datas = $ec->getExamCategory();
-        $category = [];
-        foreach ($ec_datas as $data){
-            $category[$data['id']] = $data['explain'];
+        $admin = new AdminUser();
+        $authority = $admin->getUserAuthority(1);
+
+        if($authority[0]['authority']=='0' || stristr($authority[0]['authority'],'2')!=false){
+            $ec = new ExamCategory();
+            $exam = new Exam();
+            $ec_datas = $ec->getExamCategory();
+            $category = [];
+            foreach ($ec_datas as $data){
+                $category[$data['id']] = $data['explain'];
+            }
+            $exam_list = $exam->getExam();
+            categoryID2NAME($category, $exam_list);
+            $this->view->assign('category', json_encode($category));
+            $this->view->assign('exams', $exam_list);
+            $this->view->assign('content_header', '试卷信息管理');
+            $this->view->assign('menu_open2', 'menu-open');
+            $this->view->assign('active21', 'active');
+            return $this->view->fetch('exam_management');
+        } else {
+            $this->view->assign('content_header', '试卷信息管理');
+            $this->view->assign('menu_open2', 'menu-open');
+            $this->view->assign('active21', 'active');
+            return $this->view->fetch('/login/authority');
         }
-        $exam_list = $exam->getExam();
-        categoryID2NAME($category, $exam_list);
-        $this->view->assign('category', json_encode($category));
-        $this->view->assign('exams', $exam_list);
-        $this->view->assign('content_header', '试卷信息管理');
-        $this->view->assign('menu_open2', 'menu-open');
-        $this->view->assign('active21', 'active');
-        return $this->view->fetch('exam_management');
     }
 
     public function addExam(){
-        $ec = new ExamCategory();
-        $ec_datas = $ec->getExamCategory();
-        $category = [];
-        foreach ($ec_datas as $data){
-            $category[$data['id']] = $data['explain'];
+        $admin = new AdminUser();
+        $authority = $admin->getUserAuthority(1);
+
+        if($authority[0]['authority']=='0' || stristr($authority[0]['authority'],'2')!=false){
+            $ec = new ExamCategory();
+            $ec_datas = $ec->getExamCategory();
+            $category = [];
+            foreach ($ec_datas as $data){
+                $category[$data['id']] = $data['explain'];
+            }
+            $question_list = [['question'=>null,'item1'=>null,'item2'=>null,'item3'=>null,'item4'=>null,'answer'=>null]];
+            $this->view->assign('question_list', $question_list);
+            $this->view->assign('category', json_encode($category));
+            $this->view->assign('content_header', '试卷信息管理');
+            $this->view->assign('menu_open2', 'menu-open');
+            $this->view->assign('active22', 'active');
+            return $this->view->fetch('exam_management_add');
+        } else {
+            $this->view->assign('content_header', '试卷信息管理');
+            $this->view->assign('menu_open2', 'menu-open');
+            $this->view->assign('active22', 'active');
+            return $this->view->fetch('/login/authority');
         }
-        $question_list = [['question'=>null,'item1'=>null,'item2'=>null,'item3'=>null,'item4'=>null,'answer'=>null]];
-        $this->view->assign('question_list', $question_list);
-        $this->view->assign('category', json_encode($category));
-        $this->view->assign('content_header', '试卷信息管理');
-        $this->view->assign('menu_open2', 'menu-open');
-        $this->view->assign('active22', 'active');
-        return $this->view->fetch('exam_management_add');
     }
 }

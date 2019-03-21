@@ -29,21 +29,79 @@
 <!-- 管理员列表 -->
 <div class="list-group" style="width: 50%; margin-left: auto; margin-right: auto;">
   <a href="#" class="list-group-item active">
-    <span class="badge" style="background-color: green; color: #fff;font-size: 1em;padding: 6px;">添加</span>
+    <span class="badge" style="background-color: green; color: #fff;font-size: 1em;padding: 6px;" onclick="$('#newAdmin').modal('show');">添加</span>
     <h4 class="list-group-item-heading">
       管理员列表
     </h4>
   </a>
+  {volist name='adminlist' id='admin'}
   <a href="#" class="list-group-item">
     <span class="badge" style="background-color: red" onclick="deleteAdmin()">删除</span>
-    <span class="badge" style="background-color: green" onclick="$('#myModal').modal('show');">修改</span>
-    <h4 class="list-group-item-heading"> 管理员名 </h4>
+    <span class="badge" style="background-color: green" onclick="$('#authorityList').modal('show');">修改</span>
+    <h4 class="list-group-item-heading"> {$admin.username} </h4>
     <p class="list-group-item-text">
-      上次登录系统时间：2018年12月20日 20:30:00
+      上次登录系统时间：{$admin.loadtime}
     </p>
   </a>
+  {/volist}
 </div>
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+<!-- 新建人员 -->
+<div class="modal fade" id="newAdmin" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
+  <div class="modal-dialog modal-lg" style="width: 30%" >
+    <div class="card card-primary modal-content">
+      <div class="card-header modal-header">
+        <h4>新建管理员信息</h4>
+      </div>
+      <div class="card-body modal-body">
+        <form id="new-admin-form">
+          <div class="input-group">
+            <span class="input-group-addon">账号</span>
+            <input id="adminZH" type="text" class="form-control" placeholder="请输入管理员账号">
+          </div>
+          <br>
+          <div class="input-group">
+            <span class="input-group-addon">密码</span>
+            <input id="adminMM" type="text" class="form-control" placeholder="请输入管理员密码">
+          </div>
+          <br>
+          <span>授权列表</span>
+          <div class="table-responsive mailbox-messages">
+            <table class="table table-hover table-striped">
+              <tbody>
+              <tr>
+                <td><input type="checkbox" value="0"></td>
+                <td class="mailbox-name">超级管理权限</td>
+                <td><input type="checkbox" value="1"></td>
+                <td class="mailbox-name">党员信息管理</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" value="2"></td>
+                <td class="mailbox-name">试卷信息管理</td>
+                <td><input type="checkbox" value="3"></td>
+                <td class="mailbox-name">文章管理</td>
+              </tr>
+              <tr>
+                <td><input type="checkbox" value="4"></td>
+                <td class="mailbox-name">视频管理</td>
+                <td><input type="checkbox" value="5"></td>
+                <td class="mailbox-name">专题活动管理</td>
+              </tr>
+              </tbody>
+            </table>
+            <!-- /.table -->
+          </div>
+        </form>
+      </div>
+      <!-- /.card-body -->
+      <div class="card-footer modal-footer">
+        <button name="modify" class="btn btn-info" onclick="newAdmin()">保存</button>
+        <button name="cancel" class="btn btn-danger float-right" data-dismiss="modal">取消</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- 权限列表 -->
+<div class="modal fade" id="authorityList" tabindex="-1" role="dialog" aria-labelledby="addModalLabel" aria-hidden="true" data-backdrop="static" data-keyboard="false">
   <div class="modal-dialog modal-lg" style="width: 30%" >
     <div class="card card-primary modal-content">
       <div class="card-header modal-header">
@@ -53,27 +111,27 @@
         <div class="table-responsive mailbox-messages">
           <table class="table table-hover table-striped">
             <tbody id="user_list_tb">
-            <tr>
+            <tr class="authorityElem">
               <td><input type="checkbox" value="0"></td>
               <td class="mailbox-name">超级管理权限</td>
             </tr>
-            <tr>
+            <tr class="authorityElem">
               <td><input type="checkbox" value="1"></td>
               <td class="mailbox-name">党员信息管理</td>
             </tr>
-            <tr>
+            <tr class="authorityElem">
               <td><input type="checkbox" value="2"></td>
               <td class="mailbox-name">试卷信息管理</td>
             </tr>
-            <tr>
+            <tr class="authorityElem">
               <td><input type="checkbox" value="3"></td>
               <td class="mailbox-name">文章管理</td>
             </tr>
-            <tr>
+            <tr class="authorityElem">
               <td><input type="checkbox" value="4"></td>
               <td class="mailbox-name">视频管理</td>
             </tr>
-            <tr>
+            <tr class="authorityElem">
               <td><input type="checkbox" value="5"></td>
               <td class="mailbox-name">专题活动管理</td>
             </tr>
@@ -107,9 +165,59 @@
       })
   }
 
-  $('tr').click(function () {
+  $('tr.authorityElem').click(function () {
       $(this).find('input[type="checkbox"]').click();
   })
+
+  function newAdmin() {
+      var checkedUsers = $('input[type=checkbox]:checked');
+      var zhanghao = $('input#adminZH').val();
+      var mima = $('input#adminMM').val();
+      var authorityCoding = '';
+      for(var i=0;i<checkedUsers.length;i++){
+          if(checkedUsers[i].value =='0') {
+              authorityCoding = '0';
+              break;
+          }
+          authorityCoding += checkedUsers[i].value;
+      }
+      if(zhanghao.length>=1 && mima.length>=1 && checkedUsers.length>=1){
+          var d ={};
+          d['username'] = zhanghao;
+          d['password'] = mima;
+          d['authority'] = authorityCoding;
+          $.ajax({
+              type: 'post',
+              url: '/newAdmin',
+              data: {data: d},
+              dataType: 'json',
+              success: function (res) {
+                  if(res.flag === 'S'){
+                      $('#newAdmin').modal('hide');
+                      swal({
+                          title: '恭喜！',
+                          text: res.msg,
+                          type: 'success',
+                          showCancelButton: false
+                      }).then(function (isConfirm) {
+                          if(isConfirm.value){
+                              window.location.href = "/admin/admin_management";
+                          }
+                      })
+                  } else {
+                      swal('Oops!', res.msg, 'info');
+                  }
+              },
+              error: function (err, zt, yy) {
+                  swal('发生错误', JSON.stringify(err), 'error');
+              }
+          });
+          //console.log('admin account is '+zhanghao+'; admin password is '+mima+'; checked list is ',authorityCoding);
+
+      } else {
+          swal('提醒', '请确保账号、密码和权限均不为空', 'warning')
+      }
+  }
 
   function modifyAdmin() {
       var checkedUsers = $('input[type=checkbox]:checked');

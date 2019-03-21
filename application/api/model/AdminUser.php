@@ -19,8 +19,13 @@ class AdminUser extends Model
      * @return int|string
      */
     public function insertAdminUser($data){
-        $res = AdminUser::allowField(true)->insertAll($data);
+        $res = AdminUser::allowField(true)->save($data);
         return $res;
+    }
+
+    public function userIsExist($name){
+        $res = AdminUser::where('username','=', $name)->select();
+        return sizeof($res);
     }
 
     /**
@@ -57,6 +62,18 @@ class AdminUser extends Model
      */
     public function authorization($id, $authority){
         $res = AdminUser::where('id', '=', $id)->update(['authority'=>$authority]);
+        return $res;
+    }
+
+    /**
+     * 获取管理员列表
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getAllAdmin(){
+        $res = AdminUser::select();
         return $res;
     }
 }

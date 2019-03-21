@@ -45,6 +45,7 @@ return [
     'getVideoByID' => 'api/VideoApi/getVideoByID',
     'deleteVideoByID' => 'api/VideoApi/deleteVideoByID',
     'searchVideoByKW' => 'api/VideoApi/searchVideoByKW',
+    'newAdmin' => 'api/adminApi/newAdmin',
 
 //    'uploads/video' => 'api/Uploads/video',
 //    'uploads/images' => 'api/Uploads/images',

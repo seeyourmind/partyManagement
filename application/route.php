@@ -30,6 +30,7 @@ return [
     'deleteQuestion' => 'api/ExamApi/deleteExamQuestionWithID',
     'insertQuestion' => 'api/ExamApi/insertExamQuestion',
     'insertQuestions' => 'api/ExamApi/insertExamQuestions',
+    'getNineteenBigAnswer' => 'api/ExamApi/getNineteenBigAnswer',
     'insertArticle' => 'api/ArticleApi/insertArticle',
     'getAllArticles' => 'api/ArticleApi/getAllArticles',
     'getArticleWithID' => 'api/ArticleApi/getArticleWithID',
@@ -46,6 +47,10 @@ return [
     'deleteVideoByID' => 'api/VideoApi/deleteVideoByID',
     'searchVideoByKW' => 'api/VideoApi/searchVideoByKW',
     'newAdmin' => 'api/adminApi/newAdmin',
+    'deleteAdmin' => 'api/adminApi/deleteAdmin',
+    'authorizationAdmin' => 'api/adminApi/authorizationAdmin',
+    'getOneAdminInfo' => 'api/adminApi/getOneAdminInfo',
+    'changeAdminPassword' => 'api/adminApi/changePassword',
 
 //    'uploads/video' => 'api/Uploads/video',
 //    'uploads/images' => 'api/Uploads/images',
@@ -81,8 +86,6 @@ return [
     'wxapi/news' => 'wxapi/ArticleView/news',
     'wxapi/messages' => 'wxapi/ArticleView/messages',
     'wxapi/get_video_category' => 'wxapi/videoAPI/get_category',
-    'wxapi/get_video_list' => 'wxapi/videoAPI/get_video_list_by_category',
-
-    'getNineteenBigAnswer' => 'api/ExamApi/getNineteenBigAnswer'
+    'wxapi/get_video_list' => 'wxapi/videoAPI/get_video_list_by_category'
 
 ];

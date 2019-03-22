@@ -10,14 +10,18 @@ namespace app\admin\controller;
 
 
 use app\api\model\AdminUser;
-use think\Controller;
 
-class AdminManagement extends Controller
+class AdminManagement extends Base
 {
     public function index(){
-        $admin = new AdminUser();
-        $adminList = $admin->getAllAdmin();
-        $this->view->assign('adminlist', $adminList);
-        return $this->view->fetch('adminm');
+        if(session('admin_authority')==0){
+            $admin = new AdminUser();
+            $adminList = $admin->getAllAdmin();
+            $this->view->assign('adminlist', $adminList);
+            return $this->view->fetch('adminm');
+        } else {
+            $this->view->assign('name', session('admin_username'));
+            return $this->view->fetch('admin_info');
+        }
     }
 }

@@ -23,10 +23,13 @@ class ExamManagement extends Base
      * @throws \think\exception\DbException
      */
     public function index(){
-        $admin = new AdminUser();
-        $authority = $admin->getUserAuthority(1);
+        $authority = session('admin_authority');
+        if(!$authority){
+            $admin = new AdminUser();
+            $authority = $admin->getUserAuthority(session('admin_username'))[0]['authority'];
+        }
 
-        if($authority[0]['authority']=='0' || stristr($authority[0]['authority'],'2')!=false){
+        if($authority=='0' || stristr($authority,'2')!=false){
             $ec = new ExamCategory();
             $exam = new Exam();
             $ec_datas = $ec->getExamCategory();
@@ -51,10 +54,13 @@ class ExamManagement extends Base
     }
 
     public function addExam(){
-        $admin = new AdminUser();
-        $authority = $admin->getUserAuthority(1);
+        $authority = session('admin_authority');
+        if(!$authority){
+            $admin = new AdminUser();
+            $authority = $admin->getUserAuthority(session('admin_username'))[0]['authority'];
+        }
 
-        if($authority[0]['authority']=='0' || stristr($authority[0]['authority'],'2')!=false){
+        if($authority=='0' || stristr($authority,'2')!=false){
             $ec = new ExamCategory();
             $ec_datas = $ec->getExamCategory();
             $category = [];

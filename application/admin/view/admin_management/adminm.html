@@ -22,7 +22,7 @@
       <a class="navbar-brand" href="#">超级用户管理界面</a>
     </div>
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> 返回</a></li>
+      <li><a href="#" onclick="window.location.href = '/admin/user_management';"><span class="glyphicon glyphicon-log-in"></span> 返回</a></li>
     </ul>
   </div>
 </nav>
@@ -36,8 +36,8 @@
   </a>
   {volist name='adminlist' id='admin'}
   <a href="#" class="list-group-item">
-    <span class="badge" style="background-color: red" onclick="deleteAdmin()">删除</span>
-    <span class="badge" style="background-color: green" onclick="$('#authorityList').modal('show');">修改</span>
+    <span userid="{$admin.id}" class="badge delete-badge" style="background-color: red" >删除</span>
+    <span userid="{$admin.id}" userauthority="{$admin.authority}" class="badge modify-badge" style="background-color: green" onclick="$('#authorityList').modal('show');">修改</span>
     <h4 class="list-group-item-heading"> {$admin.username} </h4>
     <p class="list-group-item-text">
       上次登录系统时间：{$admin.loadtime}
@@ -61,7 +61,7 @@
           <br>
           <div class="input-group">
             <span class="input-group-addon">密码</span>
-            <input id="adminMM" type="text" class="form-control" placeholder="请输入管理员密码">
+            <input id="adminMM" type="text" class="form-control" placeholder="请输入管理员密码，至少六位">
           </div>
           <br>
           <span>授权列表</span>
@@ -150,7 +150,11 @@
 </div>
 </body>
 <script type="text/javascript">
-  function deleteAdmin() {
+    var admin_id = '';
+    // 删除管理员用户
+  $('span.delete-badge').click(function () {
+      var id = $(this).attr('userid');
+
       swal({
           title: '提示',
           text: '是否删除该管理员？',
@@ -158,17 +162,52 @@
           confirmButtonText: '确定',
           cancelButtonText: '取消'
       }).then(function (isconfirm) {
-          console.log(isconfirm)
-          if(isconfirm.value){
-              window.location.href = '/admin/admin_management'
-          }
-      })
-  }
-
+          $.ajax({
+              type: 'post',
+              url: '/deleteAdmin',
+              data: {id: id},
+              dataType: 'json',
+              success: function (res) {
+                  if(res.flag === 'S'){
+                      swal({
+                          title: '恭喜！',
+                          text: res.msg,
+                          type: 'success',
+                          showCancelButton: false
+                      }).then(function (isConfirm) {
+                          if(isConfirm.value){
+                              window.location.href = "/admin/admin_management";
+                          }
+                      })
+                  } else {
+                      swal('Oops!', res.msg, 'info');
+                  }
+              },
+              error: function (err, zt, yy) {
+                  swal('发生错误', JSON.stringify(err), 'error');
+              }
+          });
+      });
+  });
+    // 填充管理员权限列表
+  $('span.modify-badge').click(function () {
+     admin_id = $(this).attr('userid');
+     var authority = $(this).attr('userauthority');
+     console.log()
+     if(authority=='0'){
+         $('div#authorityList').find('input[type="checkbox"]').attr('checked', 'true');
+     } else {
+         for(var chr in authority){
+             var elem = $('div#authorityList').find('input[type="checkbox"][value='+authority.charAt(chr)+']');
+             elem.attr('checked', 'true');
+         }
+     }
+  });
+    // 选中权限
   $('tr.authorityElem').click(function () {
-      $(this).find('input[type="checkbox"]').click();
-  })
-
+      $(this).find('input[type="checkbox"]').attr('checked', 'true');
+  });
+    // 新建管理员用户
   function newAdmin() {
       var checkedUsers = $('input[type=checkbox]:checked');
       var zhanghao = $('input#adminZH').val();
@@ -218,7 +257,7 @@
           swal('提醒', '请确保账号、密码和权限均不为空', 'warning')
       }
   }
-
+    // 修改管理员权限
   function modifyAdmin() {
       var checkedUsers = $('input[type=checkbox]:checked');
       var authorityCoding = '';
@@ -229,6 +268,31 @@
           }
           authorityCoding += checkedUsers[i].value;
       }
+      $.ajax({
+          type: 'post',
+          url: '/authorizationAdmin',
+          data: {id:admin_id, authority:authorityCoding},
+          dataType: 'json',
+          success: function (res) {
+              if(res.flag === 'S'){
+                  swal({
+                      title: '恭喜！',
+                      text: res.msg,
+                      type: 'success',
+                      showCancelButton: false
+                  }).then(function (isConfirm) {
+                      if(isConfirm.value){
+                          window.location.href = "/admin/admin_management";
+                      }
+                  })
+              } else {
+                  swal('Oops!', res.msg, 'info');
+              }
+          },
+          error: function (err, zt, yy) {
+              swal('发生错误', JSON.stringify(err), 'error');
+          }
+      });
   }
 </script>
 </html>

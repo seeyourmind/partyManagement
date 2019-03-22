@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+    <title>超级用户管理界面</title>
+
+    <link rel="stylesheet" href="__ADMIN__/plugins/sweetalert/css/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="__ADMIN__/plugins/sweetalert/js/sweetalert2.min.js"></script>
+</head>
+<body style="background-color: rgba(0,0,0,0.7)">
+<!-- 页面标题 -->
+<nav class="navbar navbar-inverse" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#">超级用户管理界面</a>
+        </div>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="#" onclick="window.location.href = '/admin/user_management';"><span class="glyphicon glyphicon-log-in"></span> 返回</a></li>
+        </ul>
+    </div>
+</nav>
+<!-- 管理员资料卡 -->
+<div class="card card-primary modal-content" style="width: 30%; margin-right: auto; margin-left: auto;">
+    <div class="card-header modal-header">
+        <h4>管理员信息卡</h4>
+    </div>
+    <div class="card-body modal-body">
+        <form id="new-admin-form">
+            <div class="input-group">
+                <span class="input-group-addon">账号</span>
+                <input id="adminZH" type="text" class="form-control" placeholder="请输入管理员账号" disabled="disabled">
+            </div>
+            <br>
+            <div class="input-group">
+                <span class="input-group-addon">密码</span>
+                <input id="adminMM" type="text" class="form-control" placeholder="请输入管理员密码">
+            </div>
+            <br>
+            <span>已有权限</span>
+            <div id="authorizationList" class="table-responsive mailbox-messages"></div>
+        </form>
+    </div>
+    <!-- /.card-body -->
+    <div class="card-footer modal-footer">
+        <button name="modify" class="btn btn-info" disabled="disabled" onclick="changePassword()">保存</button>
+    </div>
+</div>
+</body>
+<script type="text/javascript">
+    var name = "{$name}";
+    var colors = ['#8d4bbb', '#FF69B4', '#725e82', '#20B2AA', '#fa8c35', '#6B8E23'];
+    var authoritys = ['超级管理权限', '党员信息管理', '试卷信息管理', '文章管理', '视频管理', '专题活动管理'];
+    $('input#adminZH').attr('value', name);
+    $('div#authorizationList').empty();
+
+    $.ajax({
+        type: 'post',
+        url: '/getOneAdminInfo',
+        data: {name:name},
+        dataType: 'json',
+        success: function (res) {
+            if(res.flag === 'S'){
+                $('input#adminMM').attr('value', res.msg.password);
+                var authority = res.msg.authority;
+                for(var i in authority){
+                    $('div#authorizationList').append('<span class="badge" style="margin-right:10px;background-color:'+colors[parseInt(authority[i])]+';">'+authoritys[parseInt(authority[i])]+'</span>');
+                }
+            } else {
+                swal('Oops!', res.msg, 'info');
+            }
+        },
+        error: function (err, zt, yy) {
+            swal('发生错误', JSON.stringify(err), 'error');
+        }
+    });
+
+    $('input#adminMM').on('change', function () {
+        $('button[name="modify"]').removeAttr('disabled');
+    });
+
+    function changePassword() {
+        var password = $('input#adminMM').val();
+        $.ajax({
+            type: 'post',
+            url: '/changeAdminPassword',
+            data: {name:name, password:password},
+            dataType: 'json',
+            success: function (res) {
+                if(res.flag === 'S'){
+                    swal({
+                        title: '恭喜！',
+                        text: res.msg,
+                        type: 'success',
+                        showCancelButton: false
+                    }).then(function (isConfirm) {
+                        if(isConfirm.value){
+                            window.location.href = "/admin/admin_management";
+                        }
+                    })
+                } else {
+                    swal('Oops!', res.msg, 'info');
+                }
+            },
+            error: function (err, zt, yy) {
+                swal('发生错误', JSON.stringify(err), 'error');
+            }
+        });
+    }
+
+</script>
+</html>

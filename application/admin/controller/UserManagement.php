@@ -12,14 +12,18 @@ use app\api\model\AdminUser;
 use app\api\model\Userinfo;
 use think\Exception;
 use think\Request;
+use think\Session;
 
 class UserManagement extends Base
 {
     public function index(){
-        $admin = new AdminUser();
-        $authority = $admin->getUserAuthority(1);
+        $authority = session('admin_authority');
+        if(!$authority){
+            $admin = new AdminUser();
+            $authority = $admin->getUserAuthority(session('admin_username'))[0]['authority'];
+        }
 
-        if($authority[0]['authority']=='0' || stristr($authority[0]['authority'],'1')!=false){
+        if($authority=='0' || stristr($authority,'1')!=false){
             $userinfo = new Userinfo();
             $user = [['name'=>'请选择需要查看的用户','stage'=>null,'id'=>null,'sex'=>null,'nation'=>null,'birthday'=>null]];
 

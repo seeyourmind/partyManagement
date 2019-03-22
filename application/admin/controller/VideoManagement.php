@@ -16,10 +16,13 @@ use think\Request;
 class VideoManagement extends Base
 {
     public function index(){
-        $admin = new AdminUser();
-        $authority = $admin->getUserAuthority(1);
+        $authority = session('admin_authority');
+        if(!$authority){
+            $admin = new AdminUser();
+            $authority = $admin->getUserAuthority(session('admin_username'))[0]['authority'];
+        }
 
-        if($authority[0]['authority']=='0' || stristr($authority[0]['authority'],'4')!=false){
+        if($authority=='0' || stristr($authority,'4')!=false){
             try{
                 $vm = new \app\api\model\VideoManagement();
                 $videos = $vm->getAllVideo();

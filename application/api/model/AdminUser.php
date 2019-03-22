@@ -23,6 +23,14 @@ class AdminUser extends Model
         return $res;
     }
 
+    /**
+     * 验证用户名是否重复
+     * @param $name
+     * @return int
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
     public function userIsExist($name){
         $res = AdminUser::where('username','=', $name)->select();
         return sizeof($res);
@@ -37,7 +45,10 @@ class AdminUser extends Model
      * @throws \think\exception\DbException
      */
     public function loginValidate($data){
-        $res = AdminUser::field('id')->where('username', '=', $data['username'])->where('password','=',$data['password'])->select();
+        $res = AdminUser::field('id,authority')->where('username', '=', $data['username'])->where('password','=',$data['password'])->select();
+        if($res){
+            AdminUser::updateAdminLoadTime($res[0]['id']);
+        }
         return $res;
     }
 
@@ -49,8 +60,8 @@ class AdminUser extends Model
      * @throws \think\db\exception\ModelNotFoundException
      * @throws \think\exception\DbException
      */
-    public function getUserAuthority($id){
-        $res = AdminUser::field('authority')->where('id','=', $id)->select();
+    public function getUserAuthority($username){
+        $res = AdminUser::field('authority')->where('username','=', $username)->select();
         return $res;
     }
 
@@ -74,6 +85,48 @@ class AdminUser extends Model
      */
     public function getAllAdmin(){
         $res = AdminUser::select();
+        return $res;
+    }
+
+    /**
+     * 更新管理员登录时间
+     * @param $id
+     */
+    private function updateAdminLoadTime($id){
+        AdminUser::where('id', '=', $id)->update(['loadtime'=>date('Y-m-d H:i:s', time())]);
+    }
+
+    /**
+     * 删除管理员信息
+     * @param $id
+     * @return int
+     */
+    public function deleteAdminUser($id){
+        $res = AdminUser::where('id', '=', $id)->delete();
+        return $res;
+    }
+
+    /**
+     * 获取管理员个人信息
+     * @param $name
+     * @return false|\PDOStatement|string|\think\Collection
+     * @throws \think\db\exception\DataNotFoundException
+     * @throws \think\db\exception\ModelNotFoundException
+     * @throws \think\exception\DbException
+     */
+    public function getAdminInfoByName($name){
+        $res = AdminUser::where('username', '=', $name)->select();
+        return $res;
+    }
+
+    /**
+     * 修改登录密码
+     * @param $name
+     * @param $password
+     * @return $this
+     */
+    public function changePassword($name, $password){
+        $res = AdminUser::where('username', '=', $name)->update(['password'=>$password]);
         return $res;
     }
 }

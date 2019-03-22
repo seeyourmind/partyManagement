@@ -17,10 +17,13 @@ use think\Request;
 class ArticleManagement extends Base
 {
     public function index(){
-        $admin = new AdminUser();
-        $authority = $admin->getUserAuthority(1);
+        $authority = session('admin_authority');
+        if(!$authority){
+            $admin = new AdminUser();
+            $authority = $admin->getUserAuthority(session('admin_username'))[0]['authority'];
+        }
 
-        if($authority[0]['authority']=='0' || stristr($authority[0]['authority'],'3')!=false){
+        if($authority=='0' || stristr($authority,'3')!=false){
             $article = new Article();
             $res = $article->getAllArticles();
             $this->view->assign('articles', $res);
@@ -38,10 +41,13 @@ class ArticleManagement extends Base
     }
 
     public function newArticle(Request $request){
-        $admin = new AdminUser();
-        $authority = $admin->getUserAuthority(1);
+        $authority = session('admin_authority');
+        if(!$authority){
+            $admin = new AdminUser();
+            $authority = $admin->getUserAuthority(session('admin_username'))[0]['authority'];
+        }
 
-        if($authority[0]['authority']=='0' || stristr($authority[0]['authority'],'3')!=false){
+        if($authority=='0' || stristr($authority,'3')!=false){
             if(!is_null($request) && $request->isGet()){
                 $id = $request->get('aid');
                 if(sizeof($id)>=1){

@@ -17,10 +17,13 @@ use think\Request;
 class ActivitiesManagement extends Base
 {
     public function index(){
-        $admin = new AdminUser();
-        $authority = $admin->getUserAuthority(1);
+        $authority = session('admin_authority');
+        if(!$authority){
+            $admin = new AdminUser();
+            $authority = $admin->getUserAuthority(session('admin_username'))[0]['authority'];
+        }
 
-        if($authority[0]['authority']=='0' || stristr($authority[0]['authority'],'5')!=false){
+        if($authority=='0' || stristr($authority,'5')!=false){
             $activities = new Activities();
             $res = $activities->getAllActivities();
             $this->view->assign('activities', $res);

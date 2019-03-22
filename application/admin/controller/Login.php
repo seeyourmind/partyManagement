@@ -53,6 +53,7 @@ class Login extends Controller
                 $flag = 1;
                 $result = '验证通过，点击[OK]进入主页';
                 Session::set('admin_username', $data['username']);
+                Session::set('admin_authority', $res[0]['authority']);
             } else {
                 $result = '验证失败，请核对账号密码是否正确';
             }

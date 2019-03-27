@@ -51,6 +51,8 @@ return [
     'authorizationAdmin' => 'api/adminApi/authorizationAdmin',
     'getOneAdminInfo' => 'api/adminApi/getOneAdminInfo',
     'changeAdminPassword' => 'api/adminApi/changePassword',
+    'uploadNewPictorial' => 'api/PictorialApi/uploadNewPictorial',
+    'deleteOldPictorial' => 'api/PictorialApi/deleteOldPictorial',
 
 //    'uploads/video' => 'api/Uploads/video',
 //    'uploads/images' => 'api/Uploads/images',
@@ -86,6 +88,7 @@ return [
     'wxapi/news' => 'wxapi/ArticleView/news',
     'wxapi/messages' => 'wxapi/ArticleView/messages',
     'wxapi/get_video_category' => 'wxapi/videoAPI/get_category',
-    'wxapi/get_video_list' => 'wxapi/videoAPI/get_video_list_by_category'
+    'wxapi/get_video_list' => 'wxapi/videoAPI/get_video_list_by_category',
+    'wxapi/get_pictorial_img' => 'wxapi/pictorialAPI/get_pictorial_img'
 
 ];

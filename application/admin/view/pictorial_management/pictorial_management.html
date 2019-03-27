@@ -1,0 +1,165 @@
+{extend name="public/base" />
+{block name="user_css"}
+<!--引入CSS-->
+<style>
+    .box-warp{
+        text-align: center;
+        overflow: hidden;
+    }
+    .box-warp div{
+        width: 31%;
+        height: 21%;
+        margin: 1%;
+        border-radius: 10%;
+        float: left;
+        background-color: orange;
+    }
+    .video-mask span{
+        position: absolute;
+        bottom: 0;
+        top: 80px;
+    }
+    .video-mask span:hover{
+        color: #5d6974;
+    }
+    video{
+        width: 200px;
+        height: 200px;
+    }
+    .info-message {
+        color: #5d6974;
+        text-align: center;
+        width: 100%;
+        height: 50px;
+    }
+</style>
+{/block}
+{block name="content_main"}
+<section class="content">
+    <div class="card card-primary card-outline" style="width: 95%">
+        <!--  HEAD -->
+        <div class="card-header">
+            <h3 class="card-title">Pictorial List</h3>
+            <!-- SEARCH -->
+            <div class="card-tools">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="searchVideo" class="form-control" placeholder="Search Keyword">
+                    <div class="input-group-append">
+                        <div class="btn btn-primary">
+                            <span onclick="searchVideo()"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- TOOL -->
+        <div class="card-body p-0">
+            <div class="mailbox-controls">
+                <!-- refresh button -->
+                <button type="button" class="btn btn-default btn-sm" onclick="refreshVideoList()"><i class="fa fa-refresh"></i></button>
+                <div class="float-right">
+                    <div class="btn-group">
+                        <button id="show-panel-button" type="button" class="btn btn-success btn-sm" onclick="$('div#upload_panel').removeAttr('hidden');">上传画报</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="upload_panel" class="input-group" style="padding-left: 10%; padding-right: 10%" hidden>
+            <div class="custom-file">
+                <input type="file" class="custom-file-input" id="coverImage" name="file" accept="image/*">
+                <label class="custom-file-label" for="coverImage" id="coverImageLabel">请选择需要上传的宣传画报</label>
+            </div>
+            <button class="btn btn-success" style="margin-left: 10px;" onclick="uploadPictorial()">上传</button>
+            <button class="btn btn-danger" style="margin-left: 2px;" onclick="$('div#upload_panel').attr('hidden', 'hidden');">取消</button>
+        </div>
+        <!-- 视频列表 -->
+        <div class="box-warp">
+            {volist name='id_group' id='idg'}
+            <div class="box" id="box_id">
+                <img class="pictorial-img" id="{$idg.id}" src="http://localhost{$idg.url}" alt="{$idg.uptime}" width="100%" style="margin-top: auto; margin-bottom: auto;"">
+            </div>
+            {/volist}
+            <div {$hide} class="info-message"><p>暂时没有任何画报资源</p></div>
+        </div>
+    </div>
+</section>
+
+{/block}
+{block name="user_js"}
+<script type="text/javascript">
+    // 获取宣传画报路径
+    $('#coverImage[type="file"]').change(function () {
+        var coverFiles = $('#coverImage[type="file"]')[0].files[0];
+        $('#coverImageLabel').html(coverFiles.name);
+        //console.log(coverFiles);
+    });
+    //上传画报
+    function uploadPictorial() {
+        var coverFiles =  $('#coverImage[type="file"]')[0].files[0];
+        //console.log(coverFiles);
+        var fd = new FormData();
+        fd.append('upload', coverFiles);
+        $.ajax({
+            type: 'post',
+            url: '/uploadNewPictorial',
+            data: fd,
+            dataType: 'json',
+            contentType: false, // 注意这里应设为false
+            processData: false,
+            cache: false,
+            success: function (res) {
+                // console.log('后台返回数据',res)
+                if(res.flag === 'S'){
+                    swal('恭喜！', res.msg, 'success', 'OK').then(function (isConfirm) {
+                        if (isConfirm.value) {
+                            window.location.href = "/admin/pictorial_management";
+                        }
+                    });
+                } else {
+                    swal('Oops!', res.msg, 'info');
+                    console.log(res);
+                }
+            },
+            error: function (err, zt, yy) {
+                swal('发生错误', JSON.stringify(err), 'error');
+            }
+        });
+    }
+    // 删除画报
+    $('img.pictorial-img').on('click', function () {
+        var id = $(this).attr('id');
+        //console.log('id', id);
+        swal({
+            title: '警告',
+            text: '您确定要删除该画报吗？',
+            showCancelButton: true,
+            confirmButtonText: '确定',
+            cancelButtonText: '取消'
+        }).then(function (isconfirm) {
+            $.ajax({
+                type: 'post',
+                url: '/deleteOldPictorial',
+                data: {id: id},
+                dataType: 'json',
+                success: function (res) {
+                    // console.log('后台返回数据',res)
+                    if(res.flag === 'S'){
+                        swal('恭喜！', res.msg, 'success', 'OK').then(function (isConfirm) {
+                            if (isConfirm.value) {
+                                window.location.href = "/admin/pictorial_management";
+                            }
+                        });
+                    } else {
+                        swal('Oops!', res.msg, 'info');
+                        console.log(res);
+                    }
+                },
+                error: function (err, zt, yy) {
+                    swal('发生错误', JSON.stringify(err), 'error');
+                }
+            });
+        })
+
+    })
+</script>
+{/block}

@@ -50,12 +50,17 @@ class VideoAPI extends Controller
         } else {
             return json([
                 'flag' => 'F',
-                'msg' => '您使用的请求方式无效，请使用POST方式请求服务器'
+                'msg' => '您使用的请求方式无效，请使用GET方式请求服务器'
             ]);
         }
         return $this->request;
     }
 
+    /**
+     * 按分类获取视频列表
+     * @param Request $request
+     * @return \think\response\Json
+     */
     public function get_video_list_by_category(Request $request) {
         is_null($request) && $request;
         if($request->isPost()){

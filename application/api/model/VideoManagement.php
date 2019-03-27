@@ -14,18 +14,21 @@ use think\Model;
 class VideoManagement extends Model
 {
     /**
-     * 新建视频信息
+     * 上传视频
      * @param $path
      * @param $detail
+     * @param $name
+     * @param $thumbnail
      * @return int|string
      */
-    public function insertNewVideo($path, $detail, $name, $thumbnail)
+    public function insertNewVideo($path, $detail, $name, $vtme, $thumbnail)
     {
         $res = VideoManagement::allowField(true)->insert([
             'path' => $path,
             'detail' => $detail,
             'up_time' => date("Y-m-d H:i:s"),
             'file_name' => $name,
+            'vtime' => $vtme,
             'thumbnail' => $thumbnail
         ]);
         return $res;

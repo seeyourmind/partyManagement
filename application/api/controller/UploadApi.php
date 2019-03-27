@@ -284,14 +284,33 @@ class UploadApi extends Controller
                 Log::record('解锁');
 
                 $vm = new VideoManagement();
+                $insert_video_path = 'uploads'.DS.'video'.DS.$file_md5_name.'.'.$file_ext;
+                $insert_video_path = str_replace('\\', '/', $insert_video_path);
+                $insert_thumbnail_path = 'uploads'.DS.'video'.DS.'thumbnail'.DS.$file_md5_name.'.png';
+                $insert_thumbnail_path = str_replace('\\', '/', $insert_thumbnail_path);
+                $insert_video_name = substr($file_name, 0, (strlen($file_name)-strlen($file_ext)-1));
 
-                if($vm->insertNewVideo('uploads'.DS.'video'.DS.$file_md5_name.'.'.$file_ext, $_POST['detail'], substr($file_name, 0, (strlen($file_name)-strlen($file_ext)-1)), 'uploads'.DS.'video'.DS.'thumbnail'.DS.$file_md5_name.'.png')){
+                $video_file = $uploadDir.DS.$file_md5_name.'.'.$file_ext;
+                exec("ffmpeg -i $video_file 2>&1", $cmd_output_2, $cmd_return_var_2);
+                if (is_array($cmd_output_2)) {
+                    foreach ($cmd_output_2 as $v) {
+                        if (strpos($v, 'Duration') !== false) {
+                            $times = substr($v, stripos($v, '.') - 8, 8);//'  Duration: 00:24:28.14, start: 0.000000, bitrate: 486 kb/s'
+                            break;
+                        }
+                    }
+                    Log::error('执行读取视频时长的命令：cmd_output_2 is ' . $times);
+                }
+
+                if($vm->insertNewVideo($insert_video_path, $_POST['detail'], $insert_video_name, $times, $insert_thumbnail_path)){
                     Log::error('开始保存缩略图');
                     $video_file = $uploadDir.DS.$file_md5_name.'.'.$file_ext;
                     $video_jpeg = $uploadDir.DS.'thumbnail'.DS.$file_md5_name.'.png';
                     $ffmpeg_cmd = "ffmpeg -i $video_file -y -f mjpeg -ss 3 -t 2 -s 200*200 $video_jpeg";
-                    exec($ffmpeg_cmd);
-                    Log::error('结束保存缩略图');
+                    exec($ffmpeg_cmd,$cmd_output,$cmd_return_var);
+
+                    //$vtime = exec("ffmpeg -i ".$video_file." 2>&1 | grep 'Duration' | cut -d ' ' -f 4 | sed s/,//");//Linux下总长度
+
                     die('{"flag":"S", "msg":"视频上传成功"}');
                 } else {
                     die('{"flag": "F", "msg":"视频上传失败"}');

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 {include file="public/header" /}
-<body class="hold-transition login-page">
+<body class="hold-transition login-page" onkeydown="keyLogin()">
 <div class="login-box">
   <div class="login-logo">
     <a href=""><b>党建管理平台</b></a>
@@ -86,6 +86,10 @@
       var ts = Date.parse(new Date())/1000;
       $('#refreshVC').attr("src", "/captcha?id="+ts);
   })
+
+  function keyLogin() {
+      if(event.keyCode==13) $('button#login').click();
+  }
 </script>
 </body>
 </html>

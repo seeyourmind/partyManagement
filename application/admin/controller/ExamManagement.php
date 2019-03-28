@@ -11,6 +11,7 @@ namespace app\admin\controller;
 use app\api\model\AdminUser;
 use app\api\model\Exam;
 use app\api\model\ExamCategory;
+use think\Log;
 
 class ExamManagement extends Base
 {
@@ -33,10 +34,12 @@ class ExamManagement extends Base
             $ec = new ExamCategory();
             $exam = new Exam();
             $ec_datas = $ec->getExamCategory();
+
             $category = [];
             foreach ($ec_datas as $data){
                 $category[$data['id']] = $data['explain'];
             }
+
             $exam_list = $exam->getExam();
             categoryID2NAME($category, $exam_list);
             $this->view->assign('category', json_encode($category));

@@ -18,7 +18,7 @@ class ExamCategory extends Model
      * @throws \think\exception\DbException
      */
     public function getExamCategory(){
-        $res = ExamCategory::paginate(12);
+        $res = ExamCategory::select();
 
         return $res;
     }
